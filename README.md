@@ -4,15 +4,18 @@
 
 Python Interface for the Robot Task and Motion Planning(TAMP) Library
 
+*We will commit the code soon.*
+
 ## Features
 
 - Pure python library
 - Support only URDF file
-- Compute robot's kinematics (Ex. forward kinematics, inverse kinematics, Jacobean)
+- Support only kinematic world, so not consider dynamics in this repo
+- Compute Robot's kinematics (Ex. forward kinematics, inverse kinematics, Jacobian)
 - Possible collision check about robot self-collision and collision between robot and objects
 - Support simple motion planning (RRT*, Cartesian planning)
-- Render robot mesh using matplotlib or trimesh.Scene
-- Support robot tamp with MCTS (Ours)
+- Render Robot mesh using matplotlib or trimesh.Scene
+- Support Robot TAMP with MCTS (Ours)
 
 ## Installation
 
