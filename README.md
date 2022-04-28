@@ -187,7 +187,7 @@ You can see visualization using matplotlib library or trimesh.Scene class.
 - **Attach object to robot**
 
   You can manage by attaching or detaching objects to the gripper.  
-  These managing are used for Planning. You can see a example in `example/scene/gripper` directory. 
+  These method will be used for motion planning. You can see a example in `example/scene/gripper` directory. 
 
   ~~~shell
   $ cd example/scene/gripper
