@@ -203,7 +203,7 @@ You can see visualization using matplotlib library or trimesh.Scene class.
   
 - **Planning**
 
-  You can see an animation that visualizes trajectory in `example/planning` directory. 
+  You can see an animation of planning that visualizes trajectory in `example/planning` directory. 
 
   |                          Cartesian                           |                             RRT*                             |
   | :----------------------------------------------------------: | :----------------------------------------------------------: |
@@ -211,4 +211,8 @@ You can see visualization using matplotlib library or trimesh.Scene class.
 
 - **Pick and Place**
 
-  Comming soon...
+  You can see an animation of pick and place that visualizes trajectory  in `example/action` directory.
+  
+  |                Scene arranged objects (X4)                 |                Scene stacked objects (X4)                 |
+  | :--------------------------------------------------------: | :-------------------------------------------------------: |
+  | <img src="img/pnp_arranged.gif" width="500" height="300"/> | <img src="img/pnp_stacked.gif" width="500" height="300"/> |
