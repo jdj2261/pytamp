@@ -205,7 +205,7 @@ You can see visualization using matplotlib library or trimesh.Scene class.
 
   You can see an animation of planning that visualizes trajectory in `example/planning` directory. 
 
-  |                          Cartesian                           |                             RRT*                             |
+  |                        Cartesian (X1)                        |                        RRT-star (X1)                         |
   | :----------------------------------------------------------: | :----------------------------------------------------------: |
   | <img src="img/panda_cartesian_planning.gif" width="500" height="300"/> | <img src="img/panda_rrt_planning.gif" width="500" height="300"/> |
 
