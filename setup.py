@@ -20,7 +20,8 @@ setup(
         "tqdm",
         "pyyaml",
         "python-fcl",
-	    "networkx"
+        "networkx",
+        "pygraphviz"
     ],
     eager_resources=['*'],
     include_package_data=True,
@@ -30,7 +31,7 @@ setup(
     url="https://github.com/jdj2261/pytamp.git",
 	download_url="https://github.com/jdj2261/pytamp/archive/refs/heads/main.zip",
     author_email="wlseoeo@gmail.com",
-    version="0.1",
+    version="0.2",
     long_description=long_description,
     long_description_content_type='text/markdown'
 )

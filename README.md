@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/pytamp.svg)](https://badge.fury.io/py/pytamp)  [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-Python Interface for the Robot Task and Motion Planning(TAMP) Library
+Python Interface for the robot task and motion planning(TAMP) library
 
 *We will commit the code soon.*
 
@@ -11,50 +11,25 @@ Python Interface for the Robot Task and Motion Planning(TAMP) Library
 - Pure python library
 - Support only URDF file
 - Support only kinematic world, so not consider dynamics in this repo
-- Compute Robot's kinematics (Ex. forward kinematics, inverse kinematics, Jacobian)
-- Possible collision check about robot self-collision and collision between robot and objects
+- Compute robot's kinematics (Ex. forward kinematics, inverse kinematics, Jacobian)
+- Enable to check collision about robot self-collision and collision between robot and objects
 - Support simple motion planning (RRT*, Cartesian planning)
 - Render Robot mesh using matplotlib or trimesh.Scene
-- Support Robot TAMP with MCTS (Ours)
+- Support Robot TAMP with MCTS [Ours]
 
 ## Installation
 
 ### Requirements
 
-You need a [python-fcl](https://github.com/BerkeleyAutomation/python-fcl) package for checking mesh collision.
+You need [pygraphviz](https://github.com/pygraphviz/pygraphviz) and python3-tk package to see a MCTS tree.
 
-- On Ubuntu, Download liboctomap-dev, libfcl-dev using  `apt`
+- On Ubuntu 18.04 or 20.04, Download graphviz and graphviz-dev and python3-tk using  `apt`
 
-  `sudo apt install liboctomap-dev`
+  `sudo apt install graphviz graphviz-dev python3-tk`
 
-  `sudo apt install libfcl-dev`
-- On Mac, Download the source and build it.
+- On Mac, Download graphviz using `brew`
 
-  - octomap
-
-    ~~~shell
-    $ git clone https://github.com/OctoMap/octomap.git
-    $ cd octomap
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ sudo make
-    $ sudo make install
-    ~~~
-  - fcl
-  
-    Since python-fcl used version 0.5.0 of fcl, checkout with tag 0.5.0
-  
-    ~~~shell
-    $ git clone https://github.com/flexible-collision-library/fcl.git
-    $ cd fcl
-    $ git checkout 0.5.0
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ sudo make
-    $ sudo make install
-    ~~~
+  `brew install graphviz`
 
 ### Install pytamp
 
