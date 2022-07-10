@@ -1,12 +1,13 @@
 import numpy as np
 
+import pykin.utils.plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
-from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
+
+from pytamp.scene.scene_manager import SceneManager
 from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
-import pykin.utils.plot_utils as p_utils
 
 file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(
@@ -48,7 +49,7 @@ scene_mngr.scene.logical_states[scene_mngr.gripper_name] = {scene_mngr.scene.log
 scene_mngr.update_logical_states()
 
 pick = PickAction(scene_mngr, n_contacts=1, n_directions=1)
-place = PlaceAction(scene_mngr, release_distance=0.005,n_samples_held_obj=1, n_samples_support_obj=1)
+place = PlaceAction(scene_mngr, release_distance=0.005, n_samples_held_obj=1, n_samples_support_obj=1)
 
 pnp_joint_all_pathes = []
 place_all_object_poses = []

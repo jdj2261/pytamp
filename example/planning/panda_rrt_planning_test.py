@@ -3,24 +3,26 @@ import sys, os
 import yaml
 
 import pykin.asset
+import pykin.utils.plot_utils as p_utils
 
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
-from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
-from pykin.planners.rrt_star_planner import RRTStarPlanner
 from pykin.utils.transform_utils import get_matrix_from_rpy
-import pykin.utils.plot_utils as p_utils
+
+from pytamp.scene.scene_manager import SceneManager
+from pytamp.planners.rrt_star_planner import RRTStarPlanner
 
 fig, ax = p_utils.init_3d_figure()
 asset_file_path = os.path.abspath(pykin.asset.__file__ + "/../")
+file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
     has_gripper=True)
 robot.setup_link_name("panda_link_0", "panda_right_hand")
 
-custom_fpath = '../../asset/config/panda_init_params.yaml'
+custom_fpath = asset_file_path + '/config/panda_init_params.yaml'
 with open(custom_fpath) as f:
     controller_config = yaml.safe_load(f)
 init_qpos = controller_config["init_qpos"]

@@ -1,17 +1,15 @@
 import numpy as np
-import sys, os
 
-pykin_path = os.path.dirname((os.path.dirname(os.path.dirname(os.path.dirname(os.getcwd())))))
-sys.path.append(pykin_path)
 
+import pykin.utils.plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
-from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
-from pytamp.action.pick import PickAction
-import pykin.utils.plot_utils as p_utils
 
-file_path = '../../../../asset/urdf/panda/panda.urdf'
+from pytamp.action.pick import PickAction
+from pytamp.scene.scene_manager import SceneManager
+
+file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
@@ -19,8 +17,7 @@ robot = SingleArm(
 robot.setup_link_name("panda_link_0", "panda_right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
-file_path = '../../../../asset/urdf/panda/panda.urdf'
-panda_robot = SingleArm(file_path, Transform(rot=[0.0, 0.0, np.pi/2], pos=[0, 0, 0]))
+
 
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
 blue_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.06]))

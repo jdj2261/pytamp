@@ -1,13 +1,11 @@
 import numpy as np
-import sys, os
 
-
+import pykin.utils.plot_utils as p_utils
 
 from pykin.kinematics.transform import Transform
+from pykin.utils.mesh_utils import get_object_mesh, get_mesh_bounds
 from pytamp.scene.scene_manager import SceneManager
 from pytamp.action.place import PlaceAction
-from pykin.utils.mesh_utils import get_object_mesh, get_mesh_bounds
-import pykin.utils.plot_utils as p_utils
 
 shelf_pose = Transform(pos=np.array([0.9, 0, 1.41725156]),rot=np.array([0, 0, np.pi/2]))
 bottle_meshes = []

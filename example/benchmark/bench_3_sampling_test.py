@@ -1,13 +1,11 @@
 import numpy as np
-import sys, os
 
-
-
+import pykin.utils.plot_utils as p_utils
 from pykin.kinematics.transform import Transform
+from pykin.utils.mesh_utils import get_object_mesh
+
 from pytamp.scene.scene_manager import SceneManager
 from pytamp.action.place import PlaceAction
-from pykin.utils.mesh_utils import get_object_mesh
-import pykin.utils.plot_utils as p_utils
 
 table_mesh = get_object_mesh('ben_table.stl')
 table_height = table_mesh.bounds[1][2] - table_mesh.bounds[0][2]

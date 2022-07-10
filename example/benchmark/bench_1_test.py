@@ -1,13 +1,12 @@
 import numpy as np
-import sys, os
 
-
-
+import pykin.utils.plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
-from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
-import pykin.utils.plot_utils as p_utils
+
+from pytamp.scene.scene_manager import SceneManager
+
 
 file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(

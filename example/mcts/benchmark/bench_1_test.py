@@ -1,18 +1,16 @@
 import numpy as np
-import sys, os
+import argparse
 import matplotlib.pyplot as plt
 
-
-
+import pykin.utils.plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
+from pykin.utils.mesh_utils import get_object_mesh
+
+from pytamp.search.mcts import MCTS
 from pytamp.scene.scene_manager import SceneManager
 from pytamp.scene.scene import Scene
-from pykin.utils.mesh_utils import get_object_mesh
-from pytamp.search.mcts import MCTS
-import pykin.utils.plot_utils as p_utils
 
-import argparse
 
 parser = argparse.ArgumentParser(description='Test Benchmark 1.')
 parser.add_argument('--budgets', metavar='T', type=int, default=5000, help='an integer for the accumulator')
@@ -26,7 +24,7 @@ debug_mode = args.debug_mode
 seed = args.seed
 np.random.seed(seed)
 
-file_path = 'urdf/panda/panda.urdf'
+file_path = 'urdf/panda/panda.urdf'c
 robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 

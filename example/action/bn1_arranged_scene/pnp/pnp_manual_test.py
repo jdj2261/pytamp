@@ -14,7 +14,7 @@ from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 import pykin.utils.plot_utils as p_utils
 
-file_path = '../../../../asset/urdf/panda/panda.urdf'
+file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
