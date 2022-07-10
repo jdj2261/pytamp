@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
 
 import pykin.utils.plot_utils as p_utils
-import pykin.utils.sampler as sampler
 from pykin.utils.kin_utils import ShellColors as sc
+
+import pytamp.utils.sampler as sampler
 from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 from pytamp.search.node_data import NodeData 
