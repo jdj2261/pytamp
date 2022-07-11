@@ -49,7 +49,7 @@ class SceneManager:
     def __repr__(self):
         return 'pytamp.scene.scene.{}()'.format(type(self).__name__)
 
-    def add_object(self, name, gtype, gparam, h_mat=None, color='k'):
+    def add_object(self, name, gtype, gparam, h_mat=None, color=[0., 1., 0.]):
         if name in self._scene.objs:
             raise ValueError(
                 "Duplicate name: object {} already exists".format(name)

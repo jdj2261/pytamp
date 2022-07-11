@@ -7,7 +7,6 @@ from pykin.robots.single_arm import SingleArm
 from pykin.utils.mesh_utils import get_object_mesh
 
 from pytamp.search.mcts import MCTS
-from pytamp.scene.scene import Scene
 from pytamp.scene.scene_manager import SceneManager
 
 
@@ -27,7 +26,7 @@ bottle_meshes = []
 for i in range(6):
     bottle_meshes.append(get_object_mesh('bottle.stl'))
 bottle_pose1 = Transform(pos=np.array([0.75, 0.03, 1.29]))
-bottle_pose2 = Transform(pos=np.array([0.75, 0.15, 1.29]))
+bottle_pose2 = Transform(pos=np.array([0.70, 0.10, 1.29]))
 bottle_pose3 = Transform(pos=np.array([0.70, -0.05,1.29]))
 # bottle_pose4 = Transform(pos=np.array([0.90, 0.1, 1.29]))
 # bottle_pose5 = Transform(pos=np.array([0.90, 0, 1.29]))
@@ -57,7 +56,7 @@ for i in range(20):
 
 scene_mngr.add_object(name="goal_bottle", gtype="mesh", h_mat=bottle_pose1.h_mat, gparam=bottle_meshes[0], color=[1., 0., 0.])
 scene_mngr.add_object(name="bottle_2", gtype="mesh", h_mat=bottle_pose2.h_mat, gparam=bottle_meshes[1], color=[0., 1., 0.])
-# scene_mngr.add_object(name="bottle_3", gtype="mesh", h_mat=bottle_pose3.h_mat, gparam=bottle_meshes[2], color=[0., 1., 0.])
+scene_mngr.add_object(name="bottle_3", gtype="mesh", h_mat=bottle_pose3.h_mat, gparam=bottle_meshes[2], color=[0., 1., 0.])
 # scene_mngr.add_object(name="bottle_4", gtype="mesh", h_mat=bottle_pose4.h_mat, gparam=bottle_meshes[3], color=[0., 1., 0.])
 # scene_mngr.add_object(name="bottle_5", gtype="mesh", h_mat=bottle_pose5.h_mat, gparam=bottle_meshes[4], color=[0., 1., 0.])
 # scene_mngr.add_object(name="bottle_6", gtype="mesh", h_mat=bottle_pose6.h_mat, gparam=bottle_meshes[5], color=[0., 1., 0.])
@@ -66,7 +65,7 @@ scene_mngr.add_robot(robot, robot.init_qpos)
 # scene_mngr.set_logical_state("tray_red", (scene_mngr.scene.logical_state.static, True))
 scene_mngr.set_logical_state("goal_bottle", ("on", "shelf_9"))
 scene_mngr.set_logical_state("bottle_2", ("on", "shelf_9"))
-# scene_mngr.set_logical_state("bottle_3", ("on", "shelf_9"))
+scene_mngr.set_logical_state("bottle_3", ("on", "shelf_9"))
 # scene_mngr.set_logical_state("bottle_4", ("on", "shelf_9"))
 # scene_mngr.set_logical_state("bottle_5", ("on", "shelf_9"))
 # scene_mngr.set_logical_state("bottle_6", ("on", "shelf_9"))
@@ -110,148 +109,6 @@ plt.plot(rewards)
 plt.show()
 
 best_nodes = mcts.get_best_node(subtree)
-# mcts.simulate_path(best_nodes)
-if best_nodes:
-    for node in best_nodes:
-        mcts.show_logical_action(node)
 
-    # mcts.visualize_tree("Subtree", subtree)
-
-    init_theta = None
-    init_scene = None
-    success_pnp = True
-    pnp_joint_all_pathes = []
-    place_all_object_poses = []
-    pick_all_objects = []
-    test = []
-    test2 = []
-    test3 = []
-    for node in best_nodes:
-        # fig, ax = p_utils.init_3d_figure(name="Level wise 1")
-        scene:Scene = mcts.tree.nodes[node]['state']
-        if mcts.tree.nodes[node]['type'] == "action":
-            continue
-        
-        action = mcts.tree.nodes[node].get(mcts.node_data.ACTION)
-        # scene_mngr.render_objects_and_gripper(ax, scene)
-        # scene_mngr.show()
-
-        if action:
-            if list(action.keys())[0] == 'grasp':
-                success_pick = False
-                pick_scene:Scene = mcts.tree.nodes[node]['state']
-                # ik_solve, grasp_poses = mcts.pick_action.get_possible_ik_solve_level_2(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
-                # if ik_solve:
-                print("pick")
-                if init_theta is None:
-                    init_theta = mcts.pick_action.scene_mngr.scene.robot.init_qpos
-                pick_joint_path = mcts.pick_action.get_possible_joint_path_level_3(
-                    scene=pick_scene, 
-                    grasp_poses=pick_scene.grasp_poses,
-                    init_thetas=init_theta)
-                if pick_joint_path:
-                    # pick_all_objects.append([pick_scene.robot.gripper.attached_obj_name])
-                    init_theta = pick_joint_path[-1][mcts.pick_action.move_data.MOVE_default_grasp][-1]
-                    success_pick = True
-                else:
-                    print("Pick joint Fail")
-                    success_pnp = False
-                    break
-            else:
-                success_place = False
-                place_scene:Scene = mcts.tree.nodes[node]['state']
-                # ik_solve, release_poses = mcts.place_action.get_possible_ik_solve_level_2(scene=place_scene, release_poses=place_scene.release_poses)
-                # if ik_solve:
-                print("place")
-                place_joint_path = mcts.place_action.get_possible_joint_path_level_3(
-                    scene=place_scene, 
-                    release_poses=place_scene.release_poses, 
-                    init_thetas=init_theta)
-                if place_joint_path:
-                    success_place = True
-                    init_theta = place_joint_path[-1][mcts.place_action.move_data.MOVE_default_release][-1]
-                    if success_pick and success_place:
-                        test += pick_joint_path + place_joint_path
-                        test2.append(pick_scene.robot.gripper.attached_obj_name)
-                        test3.append(place_scene.objs[place_scene.pick_obj_name].h_mat)
-                        print("Success pnp")
-                        success_pnp = True
-                    else:
-                        print("PNP Fail")
-                        success_pnp = False
-                        break
-                else:
-                    print("Place joint Fail")
-                    success_pnp = False
-                    break
-        else:
-            init_scene = scene
-
-    test += pick_joint_path
-    test2.append(pick_scene.robot.gripper.attached_obj_name)
-
-    if success_pnp or success_pick:
-        pnp_joint_all_pathes.append((test))
-        pick_all_objects.append(test2)
-        place_all_object_poses.append(test3)
-        for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(pnp_joint_all_pathes, pick_all_objects, place_all_object_poses):
-            # fig, ax = p_utils.init_3d_figure( name="Level wise 3")
-            result_joint = []
-            eef_poses = []
-            attach_idxes = []
-            detach_idxes = []
-
-            attach_idx = 0
-            detach_idx = 0
-
-            grasp_task_idx = 0
-            post_grasp_task_idx = 0
-
-            release_task_idx = 0
-            post_release_task_idx = 0
-            cnt = 0
-            for pnp_joint_path in pnp_joint_all_path:        
-                for j, (task, joint_path) in enumerate(pnp_joint_path.items()):
-                    for k, joint in enumerate(joint_path):
-                        cnt += 1
-                        
-                        if task == mcts.pick_action.move_data.MOVE_grasp:
-                            grasp_task_idx = cnt
-                        if task == mcts.pick_action.move_data.MOVE_post_grasp:
-                            post_grasp_task_idx = cnt
-                            
-                        if post_grasp_task_idx - grasp_task_idx == 1:
-                            attach_idx = grasp_task_idx
-                            attach_idxes.append(attach_idx)
-
-                        if task == mcts.place_action.move_data.MOVE_release:
-                            release_task_idx = cnt
-                        if task == mcts.place_action.move_data.MOVE_post_release:
-                            post_release_task_idx = cnt
-                        if post_release_task_idx - release_task_idx == 1:
-                            detach_idx = release_task_idx
-                            detach_idxes.append(detach_idx)
-                        
-                        result_joint.append(joint)
-                        fk = mcts.pick_action.scene_mngr.scene.robot.forward_kin(joint)
-                        eef_poses.append(fk[mcts.place_action.scene_mngr.scene.robot.eef_name].pos)
-
-        for node in best_nodes:
-            mcts.show_logical_action(node)
-
-        fig, ax = p_utils.init_3d_figure( name="Level wise 3")
-        mcts.place_action.scene_mngr.animation(
-            ax,
-            fig,
-            init_scene=scene_mngr.scene,
-            joint_path=result_joint,
-            eef_poses=None,
-            visible_gripper=True,
-            visible_text=True,
-            alpha=1.0,
-            interval=50,
-            repeat=False,
-            pick_object = pick_all_object,
-            attach_idx = attach_idxes,
-            detach_idx = detach_idxes,
-            place_obj_pose= place_all_object_pose)
+pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
+mcts.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

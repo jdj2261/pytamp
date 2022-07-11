@@ -13,7 +13,7 @@ class Object:
         gtype, 
         gparam, 
         h_mat=np.eye(4), 
-        color='k'
+        color=[0., 1., 0.]
     ):
         self.name = name
         self.gtype = gtype

@@ -1,7 +1,6 @@
 import numpy as np
 import networkx as nx
-import sys
-from pykin.search.node_data import NodeData
+from pytamp.search.node_data import NodeData
 
 def find_best_idx_from_random(tree, children):
     # eps = self._config["eps"]
