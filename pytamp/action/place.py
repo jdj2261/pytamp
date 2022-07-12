@@ -1,5 +1,4 @@
 import numpy as np
-import random
 from collections import OrderedDict
 from copy import deepcopy
 from trimesh import Trimesh, proximity
@@ -329,8 +328,8 @@ class PlaceAction(ActivityBase):
         # TODO heuristic
         if obj_name not in ["table", "shelf_9"]:
             center_upper_point = np.zeros(3)
-            center_upper_point[0] = center_point[0] + random.uniform(-0.002, 0.002)
-            center_upper_point[1] = center_point[1] + random.uniform(-0.002, 0.002)
+            center_upper_point[0] = center_point[0] + np.random.uniform(-0.002, 0.002)
+            center_upper_point[1] = center_point[1] + np.random.uniform(-0.002, 0.002)
             center_upper_point[2] = copied_mesh.bounds[1, 2]
             sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
             normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)

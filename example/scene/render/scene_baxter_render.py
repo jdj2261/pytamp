@@ -19,7 +19,7 @@ robot.setup_link_name("base", "right_wrist")
 robot.setup_link_name("base", "left_wrist")
 
 # set target joints angle
-custom_fpath = asset_file_path + '/config/baxter_init_params.yaml'
+custom_fpath = asset_file_path + '/config/panda_init_params.yaml'
 with open(custom_fpath) as f:
     controller_config = yaml.safe_load(f)
 init_qpos = controller_config["init_qpos"]

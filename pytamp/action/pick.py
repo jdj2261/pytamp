@@ -4,7 +4,6 @@ from copy import deepcopy
 
 import pykin.utils.mesh_utils as m_utils
 from pykin.utils.mesh_utils import get_relative_transform
-from pykin.utils.transform_utils import get_rpy_from_matrix
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene
 

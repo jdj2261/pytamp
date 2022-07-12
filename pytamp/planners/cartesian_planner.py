@@ -1,5 +1,4 @@
 import numpy as np
-import random
 
 import pykin.utils.transform_utils as t_utils
 import pykin.utils.kin_utils as k_utils
@@ -165,7 +164,7 @@ class CartesianPlanner(Planner):
 
             logger.error(f"Failed Generate Path.. Position Error is {err:6f}")
             print(f"{sc.BOLD}Retry Generate Path, the number of retries is {cnt}/{total_cnt} {sc.ENDC}\n")
-            self._damping = random.uniform(0, 0.1)
+            self._damping = np.random.uniform(0, 0.1)
         
         return joint_path
 

@@ -1,4 +1,3 @@
-import random
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -157,7 +156,7 @@ class MCTS:
             expanded_children = [child for child in self.tree.neighbors(cur_state_node)]
             if not expanded_children:
                 return logical_action_node
-            logical_action_node = random.choice(expanded_children)
+            logical_action_node = np.random.choice(expanded_children)
         else:
             # print(f"Current state node has children {children}")
             logical_action_node = self._sample_child_node(children, exploration_method)
@@ -201,7 +200,7 @@ class MCTS:
             expanded_children = [child for child in self.tree.neighbors(cur_logical_action_node)]
             if not expanded_children:
                 return next_state_node
-            next_state_node = random.choice(expanded_children)
+            next_state_node = np.random.choice(expanded_children)
         else:
             # print(f"Logical action node has children {children}")
             next_state_node = self._sample_child_node(children, exploration_method)

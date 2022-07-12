@@ -1,5 +1,4 @@
 import math
-import random
 import numpy as np
 import networkx as nx
 
@@ -269,7 +268,7 @@ class RRTStarPlanner(Planner):
         random_value = np.random.random()
         if random_value > self.epsilon:
             for i, (q_min, q_max) in enumerate(zip(self.q_limits_lower, self.q_limits_upper)):
-                q_outs[i] = random.uniform(q_min, q_max)
+                q_outs[i] = np.random.uniform(q_min, q_max)
         else:
             q_outs = self.goal_q
 
