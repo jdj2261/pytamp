@@ -267,10 +267,11 @@ class SceneManager:
     
         return self.gripper_collision_mngr.in_collision_other(self.obj_collision_mngr, return_names)
 
-    def update_logical_states(self, init=False):
+    def update_logical_states(self, is_init=False):
         self._scene.update_logical_states()
-        if init:
-            self.init_logical_states = self._scene.logical_states
+        if is_init:
+            self.init_logical_states = deepcopy(self._scene.logical_states)
+            self.init_scene = deepcopy(self._scene)
 
     def get_objs_info(self):
         return self._scene.objs

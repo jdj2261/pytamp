@@ -66,7 +66,7 @@ mcts = MCTS(scene_mngr)
 mcts.debug_mode = False
 mcts.budgets = 300
 mcts.max_depth = 14
-mcts.exploration_c = 2
+mcts.c = 2
 nodes = mcts.do_planning()
 
 subtree = mcts.get_subtree()

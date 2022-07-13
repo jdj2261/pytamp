@@ -71,8 +71,8 @@ mcts.debug_mode = False
 # 최대부터
 mcts.budgets = 100
 mcts.max_depth = 20
-# mcts.exploration_c = 30
-mcts.exploration_c = 300
+# mcts.c = 30
+mcts.c = 300
 # mcts.sampling_method = 'bai_ucb' # 405
 mcts.sampling_method = 'bai_perturb' # 58
 # mcts.sampling_method = 'uct' # 369

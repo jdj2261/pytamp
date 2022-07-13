@@ -67,7 +67,7 @@ mcts = MCTS(scene_mngr, sampling_method='greedy')
 mcts.debug_mode = False
 mcts.budgets = 100
 mcts.max_depth = 10
-mcts.exploration_c = 1.4
+mcts.c = 1.4
 nodes = mcts.do_planning()
 best_nodes = mcts.get_best_node(cur_node=0)
 

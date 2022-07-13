@@ -18,7 +18,7 @@ robot.setup_link_name("panda_link_0", "panda_right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
 table_mesh = get_object_mesh('ben_table.stl')
-cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[0.9, 0.9, 1.0])
+cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[0.3, 0.3, 1.0])
 disk_mesh = get_object_mesh('hanoi_disk.stl')
 
 cylinder_mesh_bound = get_mesh_bounds(mesh=cylinder_mesh)
@@ -31,22 +31,21 @@ cylinder1_pose = Transform(pos=np.array([0.6, -0.25, table_height + cylinder_mes
 cylinder2_pose = Transform(pos=np.array([0.6, 0, table_height + cylinder_mesh_bound[1][2]]))
 cylinder3_pose = Transform(pos=np.array([0.6, 0.25, table_height + cylinder_mesh_bound[1][2]]))
 
-disk_num = 3
+disk_num = 6
 disk_pose = [ Transform() for _ in range(disk_num)]
 disk_object = [ 0 for _ in range(disk_num)]
 
 benchmark_config = {4 : None}
-scene_mngr = SceneManager("visual", is_pyplot=True, benchmark=benchmark_config)
+scene_mngr = SceneManager("collision", is_pyplot=True, benchmark=benchmark_config)
 
 theta = np.linspace(-np.pi, np.pi, disk_num)
 for i in range(disk_num):
-    for j in range(7):
-        disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh *i ])
-        disk_ori = Transform._to_quaternion([0, 0, theta[i]])
-        disk_pose[i] = Transform(pos=disk_pos, rot=disk_ori)
-        disk_name = "hanoi_disk_" + str(i) + "_" + str(j)
-        hanoi_mesh = get_object_mesh(f'hanoi_disk_{j}' + '.stl')
-        scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=disk_pose[i].h_mat, color=[0., 1., 0.])
+    disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh *i ])
+    # disk_ori = Transform._to_quaternion([0, 0, 0])
+    disk_pose[i] = Transform(pos=disk_mesh.center_mass + disk_pos)
+    disk_name = "hanoi_disk_" + str(i)
+    hanoi_mesh = get_object_mesh(f'hanoi_disk.stl')
+    scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=disk_pose[i].h_mat, color=[0., 1., 0.])
 
 scene_mngr.add_object(name="cylinder_1", gtype="mesh", gparam=cylinder_mesh, h_mat=cylinder1_pose.h_mat, color=[1, 0., 0.])
 scene_mngr.add_object(name="cylinder_2", gtype="mesh", gparam=cylinder_mesh, h_mat=cylinder2_pose.h_mat, color=[1, 0., 0.])
@@ -57,9 +56,17 @@ scene_mngr.add_robot(robot)
 scene_mngr.scene.logical_states["cylinder_1"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
 scene_mngr.scene.logical_states["cylinder_2"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
 scene_mngr.scene.logical_states["cylinder_3"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
-scene_mngr.scene.logical_states["hanoi_disk_0_6"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
-scene_mngr.scene.logical_states["hanoi_disk_1_6"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_0_6"]}
-scene_mngr.scene.logical_states["hanoi_disk_2_6"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_1_6"]}
+scene_mngr.scene.logical_states["cylinder_1"] = {scene_mngr.scene.logical_state.static : True}
+scene_mngr.scene.logical_states["cylinder_2"] = {scene_mngr.scene.logical_state.static : True}
+scene_mngr.scene.logical_states["cylinder_3"] = {scene_mngr.scene.logical_state.static : True}
+
+scene_mngr.scene.logical_states["hanoi_disk_0"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
+scene_mngr.scene.logical_states["hanoi_disk_1"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_0"]}
+scene_mngr.scene.logical_states["hanoi_disk_2"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_1"]}
+scene_mngr.scene.logical_states["hanoi_disk_3"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_2"]}
+scene_mngr.scene.logical_states["hanoi_disk_4"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_3"]}
+scene_mngr.scene.logical_states["hanoi_disk_5"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_4"]}
+
 scene_mngr.scene.logical_states["table"] = {scene_mngr.scene.logical_state.static : True}
 scene_mngr.scene.logical_states[scene_mngr.gripper_name] = {scene_mngr.scene.logical_state.holding : None}
 scene_mngr.update_logical_states()
@@ -77,8 +84,6 @@ pick_all_object_poses = []
 success_joint_path = False
 for pick_action in actions:
     for idx, pick_scene in enumerate(pick.get_possible_transitions(scene_mngr.scene, action=pick_action)):
-        # ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(grasp_poses=pick_scene.grasp_poses)
-        # if ik_solve:
         pick_joint_path = pick.get_possible_joint_path_level_3(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
         if pick_joint_path:
             success_joint_path = True
@@ -87,7 +92,7 @@ for pick_action in actions:
             pick_all_object_poses.append(pick.scene_mngr.scene.robot.gripper.pick_obj_pose)
         if success_joint_path: 
             break
-print(len(pick_joint_all_path))
+
 grasp_task_idx = 0
 post_grasp_task_idx = 0
 attach_idx = 0

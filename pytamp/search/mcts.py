@@ -19,7 +19,7 @@ class MCTS:
         scene_mngr:SceneManager,
         sampling_method:str='uct',
         budgets:int=500, 
-        exploration_constant:float=100000,
+        c:float=100000,
         max_depth:int=20,
         gamma:float=1,
         eps:float=0.01,
@@ -28,12 +28,12 @@ class MCTS:
         self.node_data = NodeData
         self.scene_mngr = scene_mngr
         self.state = scene_mngr.scene
-        self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
-        self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
+        self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
+        self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
         self._sampling_method = sampling_method
         self._budgets = budgets
-        self.exploration_c = exploration_constant
+        self.c = c
         self.max_depth = max_depth
         self.gamma = gamma
         self.eps = eps
@@ -45,6 +45,8 @@ class MCTS:
         self.goal_reward = 3
         self.rewards = []
         self._config = {}
+
+        self.do_planning()
         
     def _create_tree(self, state:Scene):
         tree = nx.DiGraph()
@@ -243,11 +245,11 @@ class MCTS:
         if exploration_method == "greedy":
             best_idx = sampler.find_idx_from_greedy(self.tree, children)
         if exploration_method == "uct":
-            best_idx = sampler.find_idx_from_uct(self.tree, children, self.exploration_c)
+            best_idx = sampler.find_idx_from_uct(self.tree, children, self.c)
         if exploration_method == "bai_ucb":
-            best_idx = sampler.find_idx_from_bai_ucb(self.tree, children, self.exploration_c)
+            best_idx = sampler.find_idx_from_bai_ucb(self.tree, children, self.c)
         if exploration_method == "bai_perturb":
-            best_idx = sampler.find_idx_from_bai_perturb(self.tree, children, self.exploration_c)
+            best_idx = sampler.find_idx_from_bai_perturb(self.tree, children, self.c)
         
         child_node = children[best_idx]
         return child_node
@@ -569,7 +571,7 @@ class MCTS:
             self.scene_mngr.animation(
                 ax,
                 fig,
-                init_scene=self.scene_mngr.scene,
+                init_scene=self.scene_mngr.init_scene,
                 joint_path=result_joint,
                 eef_poses=None,
                 visible_gripper=True,

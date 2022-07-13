@@ -1,6 +1,4 @@
 import numpy as np
-from copy import deepcopy
-
 
 from pykin.utils import plot_utils as p_utils
 from pykin.kinematics.transform import Transform
