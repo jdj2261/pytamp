@@ -3,7 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
 
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 from pykin.utils.kin_utils import ShellColors as sc
 
 import pytamp.utils.sampler as sampler

@@ -2,15 +2,15 @@ import numpy as np
 import sys, os
 import yaml
 
-import pykin.asset
+from pykin import asset
 
 from pykin.kinematics.transform import Transform
 from pykin.robots.bimanual import Bimanual
 from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 
-asset_file_path = os.path.abspath(pykin.asset.__file__ + "/../")
+asset_file_path = os.path.abspath(asset.__file__ + "/../")
 
 fig, ax = p_utils.init_3d_figure()
 file_path = 'urdf/baxter/baxter.urdf'

@@ -2,16 +2,16 @@ import numpy as np
 import os
 import yaml
 
-import pykin.asset
+from pykin import asset
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
 from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
 from pykin.utils.transform_utils import get_matrix_from_rpy
 from pykin.utils.kin_utils import ShellColors as sc
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 
-asset_file_path = os.path.abspath(pykin.asset.__file__ + "/../")
+asset_file_path = os.path.abspath(asset.__file__ + "/../")
 file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(
     f_name=file_path, 

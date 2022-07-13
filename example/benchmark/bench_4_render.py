@@ -1,6 +1,6 @@
 import numpy as np
 
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
 from pykin.utils.mesh_utils import get_object_mesh, get_mesh_bounds
@@ -14,10 +14,6 @@ robot = SingleArm(
     has_gripper=True)
 robot.setup_link_name("panda_link_0", "panda_right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
-
-"""
-7
-"""
 
 table_mesh = get_object_mesh('ben_table.stl')
 cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[0.3, 0.3, 1.0])
@@ -42,13 +38,12 @@ scene_mngr = SceneManager("collision", is_pyplot=False, benchmark=benchmark_conf
 
 theta = np.linspace(-np.pi, np.pi, disk_num)
 for i in range(disk_num):
-    for j in range(7):
-        disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh *i ])
-        disk_ori = Transform._to_quaternion([0, 0, theta[i]])
-        disk_pose[i] = Transform(pos=disk_pos, rot=disk_ori)
-        disk_name = "hanoi_disk_" + str(i+1) + "_" + str(j)
-        hanoi_mesh = get_object_mesh(f'hanoi_disk_{j}' + '.stl')
-        scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=disk_pose[i].h_mat, color=[0., 1., 0.])
+    disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh *i ])
+    disk_ori = Transform._to_quaternion([0, 0, theta[i]])
+    disk_pose[i] = Transform(pos=disk_pos, rot=disk_ori)
+    disk_name = "hanoi_disk_" + str(i+1)
+    hanoi_mesh = get_object_mesh(f'hanoi_disk.stl')
+    scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=disk_pose[i].h_mat, color=[0., 1., 0.])
 
 scene_mngr.add_object(name="cylinder_1", gtype="mesh", gparam=cylinder_mesh, h_mat=cylinder1_pose.h_mat, color=[1, 0., 0.])
 scene_mngr.add_object(name="cylinder_2", gtype="mesh", gparam=cylinder_mesh, h_mat=cylinder2_pose.h_mat, color=[1, 0., 0.])

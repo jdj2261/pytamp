@@ -1,6 +1,6 @@
 import numpy as np
 
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
 from pykin.utils.mesh_utils import get_object_mesh

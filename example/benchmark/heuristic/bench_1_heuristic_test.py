@@ -1,11 +1,9 @@
 import numpy as np
 
-
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
 from pykin.utils.mesh_utils import get_object_mesh
-
 from pytamp.action.pick import PickAction
 from pytamp.scene.scene_manager import SceneManager
 
@@ -50,20 +48,11 @@ pick = PickAction(scene_mngr, n_contacts=5, n_directions=10)
 ################# Action Test ##################
 fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 
-pose = list(pick.get_grasp_pose_from_heuristic(obj_name="green_box"))
 
-for i in range(len(pose)):
-    pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
-    # pick.scene_mngr.render_gripper(ax, pose=pose[i][pick.move_data.MOVE_grasp])
-
-# actions = pick.get_action_level_1_for_single_object(obj_name="green_box")
-
-# for grasp_pose in actions[pick.info.GRASP_POSES]:
-#     # pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
-#     pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
-    
-#     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_pre_grasp])
-#     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_grasp])
+for obj in ["red_box", "blue_box", "green_box"]:
+    pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj))
+    for i in range(len(pose)):
+        pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
 
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)

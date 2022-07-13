@@ -12,7 +12,7 @@ from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
 from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 
 file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(

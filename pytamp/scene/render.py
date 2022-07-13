@@ -2,7 +2,7 @@ import numpy as np
 import trimesh
 from abc import abstractclassmethod, ABCMeta
 
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 from pykin.utils.kin_utils import apply_robot_to_scene, apply_objects_to_scene, apply_gripper_to_scene
 
 class SceneRender(metaclass=ABCMeta):

@@ -1,8 +1,8 @@
 import numpy as np
 
-import pykin.utils.transform_utils as t_utils
-import pykin.utils.kin_utils as k_utils
-import pykin.kinematics.jacobian as jac
+from pykin.kinematics import jacobian as jac
+from pykin.utils import transform_utils as t_utils
+from pykin.utils import kin_utils as k_utils
 from pykin.utils.kin_utils import ShellColors as sc, logging_time
 from pykin.utils.log_utils import create_logger
 from pykin.utils.transform_utils import get_linear_interpoation, get_quaternion_slerp, get_quaternion_from_matrix

@@ -3,7 +3,7 @@ import matplotlib.animation as animation
 from collections import OrderedDict
 from copy import deepcopy
 
-import pykin.utils.plot_utils as p_utils
+from pykin.utils import plot_utils as p_utils
 from pykin.robots.single_arm import SingleArm
 from pykin.collision.collision_manager import CollisionManager
 from pykin.utils.mesh_utils import get_relative_transform
@@ -22,6 +22,7 @@ class SceneManager:
         # Element for Scene
         self.geom = geom
         self._scene = scene
+        self._heuristic = True
         if scene is None:
             self._scene = Scene(benchmark)
 
@@ -541,3 +542,11 @@ class SceneManager:
     @scene.setter
     def scene(self, scene):
         self._scene = scene
+
+    @property
+    def heuristic(self):
+        return self._heuristic
+
+    @heuristic.setter
+    def heuristic(self, heuristic):
+        self._heuristic = heuristic

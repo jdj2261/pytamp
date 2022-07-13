@@ -3,7 +3,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from trimesh import Trimesh, proximity
 
-import pykin.utils.mesh_utils as m_utils
+from pykin.utils import mesh_utils as m_utils
 from pykin.utils.log_utils import create_logger
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene

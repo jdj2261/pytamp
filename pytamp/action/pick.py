@@ -2,10 +2,10 @@ import numpy as np
 from collections import OrderedDict
 from copy import deepcopy
 
-import pykin.utils.mesh_utils as m_utils
-from pykin.utils.mesh_utils import get_relative_transform
+from pykin.utils import mesh_utils as m_utils
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene
+from pytamp.utils import benchmark_utils as b_utils
 
 class PickAction(ActivityBase):
     def __init__(
@@ -31,9 +31,6 @@ class PickAction(ActivityBase):
             if obj_name == self.scene_mngr.scene.pick_obj_name:
                 continue
 
-            if self.scene_mngr.scene.bench_num == 4 and "_6" not in obj_name:
-                continue
-
             if not any(logical_state in self.scene_mngr.scene.logical_states[obj_name] for logical_state in self.filter_logical_states):
                 # print(f"pick : {obj_name}")
                 action_level_1 = self.get_action_level_1_for_single_object(obj_name=obj_name)
@@ -46,57 +43,29 @@ class PickAction(ActivityBase):
             self.deepcopy_scene(scene)
 
         grasp_poses = list(self.get_all_grasp_poses(obj_name=obj_name))
-        grasp_poses.extend(list(self.get_grasp_pose_from_heuristic(obj_name)))
+        if self.scene_mngr.heuristic:
+            grasp_poses.extend(list(self.get_grasp_pose_from_heuristic(obj_name)))
         grasp_poses_not_collision = list(self.get_all_grasp_poses_not_collision(grasp_poses))
 
         action_level_1 = self.get_action(obj_name, grasp_poses_not_collision)
         return action_level_1
 
-    def get_grasp_pose_from_heuristic(self, obj_name, dis_z=0.01):
+    def get_grasp_pose_from_heuristic(self, obj_name):
         copied_mesh = deepcopy(self.scene_mngr.scene.objs[obj_name].gparam)
         copied_mesh.apply_transform(self.scene_mngr.scene.objs[obj_name].h_mat)
+        tcp_poses = b_utils.get_heuristic_tcp_pose(scene_mngr=self.scene_mngr, 
+                                                   object_name=obj_name,
+                                                   object_mesh=copied_mesh)
         
-        if "box" in obj_name or "hanoi_disk" in obj_name:
-            obj_pose = np.eye(4)
-            center_point = copied_mesh.center_mass
-            obj_pose[:3, :3] = self.scene_mngr.scene.objs[obj_name].h_mat[:3, :3]
+        for tcp_pose in tcp_poses:
+            grasp_pose = {}
+            grasp_pose[self.move_data.MOVE_grasp] = self.scene_mngr.scene.robot.gripper.compute_eef_pose_from_tcp_pose(tcp_pose)
+            grasp_pose[self.move_data.MOVE_pre_grasp] = self.get_pre_grasp_pose(grasp_pose[self.move_data.MOVE_grasp])
+            grasp_pose[self.move_data.MOVE_post_grasp] = self.get_post_grasp_pose(grasp_pose[self.move_data.MOVE_grasp])        
             
-            obj_pose[1,:3] = abs(obj_pose[1,:3])
-            obj_pose[0,:3] = np.cross(obj_pose[1,:3], obj_pose[2,:3])
-            obj_pose[:3, 3] = center_point + [0, 0, dis_z]
-        
-            for theta in np.linspace(np.pi, np.pi-np.pi/24, 1):
-            # for theta in np.linspace(0, np.pi*2, 50):
-                tcp_pose = np.eye(4)
-                tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
-                tcp_pose[:3,1] = [0, 1, 0]
-                tcp_pose[:3,2] = [-np.sin(theta), 0, np.cos(theta)]
-                # tcp_pose[:3, 3] = center_point + [0, 0, dis_z]
-                tcp_pose = np.dot(obj_pose, tcp_pose)
+            yield grasp_pose
 
-                grasp_pose = {}
-                grasp_pose[self.move_data.MOVE_grasp] = self.scene_mngr.scene.robot.gripper.compute_eef_pose_from_tcp_pose(tcp_pose)
-                grasp_pose[self.move_data.MOVE_pre_grasp] = self.get_pre_grasp_pose(grasp_pose[self.move_data.MOVE_grasp])
-                grasp_pose[self.move_data.MOVE_post_grasp] = self.get_post_grasp_pose(grasp_pose[self.move_data.MOVE_grasp])        
-            
-                yield grasp_pose
-
-        if "bottle" in obj_name:
-            center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2
-            for theta in np.linspace(-np.pi+np.pi/(2.2), -np.pi/(2.2), 3):
-                tcp_pose = np.eye(4)
-                tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
-                tcp_pose[:3,1] = [0, 1, 0]
-                tcp_pose[:3,2] = [-np.sin(theta), 0, np.cos(theta)]
-                tcp_pose[:3,3] = center_point + [0, 0, 0.005]
-
-                grasp_pose = {}
-                grasp_pose[self.move_data.MOVE_grasp] = self.scene_mngr.scene.robot.gripper.compute_eef_pose_from_tcp_pose(tcp_pose)
-                grasp_pose[self.move_data.MOVE_pre_grasp] = self.get_pre_grasp_pose(grasp_pose[self.move_data.MOVE_grasp])
-                grasp_pose[self.move_data.MOVE_post_grasp] = self.get_post_grasp_pose(grasp_pose[self.move_data.MOVE_grasp])        
-                yield grasp_pose
     # Not Expand, only check possible action using ik
-
     def get_possible_ik_solve_level_2(self, scene:Scene=None, grasp_poses:dict={}) -> bool:
         self.deepcopy_scene(scene)
         
@@ -191,7 +160,7 @@ class PickAction(ActivityBase):
             
             # Get transform between gripper and pick object
             gripper_pose = deepcopy(next_scene.robot.gripper.get_gripper_pose())
-            transform_bet_gripper_n_obj = get_relative_transform(gripper_pose, next_scene.objs[pick_obj].h_mat)
+            transform_bet_gripper_n_obj = m_utils.get_relative_transform(gripper_pose, next_scene.objs[pick_obj].h_mat)
             
             # Attach Object to gripper
             next_scene.robot.gripper.attached_obj_name = pick_obj
@@ -319,7 +288,7 @@ class PickAction(ActivityBase):
         weights = self._get_weights_for_held_obj(copied_mesh)
 
         cnt = 0
-        margin = 0.8
+        margin = 1
         surface_point_list = []
         while cnt < self.n_contacts:
             surface_points, normals = self.get_surface_points_from_mesh(copied_mesh, 2, weights)
