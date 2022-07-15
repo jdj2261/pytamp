@@ -20,7 +20,7 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
             obj_pose[0,:3] = np.cross(obj_pose[1,:3], obj_pose[2,:3])
             obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.01]
         
-            for theta in np.linspace(np.pi, np.pi-np.pi/24, 1):
+            for theta in np.linspace(np.pi+np.pi/24, np.pi-np.pi/24, 5):
                 tcp_pose = np.eye(4)
                 tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
                 tcp_pose[:3,1] = [0, 1, 0]

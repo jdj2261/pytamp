@@ -111,8 +111,7 @@ class PlaceAction(ActivityBase):
                 post_release_joint_path = self.get_cartesian_path(release_joint_path[-1], post_release_pose)
                 if post_release_joint_path:
                     # post_release_pose -> default pose (rrt)
-                    default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)["right_gripper"].h_mat
-                    default_joint_path = self.get_rrt_star_path(post_release_joint_path[-1], default_pose)
+                    default_joint_path = self.get_rrt_star_path(post_release_joint_path[-1], goal_q=default_thetas)
                 else:
                     success_joint_path = False  
             else:

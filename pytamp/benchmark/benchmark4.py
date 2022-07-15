@@ -26,7 +26,7 @@ class Benchmark4(Benchmark):
     def load_robot(self):
         file_path = 'urdf/' + self.robot_name + '/' + self.robot_name + '.urdf'
         self.robot = SingleArm(f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True)
-        self.robot.setup_link_name("panda_link_0", "panda_right_hand")
+        self.robot.setup_link_name("panda_link_0", "right_hand")
         self.robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
     def load_objects(self):

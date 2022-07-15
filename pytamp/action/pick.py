@@ -108,8 +108,7 @@ class PickAction(ActivityBase):
                 post_grasp_joint_path = self.get_cartesian_path(grasp_joint_path[-1], post_grasp_pose)
                 if post_grasp_joint_path:
                     # post_grasp_pose -> default pose (rrt)
-                    default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)["right_gripper"].h_mat
-                    default_joint_path = self.get_rrt_star_path(post_grasp_joint_path[-1], default_pose)
+                    default_joint_path = self.get_rrt_star_path(post_grasp_joint_path[-1], goal_q=default_thetas)
                 else:
                     success_joint_path = False
                 self.scene_mngr.detach_object_from_gripper()

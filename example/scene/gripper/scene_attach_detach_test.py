@@ -17,7 +17,7 @@ robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
     has_gripper=True)
-robot.setup_link_name("panda_link_0", "panda_right_hand")
+robot.setup_link_name("panda_link_0", "right_hand")
 
 file_path = 'urdf/panda/panda.urdf'
 panda_robot = SingleArm(file_path, Transform(rot=[0.0, 0.0, np.pi/2], pos=[0, 0, 0]))

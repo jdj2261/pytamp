@@ -19,7 +19,7 @@ robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
     has_gripper=True)
-robot.setup_link_name("panda_link_0", "panda_right_hand")
+robot.setup_link_name("panda_link_0", "right_hand")
 
 custom_fpath = asset_file_path + '/config/panda_init_params.yaml'
 with open(custom_fpath) as f:

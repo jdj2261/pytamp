@@ -52,7 +52,8 @@ class RRTStarPlanner(Planner):
         self,
         scene_mngr:SceneManager,
         cur_q,
-        goal_pose, 
+        goal_pose=np.eye(4), 
+        goal_q=None,
         max_iter=1000
     ):
         """
@@ -87,43 +88,49 @@ class RRTStarPlanner(Planner):
             cnt += 1
             limit_cnt = 0
             success_check_limit = False
-            while not success_check_limit:
-                limit_cnt += 1
 
-                if limit_cnt > 200:
-                    break
-                
-                self.goal_q = self._scene_mngr.scene.robot.inverse_kin(
-                    init_q, self._goal_pose, max_iter=300)
-                
-                if not self._check_q_in_limits(self.goal_q):
+            if goal_q is not None:
+                self.goal_q = goal_q
+                self._goal_pose = self._scene_mngr.scene.robot.forward_kin(self.goal_q)[self._scene_mngr.scene.robot.eef_name].h_mat
+                success_check_limit = True
+            else:
+                while not success_check_limit:
+                    limit_cnt += 1
+
+                    if limit_cnt > 200:
+                        break
+                    
+                    self.goal_q = self._scene_mngr.scene.robot.inverse_kin(
+                        init_q, self._goal_pose, max_iter=300)
+                    
+                    if not self._check_q_in_limits(self.goal_q):
+                        init_q = np.random.randn(self._scene_mngr.scene.robot.arm_dof)
+                        continue
+                    
+                    self._scene_mngr.set_robot_eef_pose(self.goal_q)
+                    grasp_pose_from_ik = self._scene_mngr.get_robot_eef_pose()
+                    pose_error = self._scene_mngr.scene.robot.get_pose_error(self._goal_pose, grasp_pose_from_ik)
+
+                    if pose_error < 0.02:
+                        success_check_limit = True
+                        logger.info(f"The joint limit has been successfully checked. Pose error is {pose_error:6f}")
+                    
+                        result, names = self._collide(self.goal_q, visible_name=True)
+                        if result:
+                            print(names)
+                            logger.warning("Occur Collision for goal joints")
+                            success_check_limit = False
+                                    
+                            self._scene_mngr.show_scene_info()
+                            self._scene_mngr.robot_collision_mngr.show_collision_info()
+                            self._scene_mngr.obj_collision_mngr.show_collision_info("Object")
+
+                            # ![DEBUG]
+                            self._scene_mngr.render_debug(title="Collision Fail")
+                    else:
+                        if limit_cnt > 1:
+                            print(f"{sc.WARNING}Retry compute IK.. Pose error is {pose_error:6f}{sc.ENDC} ")
                     init_q = np.random.randn(self._scene_mngr.scene.robot.arm_dof)
-                    continue
-                
-                self._scene_mngr.set_robot_eef_pose(self.goal_q)
-                grasp_pose_from_ik = self._scene_mngr.get_robot_eef_pose()
-                pose_error = self._scene_mngr.scene.robot.get_pose_error(self._goal_pose, grasp_pose_from_ik)
-
-                if pose_error < 0.02:
-                    success_check_limit = True
-                    logger.info(f"The joint limit has been successfully checked. Pose error is {pose_error:6f}")
-                
-                    result, names = self._collide(self.goal_q, visible_name=True)
-                    if result:
-                        print(names)
-                        logger.warning("Occur Collision for goal joints")
-                        success_check_limit = False
-                                
-                        self._scene_mngr.show_scene_info()
-                        self._scene_mngr.robot_collision_mngr.show_collision_info()
-                        self._scene_mngr.obj_collision_mngr.show_collision_info("Object")
-
-                        # ![DEBUG]
-                        self._scene_mngr.render_debug(title="Collision Fail")
-                else:
-                    if limit_cnt > 1:
-                        print(f"{sc.WARNING}Retry compute IK.. Pose error is {pose_error:6f}{sc.ENDC} ")
-                init_q = np.random.randn(self._scene_mngr.scene.robot.arm_dof)
 
             if not success_check_limit:
                 self.tree = None

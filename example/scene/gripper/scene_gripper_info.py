@@ -10,20 +10,20 @@ from pykin.utils.mesh_utils import get_object_mesh
 from pykin.utils import plot_utils as p_utils
 
 fig, ax = p_utils.init_3d_figure()
+asset_file_path = os.path.abspath(asset.__file__ + "/../")
 
 file_path = 'urdf/panda/panda.urdf'
-asset_file_path = os.path.abspath(asset.__file__ + "/../")
 robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
     has_gripper=True)
-robot.setup_link_name("panda_link_0", "panda_right_hand")
+robot.setup_link_name("panda_link_0", "right_hand")
 
 custom_fpath = asset_file_path + '/config/panda_init_params.yaml'
 with open(custom_fpath) as f:
     controller_config = yaml.safe_load(f)
 init_qpos = controller_config["init_qpos"]
-
+init_qpos = [0, 0, 0, 0, 0, 0, 0]
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
 blue_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.06]))
 green_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.12]))
@@ -46,11 +46,12 @@ scene_mngr.add_robot(robot, init_qpos)
 
 ############################# Gripper Pose Test #############################
 scene_mngr.set_gripper_pose(scene_mngr.scene.robot.init_fk["right_gripper"].h_mat)
-scene_mngr.render_objects_and_gripper(ax, robot_color='b')
+scene_mngr.render_objects_and_gripper(ax, robot_color=np.array([1., 0., 0., 1.]))
 
 scene_mngr.set_gripper_tcp_pose(scene_mngr.scene.robot.init_fk["right_gripper"].h_mat)
-scene_mngr.render_objects_and_gripper(ax, robot_color='r')
+scene_mngr.render_objects_and_gripper(ax, robot_color=np.array([0., 1., 0., 1.]))
 
+scene_mngr.render_scene(ax)
 print(scene_mngr.get_gripper_pose())
 print(scene_mngr.get_gripper_tcp_pose())
 scene_mngr.gripper_collision_mngr.show_collision_info()

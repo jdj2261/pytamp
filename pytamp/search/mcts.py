@@ -41,13 +41,17 @@ class MCTS:
 
         self.tree = self._create_tree(self.state)
         self.nodes = None
+        
         self.infeasible_reward = -3
         self.goal_reward = 3
-        self.rewards = []
+        self.rewards_for_level_1 = []
+        self.total_rewards = []
+
+        self.level_wise_1_success = False
+        self.infeasible_sub_tree = {}
+        
         self._config = {}
 
-        self.do_planning()
-        
     def _create_tree(self, state:Scene):
         tree = nx.DiGraph()
         tree.add_node(0)
@@ -64,15 +68,24 @@ class MCTS:
                         NodeData.GOAL: False})])
         return tree
 
-    def do_planning(self):
-        for i in range(self._budgets):
-            print(f"{sc.HEADER}=========== Search iteration : {i+1} ==========={sc.ENDC}")
-            self._search(state_node=0, depth=0)
-            self.rewards.append(self.get_max_reward())
+    def do_planning(self, iter):
+        print(f"{sc.HEADER}=========== Search iteration : {iter+1} ==========={sc.ENDC}")
+        
+        self.success_leaf_node = None
+        
+        self._level_wise_1_optimize(state_node=0, depth=0)
+        self.rewards_for_level_1.append(self.get_max_reward()) 
 
-            # if (i+1) % 40 == 0:
-            #     self.visualize_tree('Test', tree=self.tree)
-    def _search(self, state_node, depth):
+        if self.level_wise_1_success:
+            success_sub_nodes = self.get_nodes_from_leaf_node(self.success_leaf_node)[::-1]
+            result_path = self._level_wise_2_optimize(success_sub_nodes)
+            self.level_wise_1_success = False
+
+        if (iter+1) % 40 == 0:
+            subtree = self.get_success_subtree()
+            self.visualize_tree('Test', tree=subtree)
+
+    def _level_wise_1_optimize(self, state_node, depth):
         cur_state_node = state_node
         cur_state:Scene = self.tree.nodes[cur_state_node][NodeData.STATE]
 
@@ -80,6 +93,8 @@ class MCTS:
         #*======================================================================================================================== #
         if self._is_terminal(cur_state):
             print(f"{sc.OKBLUE}Success!!!!!{sc.ENDC}")
+            self.level_wise_1_success = True
+            self.success_leaf_node = cur_state_node
             reward = self._get_reward(cur_state, depth=depth, is_terminal=True)
             self.tree.nodes[state_node][NodeData.GOAL] = True
             self._update_value(cur_state_node, reward)
@@ -132,7 +147,7 @@ class MCTS:
             value = reward
         else:
             discount_value = -0.1
-            value = reward + discount_value + self.gamma * self._search(next_state_node, depth+1)
+            value = reward + discount_value + self.gamma * self._level_wise_1_optimize(next_state_node, depth+1)
 
         self._update_value(cur_state_node, value)
         # print(f"{sc.MAGENTA}[Backpropagation]{sc.ENDC} Cur state Node : {cur_state_node}, Value : {np.round(value,3)}")
@@ -317,6 +332,10 @@ class MCTS:
             return 0
         return 0
 
+    def _level_wise_2_optimize(self, sub_optimal_path):
+        pnp_all_joint_path, _, _ = self.get_all_joint_path(sub_optimal_path)
+        return pnp_all_joint_path
+
     def get_nodes_from_leaf_node(self, leaf_node):
         parent_nodes = [node for node in self.tree.predecessors(leaf_node)]
         if not parent_nodes:
@@ -344,13 +363,13 @@ class MCTS:
             next_node = children[best_idx]
             return [cur_node] + self.get_best_node(tree, next_node)
 
-    def get_subtree(self):
+    def get_success_subtree(self):
         visited_nodes = [n for n in self.tree.nodes if self.tree.nodes[n][NodeData.GOAL] is True]
         
         subtree:nx.DiGraph = self.tree.subgraph(visited_nodes)
         return subtree
         
-    def get_leaf_nodes(self, tree:nx.DiGraph):
+    def get_all_leaf_nodes(self, tree:nx.DiGraph):
         leaf_nodes = [node for node in tree.nodes if not [c for c in tree.neighbors(node)]]
         leaf_nodes.sort()
         return leaf_nodes
@@ -422,7 +441,6 @@ class MCTS:
         plt.show()
 
     def render_state(self, title, state):
-
         ax = None
         if self.scene_mngr.is_pyplot is True:
             fig, ax = p_utils.init_3d_figure(name=title)
@@ -468,7 +486,7 @@ class MCTS:
         place_object_poses = []
 
         for node in nodes:
-            if self.tree.nodes[node]['type'] == "action":
+            if self.tree.nodes[node]['type'] == self.node_data.ACTION:
                 continue
             success_place = False
             action = self.tree.nodes[node].get(self.node_data.ACTION)

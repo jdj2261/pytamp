@@ -115,11 +115,7 @@ class RenderPyPlot(SceneRender):
             return
 
         for link, info in gripper_info.items():
-            if info[1] == 'mesh':
-                mesh_color = p_utils.get_mesh_color(robot, link, 'collision', color=robot_color)
-                if len(info) > 4 :
-                    mesh_color = info[4]
-                p_utils.plot_mesh(ax, mesh=info[2], h_mat=info[3], alpha=alpha, color=mesh_color)
+            p_utils.plot_geom_from_info(ax, robot, link, "collision", info, alpha, robot_color)
 
     @staticmethod
     def render_axis(

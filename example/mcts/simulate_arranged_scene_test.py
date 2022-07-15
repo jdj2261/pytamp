@@ -15,7 +15,7 @@ robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
     has_gripper=True)
-robot.setup_link_name("panda_link_0", "panda_right_hand")
+robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
@@ -70,7 +70,7 @@ mcts.max_depth = 16
 nodes = mcts.do_planning()
 # best_nodes = mcts.get_best_node(cur_node=0)
 
-subtree = mcts.get_subtree()
+subtree = mcts.get_success_subtree()
 # mcts.visualize_tree("Tree")
 mcts.visualize_tree("Subtree", subtree)
 best_nodes = mcts.get_best_node(subtree)

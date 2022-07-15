@@ -28,40 +28,43 @@ benchmark1 = Benchmark1(geom="collision", is_pyplot=True, box_num=3)
 mcts_list = []
 c_list = 10**np.linspace(0., 4., 3)
 for c in c_list:
-    mcts_list.append(MCTS(benchmark1.scene_mngr, sampling_method=algo, budgets=budgets, max_depth=max_depth, c=c))
-
-for mcts in mcts_list:
-    mcts:MCTS = mcts
-    rewards = mcts.rewards
-    max_iter = np.argmax(rewards)
-    print(max_iter, mcts.c)
-    # plt.plot(rewards)
-    # plt.show()
-    subtree = mcts.get_subtree()
-    mcts.visualize_tree("MCTS", subtree)
-    best_nodes = mcts.get_best_node(subtree)
-    for node in best_nodes:
-        mcts.show_logical_action(node)
-    pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
-    mcts.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
-    # mcts_list(mcts.do_planning())
-
-    # subtree = mcts.get_subtree()
-    # mcts.visualize_tree("MCTS", subtree)
-
-    # best_nodes = mcts.get_best_node(subtree)
-
-    # rewards = mcts.rewards
-    # max_iter = np.argmax(rewards)
-    # print(max_iter)
+    mcts = MCTS(benchmark1.scene_mngr, sampling_method=algo, budgets=budgets, max_depth=max_depth, c=c)
+    for i in range(budgets):
+        mcts.do_planning(i)
     
-    # if debug_mode:
-    #     plt.plot(rewards)
-    #     plt.show()
 
-    # # Do planning
-    # best_nodes = mcts.get_best_node(subtree)
-    # pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
+# for mcts in mcts_list:
+#     mcts:MCTS = mcts
+#     rewards = mcts.rewards
+#     max_iter = np.argmax(rewards)
+#     print(max_iter, mcts.c)
+#     # plt.plot(rewards)
+#     # plt.show()
+#     subtree = mcts.get_subtree()
+#     mcts.visualize_tree("MCTS", subtree)
+#     best_nodes = mcts.get_best_node(subtree)
+#     # for node in best_nodes:
+#         # mcts.show_logical_action(node)
+#     pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
+#     # mcts.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+#     # mcts_list(mcts.do_planning())
 
-    # if debug_mode:
-    #     mcts.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+#     # subtree = mcts.get_subtree()
+#     # mcts.visualize_tree("MCTS", subtree)
+
+#     # best_nodes = mcts.get_best_node(subtree)
+
+#     # rewards = mcts.rewards
+#     # max_iter = np.argmax(rewards)
+#     # print(max_iter)
+    
+#     # if debug_mode:
+#     #     plt.plot(rewards)
+#     #     plt.show()
+
+#     # # Do planning
+#     # best_nodes = mcts.get_best_node(subtree)
+#     # pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
+
+#     # if debug_mode:
+#     #     mcts.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

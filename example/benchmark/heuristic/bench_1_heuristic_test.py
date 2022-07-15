@@ -12,7 +12,7 @@ robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
     has_gripper=True)
-robot.setup_link_name("panda_link_0", "panda_right_hand")
+robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
@@ -54,6 +54,20 @@ for obj in ["red_box", "blue_box", "green_box"]:
     for i in range(len(pose)):
         pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
 
+pick.scene_mngr.render_objects(ax)
+p_utils.plot_basis(ax)
+
+
+fig, ax = p_utils.init_3d_figure( name="Level wise 2")
+actions = list(pick.get_possible_actions_level_1())
+for pick_actions in actions:
+    for all_grasp_pose in pick_actions[pick.info.GRASP_POSES]:
+        ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(grasp_poses=all_grasp_pose)
+        if ik_solve is not None:
+            pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+            pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
+            pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_post_grasp])
+            
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)
 pick.show()

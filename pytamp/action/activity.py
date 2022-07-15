@@ -53,8 +53,8 @@ class ActivityBase(metaclass=ABCMeta):
         self.info = ActionInfo
         self.move_data = MoveData
 
-        self.cartesian_planner = CartesianPlanner()
-        self.rrt_planner = RRTStarPlanner(delta_distance=0.05, epsilon=0.2, gamma_RRT_star=2)
+        self.cartesian_planner = CartesianPlanner(dimension=self.scene_mngr.scene.robot.arm_dof)
+        self.rrt_planner = RRTStarPlanner(delta_distance=0.05, epsilon=0.2, gamma_RRT_star=2, dimension=self.scene_mngr.scene.robot.arm_dof)
 
     def __repr__(self) -> str:
         return 'pytamp.action.activity.{}()'.format(type(self).__name__)
@@ -91,7 +91,7 @@ class ActivityBase(metaclass=ABCMeta):
             collide = self.scene_mngr.collide_objs_and_robot()
         return collide
 
-    def _solve_ik(self, pose1, pose2, eps=1e-3):
+    def _solve_ik(self, pose1, pose2, eps=1e-2):
         pose_error = self.scene_mngr.scene.robot.get_pose_error(pose1, pose2)
         if pose_error < eps:
             return True
@@ -107,8 +107,8 @@ class ActivityBase(metaclass=ABCMeta):
         self.cartesian_planner.run(self.scene_mngr, cur_q, goal_pose, resolution=0.1, collision_check=collision_check)
         return self.cartesian_planner.get_joint_path()
 
-    def get_rrt_star_path(self, cur_q, goal_pose, max_iter=500, n_step=20):
-        self.rrt_planner.run(self.scene_mngr, cur_q, goal_pose, max_iter)
+    def get_rrt_star_path(self, cur_q, goal_pose=None, goal_q=None, max_iter=500, n_step=20):
+        self.rrt_planner.run(self.scene_mngr, cur_q, goal_pose, goal_q=goal_q, max_iter=max_iter)
         return self.rrt_planner.get_joint_path(n_step=n_step)
 
     def show(self):
