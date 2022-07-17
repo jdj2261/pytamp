@@ -7,7 +7,8 @@ from pykin.robots.single_arm import SingleArm
 class Benchmark(metaclass=ABCMeta):
     def __init__(self, robot_name):
         self.robot_name = robot_name
-
+        self._load_robot()
+        
     def _load_robot(self):
         urdf_file_name = self.robot_name
         gripper_name = "panda"

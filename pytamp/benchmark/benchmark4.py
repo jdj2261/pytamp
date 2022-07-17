@@ -19,7 +19,6 @@ class Benchmark4(Benchmark):
         self.is_pyplot = is_pyplot
         super().__init__(robot_name)
         
-        self._load_robot()
         self._load_objects()
         self._load_scene()
 
