@@ -38,15 +38,15 @@ class Benchmark1(Benchmark):
 
         # TODO
         if self.robot_name == "doosan":
-            self.robot.setup_link_name("base_0", "link6")
+            self.robot.setup_link_name("base_0", "right_hand")
             self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
 
     def load_objects(self):
         self.box_poses = []
 
-        A_box_pose = Transform(pos=np.array([0.6, 0.05, 0.77]))
-        B_box_pose = Transform(pos=np.array([0.6, 0.15, 0.77]))
-        C_box_pose = Transform(pos=np.array([0.6, 0.25, 0.77]))
+        A_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]))
+        B_box_pose = Transform(pos=np.array([0.6, 0., 0.77]))
+        C_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
         D_box_pose = Transform(pos=np.array([0.5, 0.05, 0.77]))
         E_box_pose = Transform(pos=np.array([0.5, 0.15, 0.77]))
         F_box_pose = Transform(pos=np.array([0.5, 0.25, 0.77]))

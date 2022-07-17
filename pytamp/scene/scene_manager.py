@@ -264,7 +264,6 @@ class SceneManager:
     def collide_objs_and_gripper(self, return_names=False):
         if not self._scene.robot.has_gripper:
             raise ValueError("Robot doesn't have a gripper")
-    
         return self.gripper_collision_mngr.in_collision_other(self.obj_collision_mngr, return_names)
 
     def update_logical_states(self, is_init=False):

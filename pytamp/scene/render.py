@@ -95,7 +95,7 @@ class RenderPyPlot(SceneRender):
             RenderPyPlot.render_gripper(ax, robot, alpha, robot_color)
 
     @staticmethod
-    def render_gripper(ax, robot, alpha=0.3, robot_color=None, visible_tcp=True, pose=None, only_visible_axis=False):
+    def render_gripper(ax, robot, alpha=0.9, robot_color=None, visible_tcp=True, pose=None, only_visible_axis=False):
         p_utils.plot_basis(ax, robot) 
 
         if pose is not None:

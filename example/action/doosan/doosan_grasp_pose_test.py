@@ -23,7 +23,7 @@ robot = SingleArm(
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
     has_gripper=True,
     gripper_name="robotiq140")
-robot.setup_link_name("base_0", "right_hand")
+robot.setup_link_name("base_0", "link6")
 
 table_mesh = get_object_mesh('ben_table.stl')
 disk_mesh = get_object_mesh('hanoi_disk.stl')

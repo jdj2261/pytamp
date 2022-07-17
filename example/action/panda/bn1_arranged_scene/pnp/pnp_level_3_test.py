@@ -10,13 +10,22 @@ from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 from pytamp.scene.scene_manager import SceneManager
 
-file_path = 'urdf/panda/panda.urdf'
+# file_path = 'urdf/panda/panda.urdf'
+# robot = SingleArm(
+#     f_name=file_path, 
+#     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
+#     has_gripper=True)
+# robot.setup_link_name("panda_link_0", "right_hand")
+# robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
+
+file_path = 'urdf/doosan/doosan_with_robotiq140.urdf'
 robot = SingleArm(
     f_name=file_path, 
     offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
-    has_gripper=True)
-robot.setup_link_name("panda_link_0", "right_hand")
-robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
+    has_gripper=True,
+    gripper_name="robotiq140")
+robot.setup_link_name("base_0", "right_hand")
+
 
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
 blue_box_pose = Transform(pos=np.array([0.6, 0.35, 0.77]))
