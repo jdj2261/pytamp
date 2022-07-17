@@ -63,7 +63,7 @@ scene_mngr.scene.logical_states["C_box"] = {scene_mngr.scene.logical_state.on : 
 scene_mngr.scene.logical_states["goal_box"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
 scene_mngr.scene.logical_states["table"] = {scene_mngr.scene.logical_state.static : True}
 scene_mngr.scene.logical_states[scene_mngr.gripper_name] = {scene_mngr.scene.logical_state.holding : None}
-scene_mngr.update_logical_states()
+scene_mngr.update_logical_states(is_init=True)
 
 mcts = MCTS(scene_mngr)
 mcts.debug_mode = False
@@ -76,8 +76,8 @@ mcts.c = 300
 # mcts.sampling_method = 'bai_ucb' # 405
 mcts.sampling_method = 'bai_perturb' # 58
 # mcts.sampling_method = 'uct' # 369
-nodes = mcts.do_planning()
-
+for i in range(mcts.budgets):
+    mcts.do_planning(i)
 
 subtree = mcts.get_success_subtree()
 mcts.visualize_tree("MCTS", subtree)
@@ -88,7 +88,7 @@ if best_nodes:
     for node in best_nodes:
         mcts.show_logical_action(node)
 
-rewards = mcts.rewards
+rewards = mcts.rewards_for_level_1
 max_iter = np.argmax(rewards)
 print(max_iter)
 plt.plot(rewards)

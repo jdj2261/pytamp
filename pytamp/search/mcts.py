@@ -75,15 +75,15 @@ class MCTS:
         
         self._level_wise_1_optimize(state_node=0, depth=0)
         self.rewards_for_level_1.append(self.get_max_reward()) 
+        
+        # if self.level_wise_1_success:
+        #     success_sub_nodes = self.get_nodes_from_leaf_node(self.success_leaf_node)[::-1]
+        #     result_path = self._level_wise_2_optimize(success_sub_nodes)
+        #     self.level_wise_1_success = False
 
-        if self.level_wise_1_success:
-            success_sub_nodes = self.get_nodes_from_leaf_node(self.success_leaf_node)[::-1]
-            result_path = self._level_wise_2_optimize(success_sub_nodes)
-            self.level_wise_1_success = False
-
-        if (iter+1) % 40 == 0:
-            subtree = self.get_success_subtree()
-            self.visualize_tree('Test', tree=subtree)
+        # if (iter+1) % 40 == 0:
+        #     subtree = self.get_success_subtree()
+        #     self.visualize_tree('Test', tree=subtree)
 
     def _level_wise_1_optimize(self, state_node, depth):
         cur_state_node = state_node
