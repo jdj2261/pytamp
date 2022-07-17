@@ -19,15 +19,9 @@ class Benchmark4(Benchmark):
         self.is_pyplot = is_pyplot
         super().__init__(robot_name)
         
-        self.load_robot()
-        self.load_objects()
-        self.load_scene()
-
-    def load_robot(self):
-        file_path = 'urdf/' + self.robot_name + '/' + self.robot_name + '.urdf'
-        self.robot = SingleArm(f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True)
-        self.robot.setup_link_name("panda_link_0", "right_hand")
-        self.robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
+        self._load_robot()
+        self._load_objects()
+        self._load_scene()
 
     def load_objects(self):
         self.table_mesh = get_object_mesh('ben_table.stl')

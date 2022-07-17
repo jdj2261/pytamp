@@ -9,12 +9,10 @@ Python Interface for the robot task and motion planning(TAMP) library
 ## Features
 
 - Pure python library
-- Support only URDF file
 - Support only kinematic world, so not consider dynamics in this repo
-- Compute robot's kinematics (Ex. forward kinematics, inverse kinematics, Jacobian)
-- Enable to check collision about robot self-collision and collision between robot and objects
 - Support simple motion planning (RRT*, Cartesian planning)
 - Render Robot mesh using matplotlib or trimesh.Scene
+- Support 4 benchmarks for tamp
 - Support Robot TAMP with MCTS [Ours]
 
 ## Installation
@@ -37,15 +35,13 @@ You need [pygraphviz](https://github.com/pygraphviz/pygraphviz) and python3-tk p
 pip install pytamp
 ~~~
 
-
-
 ## SceneManager
 
 - **Scene** 
 
   You can manage entire scene using SceneManager class. We recommend using the SceneManager.  
   For example, You can manage robot, object, gripper pose or collision as well as visualize their geom.   
-  In addition, You can compute cartesian or motion planning.  
+  In addition, You can compute cartesian or RRT-star motion planning.  
   You can see various examples in `example/scene` directory. 
 
   - Render using trimesh.Scene
@@ -54,28 +50,9 @@ pip install pytamp
     | :--------------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------------: |
     | <img src="img/baxter_scene.png" width="300" height="200"/> | <img src="img/sawyer_scene.png" width="300" height="200"/> | <img src="img/iiwa14_scene.png" width="300" height="200"/> |
 
-  - Render using matplotlib
-
-    |                            baxter                            |                            sawyer                            |                            iiwa14                            |
-    | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-    | <img src="img/baxter_scene_matplotlib.png" width="300" height="200"/> | <img src="img/sawyer_scene_matplotlib.png" width="300" height="200"/> | <img src="img/iiwa14_scene_matplotlib.png" width="300" height="200"/> |
-
-- **Attach object to robot**
-
-  You can manage by attaching or detaching objects to the gripper.  
-  These method will be used for motion planning. You can see a example in `example/scene/gripper` directory. 
-
-  ~~~shell
-  $ cd example/scene/gripper
-  $ python scene_attach_detach_test.py
-  ~~~
-
-  You can see the attaching process as shown in the figure below.  
-  If the object is attached, a color of the object will change black. And then, the object becomes a part of the robot.
-  
-  |                       Move a robot                       |                 Attach an object to robot                  |                         Move a robot                         |                      Detach an object                      |
-  | :------------------------------------------------------: | :--------------------------------------------------------: | :----------------------------------------------------------: | :--------------------------------------------------------: |
-  | <img src="img/panda_move.png" width="400" height="200"/> | <img src="img/panda_attach.png" width="400" height="200"/> | <img src="img/panda_move_attached.png" width="400" height="200"/> | <img src="img/panda_detach.png" width="400" height="200"/> |
+    |                           Panda                           |                           Doosan                           |                           UR5e                           |
+    | :-------------------------------------------------------: | :--------------------------------------------------------: | :------------------------------------------------------: |
+    | <img src="img/panda_scene.png" width="300" height="200"/> | <img src="img/doosan_scene.png" width="300" height="200"/> | <img src="img/ur5e_scene.png" width="300" height="200"/> |
   
 - **Planning**
 

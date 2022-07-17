@@ -17,22 +17,11 @@ class Benchmark2(Benchmark):
         self.is_pyplot = is_pyplot
         super().__init__(robot_name)
 
-        self.load_robot()
-        self.load_objects()
-        self.load_scene()
+        self._load_robot()
+        self._load_objects()
+        self._load_scene()
 
-    def load_robot(self):
-        file_path = 'urdf/' + self.robot_name + '/' + self.robot_name + '.urdf'
-        self.robot = SingleArm(f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True)
-        
-        if self.robot_name == "panda":
-            self.robot.setup_link_name("panda_link_0", "right_hand")
-            self.robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
-
-        # TODO
-        if self.robot_name == "doosan":
-            pass
-    def load_objects(self):
+    def _load_objects(self):
         self.shelf_pose = Transform(pos=np.array([0.9, 0, 1.41725156]),rot=np.array([0, 0, np.pi/2]))
         self.bin_pose = Transform(pos=np.array([0.0, 1.0, 0.3864222]))
         self.bottle_meshes = []
@@ -45,7 +34,7 @@ class Benchmark2(Benchmark):
         self.bottle_pose5 = Transform(pos=np.array([0.90, 0, 1.29]))
         self.bottle_pose6 = Transform(pos=np.array([0.90, -0.1, 1.29]))
     
-    def load_scene(self):
+    def _load_scene(self):
         self.benchmark_config = {2 : None}
         self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=self.benchmark_config)
 

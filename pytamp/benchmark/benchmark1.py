@@ -1,7 +1,6 @@
 import numpy as np
 
 from pykin.kinematics.transform import Transform
-from pykin.robots.single_arm import SingleArm
 from pykin.utils.mesh_utils import get_object_mesh
 from pytamp.scene.scene_manager import SceneManager
 from pytamp.benchmark.benchmark import Benchmark
@@ -19,29 +18,11 @@ class Benchmark1(Benchmark):
         self.is_pyplot = is_pyplot
         super().__init__(robot_name)
 
-        self.load_robot()
-        self.load_objects()
-        self.load_scene()
+        self._load_robot()
+        self._load_objects()
+        self._load_scene()
 
-    def load_robot(self):
-        urdf_file_name = self.robot_name
-        gripper_name = "panda"
-        if self.robot_name == "doosan":
-            urdf_file_name = "doosan_with_robotiq140"
-            gripper_name = "robotiq140"
-        file_path = 'urdf/' + self.robot_name + '/' + urdf_file_name + '.urdf'
-        self.robot = SingleArm(f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True, gripper_name=gripper_name)
-        
-        if self.robot_name == "panda":
-            self.robot.setup_link_name("panda_link_0", "right_hand")
-            self.robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
-
-        # TODO
-        if self.robot_name == "doosan":
-            self.robot.setup_link_name("base_0", "right_hand")
-            self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
-
-    def load_objects(self):
+    def _load_objects(self):
         self.box_poses = []
 
         A_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]))
@@ -81,7 +62,7 @@ class Benchmark1(Benchmark):
         self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
         self.tray_blue_mesh = get_object_mesh('ben_tray_blue.stl')
 
-    def load_scene(self):
+    def _load_scene(self):
         self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
         self.benchmark_config = {1 : self.param}
 
