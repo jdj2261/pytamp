@@ -1,7 +1,6 @@
 import numpy as np
 
 from pykin.kinematics.transform import Transform
-from pykin.robots.single_arm import SingleArm
 from pykin.utils.mesh_utils import get_object_mesh, get_mesh_bounds
 from pytamp.scene.scene_manager import SceneManager
 from pytamp.benchmark.benchmark import Benchmark
@@ -22,7 +21,7 @@ class Benchmark4(Benchmark):
         self._load_objects()
         self._load_scene()
 
-    def load_objects(self):
+    def _load_objects(self):
         self.table_mesh = get_object_mesh('ben_table.stl')
         self.cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[0.3, 0.3, 1.0])
         self.disk_mesh = get_object_mesh('hanoi_disk.stl')
@@ -40,14 +39,15 @@ class Benchmark4(Benchmark):
         self.disk_pose = [ Transform() for _ in range(self.disk_num)]
         self.disk_object = [ 0 for _ in range(self.disk_num)]
 
-    def load_scene(self):
+    def _load_scene(self):
         self.benchmark_config = {4 : None}
         self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=self.benchmark_config)
 
         theta = np.linspace(-np.pi, np.pi, self.disk_num)
         for i in range(self.disk_num):
             disk_pos = np.array([0.6, 0.25, self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])
-            self.disk_pose[i] = Transform(pos=self.disk_mesh.center_mass + disk_pos)
+            disk_ori = Transform._to_quaternion([0, 0, theta[i]])
+            self.disk_pose[i] = Transform(pos=self.disk_mesh.center_mass + disk_pos, rot=disk_ori)
             disk_name = "hanoi_disk_" + str(i)
             hanoi_mesh = get_object_mesh(f'hanoi_disk.stl')
             self.scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=self.disk_pose[i].h_mat, color=[0., 1., 0.])

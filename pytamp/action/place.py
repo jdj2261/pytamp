@@ -164,7 +164,7 @@ class PlaceAction(ActivityBase):
         
             # Move a gripper to default pose
             default_thetas = self.scene_mngr.scene.robot.init_qpos
-            default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)["right_gripper"].h_mat
+            default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)[self.scene_mngr.scene.robot.eef_name].h_mat
             next_scene.robot.gripper.set_gripper_pose(default_pose)
 
             # Move pick object on support obj

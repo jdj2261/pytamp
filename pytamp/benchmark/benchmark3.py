@@ -1,7 +1,6 @@
 import numpy as np
 
 from pykin.kinematics.transform import Transform
-from pykin.robots.single_arm import SingleArm
 from pykin.utils.mesh_utils import get_object_mesh
 from pytamp.scene.scene_manager import SceneManager
 from pytamp.benchmark.benchmark import Benchmark

@@ -24,12 +24,12 @@ class Benchmark1(Benchmark):
     def _load_objects(self):
         self.box_poses = []
 
-        A_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]))
-        B_box_pose = Transform(pos=np.array([0.6, 0., 0.77]))
-        C_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
-        D_box_pose = Transform(pos=np.array([0.5, 0.05, 0.77]))
-        E_box_pose = Transform(pos=np.array([0.5, 0.15, 0.77]))
-        F_box_pose = Transform(pos=np.array([0.5, 0.25, 0.77]))
+        A_box_pose = Transform(pos=np.array([0.5, -0.2, 0.77]))
+        B_box_pose = Transform(pos=np.array([0.5, 0., 0.77]))
+        C_box_pose = Transform(pos=np.array([0.5, 0.2, 0.77]))
+        D_box_pose = Transform(pos=np.array([0.7, -0.2, 0.77]))
+        E_box_pose = Transform(pos=np.array([0.7, 0., 0.77]))
+        F_box_pose = Transform(pos=np.array([0.7, 0.2, 0.77]))
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 
                               C_box_pose, 

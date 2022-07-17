@@ -1,11 +1,4 @@
-import numpy as np
-
-
 from pykin.utils import plot_utils as p_utils
-from pykin.kinematics.transform import Transform
-from pykin.robots.single_arm import SingleArm
-from pykin.utils.mesh_utils import get_object_mesh
-
 from pytamp.action.pick import PickAction
 from pytamp.benchmark import Benchmark1
 
