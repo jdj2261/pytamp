@@ -61,13 +61,13 @@ pick_action = pick.get_action_level_1_for_single_object(scene_mngr.scene, "bottl
 
 cnt = 0
 for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
-    pick_joint_path = pick.get_possible_joint_path_level_3(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
+    pick_joint_path = pick.get_possible_joint_path_level_2(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
     if pick_joint_path:
         place_action = place.get_action_level_1_for_single_object("goal_box", "bottle1", pick_scene.robot.gripper.grasp_pose, scene=pick_scene)
         for place_scene in place.get_possible_transitions(scene=pick_scene, action=place_action):
             ik_solve, release_poses = place.get_possible_ik_solve_level_2(scene=place_scene, release_poses=place_scene.release_poses)
             if ik_solve:
-                place_joint_path = place.get_possible_joint_path_level_3(
+                place_joint_path = place.get_possible_joint_path_level_2(
                     scene=place_scene, release_poses=release_poses, init_thetas=pick_joint_path[-1][place.move_data.MOVE_default_grasp][-1])
                 if place_joint_path:
                     success_joint_path = True

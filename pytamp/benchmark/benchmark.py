@@ -24,7 +24,7 @@ class Benchmark(metaclass=ABCMeta):
             
         if self.robot_name == "doosan":
             self.robot.setup_link_name("base_0", "right_hand")
-            self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
+            
 
     @abstractclassmethod
     def _load_objects(self):

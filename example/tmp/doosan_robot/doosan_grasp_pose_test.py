@@ -64,7 +64,7 @@ test[:3, 3] = center_point
 
 tcp_pose = np.eye(4)
 # for theta in np.linspace(np.pi + np.pi/24, np.pi/12 + np.pi, 3):
-for theta in np.linspace(0, np.pi * 2, 3):
+for theta in np.linspace(0, np.pi * 2, 4):
     tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
     tcp_pose[:3,1] = [0, 1, 0]
     tcp_pose[:3,2] = [-np.sin(theta), 0, np.cos(theta)]

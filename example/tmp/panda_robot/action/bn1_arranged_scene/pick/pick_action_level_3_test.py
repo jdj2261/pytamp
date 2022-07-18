@@ -58,7 +58,7 @@ pick_all_object_poses = []
 success_joint_path = False
 for pick_action in actions:
     for idx, pick_scene in enumerate(pick.get_possible_transitions(scene_mngr.scene, action=pick_action)):
-        pick_joint_path = pick.get_possible_joint_path_level_3(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
+        pick_joint_path = pick.get_possible_joint_path_level_2(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
         if pick_joint_path:
             success_joint_path = True
             pick_joint_all_path.append(pick_joint_path)

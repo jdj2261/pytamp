@@ -104,7 +104,7 @@ for node in best_nodes:
             print("pick")
             if init_theta is None:
                 init_theta = mcts.pick_action.scene_mngr.scene.robot.init_qpos
-            pick_joint_path = mcts.pick_action.get_possible_joint_path_level_3(
+            pick_joint_path = mcts.pick_action.get_possible_joint_path_level_2(
                 scene=pick_scene, 
                 grasp_poses=pick_scene.grasp_poses,
                 init_thetas=init_theta)
@@ -122,7 +122,7 @@ for node in best_nodes:
             # ik_solve, release_poses = mcts.place_action.get_possible_ik_solve_level_2(scene=place_scene, release_poses=place_scene.release_poses)
             # if ik_solve:
             print("place")
-            place_joint_path = mcts.place_action.get_possible_joint_path_level_3(
+            place_joint_path = mcts.place_action.get_possible_joint_path_level_2(
                 scene=place_scene, 
                 release_poses=place_scene.release_poses, 
                 init_thetas=init_theta)

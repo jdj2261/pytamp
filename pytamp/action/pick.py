@@ -72,7 +72,7 @@ class PickAction(ActivityBase):
         ik_solve, grasp_poses_filtered = self.compute_ik_solve_for_robot(grasp_poses)
         return ik_solve, grasp_poses_filtered
  
-    def get_possible_joint_path_level_3(self, scene:Scene=None, grasp_poses:dict={}, init_thetas=None):
+    def get_possible_joint_path_level_2(self, scene:Scene=None, grasp_poses:dict={}, init_thetas=None):
         self.deepcopy_scene(scene)
         
         pick_obj = self.scene_mngr.scene.robot.gripper.attached_obj_name

@@ -21,7 +21,6 @@ class Scene:
         self.bench_num:int = list(self.benchmark_config.keys())[0]
         self.goal_object = 'goal_box'
 
-        # TODO
         if self.bench_num == 1:
             if self.benchmark_config[self.bench_num].get("goal_object"):
                 self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]

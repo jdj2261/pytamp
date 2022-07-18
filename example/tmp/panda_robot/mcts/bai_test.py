@@ -97,4 +97,4 @@ plt.show()
 # Do planning
 best_nodes = mcts.get_best_node(subtree)
 pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
-mcts.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

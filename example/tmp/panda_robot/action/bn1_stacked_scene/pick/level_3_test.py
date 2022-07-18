@@ -16,7 +16,6 @@ robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
 
-
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
 blue_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.06]))
 green_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.12]))
@@ -59,7 +58,7 @@ for pick_action in actions:
     for idx, pick_scene in enumerate(pick.get_possible_transitions(scene_mngr.scene, action=pick_action)):
         ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(grasp_poses=pick_scene.grasp_poses)
         if ik_solve:
-            pick_joint_path = pick.get_possible_joint_path_level_3(scene=pick_scene, grasp_poses=grasp_pose)
+            pick_joint_path = pick.get_possible_joint_path_level_2(scene=pick_scene, grasp_poses=grasp_pose)
             if pick_joint_path:
                 success_joint_path = True
                 pick_joint_all_path.append(pick_joint_path)

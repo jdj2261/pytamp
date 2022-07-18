@@ -29,7 +29,11 @@ class MCTS:
         self.scene_mngr = scene_mngr
         self.state = scene_mngr.scene
         self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
-        self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
+
+        if self.scene_mngr.scene.bench_num == 2:
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=1, n_samples_support_obj=10)
+        else:
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
         self._sampling_method = sampling_method
         self._budgets = budgets
@@ -497,7 +501,7 @@ class MCTS:
                     
                     if init_theta is None:
                         init_theta = self.pick_action.scene_mngr.scene.robot.init_qpos
-                    pick_joint_path = self.pick_action.get_possible_joint_path_level_3(
+                    pick_joint_path = self.pick_action.get_possible_joint_path_level_2(
                         scene=pick_scene, 
                         grasp_poses=pick_scene.grasp_poses,
                         init_thetas=init_theta)
@@ -510,7 +514,7 @@ class MCTS:
                 else:
                     print("place")
                     place_scene:Scene = self.tree.nodes[node]['state']
-                    place_joint_path = self.place_action.get_possible_joint_path_level_3(
+                    place_joint_path = self.place_action.get_possible_joint_path_level_2(
                         scene=place_scene, 
                         release_poses=place_scene.release_poses, 
                         init_thetas=init_theta)
@@ -545,62 +549,6 @@ class MCTS:
         place_all_object_poses.append(place_object_poses)
             
         return pnp_all_joint_path, pick_all_objects, place_all_object_poses
-
-    def simulate_path(self, pnp_all_joint_path, pick_all_objects, place_all_object_poses):
-        for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(pnp_all_joint_path, pick_all_objects, place_all_object_poses):
-            result_joint = []
-            eef_poses = []
-            attach_idxes = []
-            detach_idxes = []
-            attach_idx = 0
-            detach_idx = 0
-            grasp_task_idx = 0
-            post_grasp_task_idx = 0
-            release_task_idx = 0
-            post_release_task_idx = 0
-            idx = 0
-
-            for pnp_joint_path in pnp_joint_all_path:        
-                for _, (task, joint_path) in enumerate(pnp_joint_path.items()):
-                    for _, joint in enumerate(joint_path):
-                        idx += 1
-                        
-                        if task == self.pick_action.move_data.MOVE_grasp:
-                            grasp_task_idx = idx
-                        if task == self.pick_action.move_data.MOVE_post_grasp:
-                            post_grasp_task_idx = idx
-                        if post_grasp_task_idx - grasp_task_idx == 1:
-                            attach_idx = grasp_task_idx
-                            attach_idxes.append(attach_idx)
-
-                        if task == self.place_action.move_data.MOVE_release:
-                            release_task_idx = idx
-                        if task == self.place_action.move_data.MOVE_post_release:
-                            post_release_task_idx = idx
-                        if post_release_task_idx - release_task_idx == 1:
-                            detach_idx = release_task_idx
-                            detach_idxes.append(detach_idx)
-                        
-                        result_joint.append(joint)
-                        fk = self.pick_action.scene_mngr.scene.robot.forward_kin(joint)
-                        eef_poses.append(fk[self.place_action.scene_mngr.scene.robot.eef_name].pos)
-
-            fig, ax = p_utils.init_3d_figure( name="Level wise 3")
-            self.scene_mngr.animation(
-                ax,
-                fig,
-                init_scene=self.scene_mngr.init_scene,
-                joint_path=result_joint,
-                eef_poses=None,
-                visible_gripper=True,
-                visible_text=True,
-                alpha=1.0,
-                interval=50, #ms
-                repeat=False,
-                pick_object = pick_all_object,
-                attach_idx = attach_idxes,
-                detach_idx = detach_idxes,
-                place_obj_pose= place_all_object_pose)
 
     @property
     def sampling_method(self):

@@ -77,7 +77,7 @@ cnt = 0
 for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
     ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
     if ik_solve:
-        pick_joint_path = pick.get_possible_joint_path_level_3(scene=pick_scene, grasp_poses=grasp_pose)
+        pick_joint_path = pick.get_possible_joint_path_level_2(scene=pick_scene, grasp_poses=grasp_pose)
         if pick_joint_path:
             # pnp_joint_all_path.append(pick_joint_path)
             # pick_scene.objs["green_box"].h_mat = pick_scene.robot.gripper.pick_obj_pose
@@ -85,14 +85,14 @@ for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
             for place_scene in place.get_possible_transitions(scene=pick_scene, action=place_action):
                 ik_solve, release_poses = place.get_possible_ik_solve_level_2(scene=place_scene, release_poses=place_scene.release_poses)
                 if ik_solve:
-                    place_joint_path = place.get_possible_joint_path_level_3(
+                    place_joint_path = place.get_possible_joint_path_level_2(
                         scene=place_scene, release_poses=release_poses, init_thetas=pick_joint_path[-1][place.move_data.MOVE_default_grasp][-1])
                     if place_joint_path:
                         pick_action_2 = pick.get_action_level_1_for_single_object(place_scene, "blue_box")
                         for pick_scene_2 in pick.get_possible_transitions(place_scene, pick_action_2):
                             ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(scene=pick_scene_2, grasp_poses=pick_scene_2.grasp_poses)
                             if ik_solve:
-                                pick_joint_path_2 = pick.get_possible_joint_path_level_3(
+                                pick_joint_path_2 = pick.get_possible_joint_path_level_2(
                                     scene=pick_scene_2, grasp_poses=grasp_pose, init_thetas=place_joint_path[-1][place.move_data.MOVE_default_release][-1])
                                 if pick_joint_path_2:
                                     # pick_scene_2.objs["green_box"].h_mat = pick_scene_2.robot.gripper.pick_obj_pose
@@ -100,14 +100,14 @@ for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
                                     for place_scene_2 in place.get_possible_transitions(scene=pick_scene_2, action=place_action2):
                                         ik_solve, release_poses = place.get_possible_ik_solve_level_2(scene=place_scene_2, release_poses=place_scene_2.release_poses)
                                         if ik_solve:
-                                            place_joint_path2 = place.get_possible_joint_path_level_3(
+                                            place_joint_path2 = place.get_possible_joint_path_level_2(
                                                 scene=place_scene_2, release_poses=release_poses, init_thetas=pick_joint_path_2[-1][place.move_data.MOVE_default_grasp][-1])
                                             if place_joint_path2:
                                                 pick_action_3 = pick.get_action_level_1_for_single_object(place_scene_2, "green_box")
                                                 for pick_scene_3 in pick.get_possible_transitions(place_scene_2, pick_action_3):
                                                     ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(scene=pick_scene_3, grasp_poses=pick_scene_3.grasp_poses)
                                                     if ik_solve:
-                                                        pick_joint_path_3 = pick.get_possible_joint_path_level_3(
+                                                        pick_joint_path_3 = pick.get_possible_joint_path_level_2(
                                                             scene=pick_scene_3, grasp_poses=grasp_pose, init_thetas=place_joint_path2[-1][place.move_data.MOVE_default_release][-1])
                                                         if pick_joint_path_3:
                                                             # pick_scene_3.objs["green_box"].h_mat = pick_scene_3.robot.gripper.pick_obj_pose
@@ -115,7 +115,7 @@ for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
                                                             for place_scene_3 in place.get_possible_transitions(scene=pick_scene_3, action=place_action3):
                                                                 ik_solve, release_poses = place.get_possible_ik_solve_level_2(scene=place_scene_3, release_poses=place_scene_3.release_poses)
                                                                 if ik_solve:
-                                                                    place_joint_path3 = place.get_possible_joint_path_level_3(
+                                                                    place_joint_path3 = place.get_possible_joint_path_level_2(
                                                                         scene=place_scene_2, release_poses=release_poses, init_thetas=pick_joint_path_3[-1][place.move_data.MOVE_default_grasp][-1])
                                                                     if place_joint_path3:
                                                                         cnt += 1

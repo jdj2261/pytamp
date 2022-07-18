@@ -74,7 +74,7 @@ class PlaceAction(ActivityBase):
         ik_solve, release_poses_filtered = self.compute_ik_solve_for_robot(release_poses)
         return ik_solve, release_poses_filtered
 
-    def get_possible_joint_path_level_3(self, scene:Scene=None, release_poses:dict={}, init_thetas=None):
+    def get_possible_joint_path_level_2(self, scene:Scene=None, release_poses:dict={}, init_thetas=None):
         self.deepcopy_scene(scene)
 
         result_all_joint_path = []

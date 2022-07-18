@@ -17,19 +17,24 @@ class Benchmark1(Benchmark):
         self.geom = geom
         self.is_pyplot = is_pyplot
         super().__init__(robot_name)
-
+        
+        self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
         self._load_objects()
         self._load_scene()
 
     def _load_objects(self):
-        self.box_poses = []
+        self.table_mesh = get_object_mesh('ben_table.stl')
+        self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
+        self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
+        self.tray_blue_mesh = get_object_mesh('ben_tray_blue.stl')
 
-        A_box_pose = Transform(pos=np.array([0.5, -0.2, 0.77]))
-        B_box_pose = Transform(pos=np.array([0.5, 0., 0.77]))
-        C_box_pose = Transform(pos=np.array([0.5, 0.2, 0.77]))
-        D_box_pose = Transform(pos=np.array([0.7, -0.2, 0.77]))
-        E_box_pose = Transform(pos=np.array([0.7, 0., 0.77]))
-        F_box_pose = Transform(pos=np.array([0.7, 0.2, 0.77]))
+        self.box_poses = []
+        A_box_pose = Transform(pos=np.array([0.5, -0.2, self.table_mesh.bounds[1][2]]))
+        B_box_pose = Transform(pos=np.array([0.5, 0., self.table_mesh.bounds[1][2]]))
+        C_box_pose = Transform(pos=np.array([0.5, 0.2, self.table_mesh.bounds[1][2]]))
+        D_box_pose = Transform(pos=np.array([0.7, -0.2, self.table_mesh.bounds[1][2]]))
+        E_box_pose = Transform(pos=np.array([0.7, 0., self.table_mesh.bounds[1][2]]))
+        F_box_pose = Transform(pos=np.array([0.7, 0.2, self.table_mesh.bounds[1][2]]))
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 
                               C_box_pose, 
@@ -55,11 +60,6 @@ class Benchmark1(Benchmark):
         self.ceiling_pose = Transform(pos=np.array([1.0, -0.4, 1.5]))
         self.tray_red_pose = Transform(pos=np.array([0.6, -0.5-0.3, 0.8]))
         self.tray_blue_pose = Transform(pos=np.array([0.6, 0.5, 0.8]))
-
-        self.table_mesh = get_object_mesh('ben_table.stl')
-        self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
-        self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
-        self.tray_blue_mesh = get_object_mesh('ben_tray_blue.stl')
 
     def _load_scene(self):
         self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
