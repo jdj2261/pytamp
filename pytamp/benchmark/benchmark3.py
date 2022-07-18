@@ -2,7 +2,6 @@ import numpy as np
 
 from pykin.kinematics.transform import Transform
 from pykin.utils.mesh_utils import get_object_mesh
-from pytamp.scene.scene_manager import SceneManager
 from pytamp.benchmark.benchmark import Benchmark
 
 class Benchmark3(Benchmark):
@@ -12,9 +11,8 @@ class Benchmark3(Benchmark):
         geom="visual", 
         is_pyplot=True
     ):
-        self.geom = geom
-        self.is_pyplot = is_pyplot
-        super().__init__(robot_name)
+        self.benchmark_config = {3 : None}
+        super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
         self._load_objects()
         self._load_scene()
@@ -28,8 +26,6 @@ class Benchmark3(Benchmark):
 
     def _load_scene(self):
         self.benchmark_config = {3 : None}
-        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=self.benchmark_config)
-
         for i in range(20):
             clearbox_1_name = 'clearbox_1_' + str(i)
             clearbox_1_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=0.9)

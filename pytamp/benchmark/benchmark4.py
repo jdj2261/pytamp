@@ -2,7 +2,6 @@ import numpy as np
 
 from pykin.kinematics.transform import Transform
 from pykin.utils.mesh_utils import get_object_mesh, get_mesh_bounds
-from pytamp.scene.scene_manager import SceneManager
 from pytamp.benchmark.benchmark import Benchmark
 
 class Benchmark4(Benchmark):
@@ -14,9 +13,8 @@ class Benchmark4(Benchmark):
         is_pyplot=True
     ):
         self.disk_num = disk_num
-        self.geom = geom
-        self.is_pyplot = is_pyplot
-        super().__init__(robot_name)
+        self.benchmark_config = {4 : None}
+        super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
         self._load_objects()
         self._load_scene()
@@ -40,9 +38,6 @@ class Benchmark4(Benchmark):
         self.disk_object = [ 0 for _ in range(self.disk_num)]
 
     def _load_scene(self):
-        self.benchmark_config = {4 : None}
-        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=self.benchmark_config)
-
         theta = np.linspace(-np.pi, np.pi, self.disk_num)
         for i in range(self.disk_num):
             disk_pos = np.array([0.6, 0.25, self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])

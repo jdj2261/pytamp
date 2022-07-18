@@ -2,7 +2,6 @@ import numpy as np
 
 from pykin.kinematics.transform import Transform
 from pykin.utils.mesh_utils import get_object_mesh
-from pytamp.scene.scene_manager import SceneManager
 from pytamp.benchmark.benchmark import Benchmark
 
 class Benchmark2(Benchmark):
@@ -13,12 +12,12 @@ class Benchmark2(Benchmark):
         is_pyplot=True,
         bottle_num=6
     ):
-        self.geom = geom
-        self.is_pyplot = is_pyplot
         self.bottle_num = bottle_num
-        super().__init__(robot_name)
-
+        param = {'bottle_num' : self.bottle_num, 'goal_object' : 'goal_bottle'}
+        self.benchmark_config = {2 : param}
+        super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         self.robot.init_qpos = np.array([0, -np.pi/3, np.pi/1.5, 0, np.pi/3,  np.pi/2])
+        
         self._load_objects()
         self._load_scene()
 
@@ -42,10 +41,6 @@ class Benchmark2(Benchmark):
                                   bottle_pose4,
                                   bottle_pose5])
     def _load_scene(self):
-        param = {'bottle_num' : self.bottle_num, 'goal_object' : 'goal_bottle'}
-        self.benchmark_config = {2 : param}
-        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=self.benchmark_config)
-        
         for i in range(20):
             shelf_name = 'shelf_' + str(i)
             self.shelf_mesh = get_object_mesh(shelf_name + '.stl', scale=0.9)

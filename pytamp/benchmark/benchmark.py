@@ -1,14 +1,23 @@
 import numpy as np
 
-from abc import abstractclassmethod, ABCMeta
+from pytamp.scene.scene_manager import SceneManager
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
 
-class Benchmark(metaclass=ABCMeta):
-    def __init__(self, robot_name):
+class Benchmark:
+    def __init__(
+        self, 
+        robot_name,
+        geom="collision",
+        is_pyplot=True,
+        benchmark_config=None
+    ):
         self.robot_name = robot_name
+        self.geom = geom
+        self.is_pyplot = is_pyplot
+        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=benchmark_config)
         self._load_robot()
-        
+    
     def _load_robot(self):
         urdf_file_name = self.robot_name
         gripper_name = "panda"
@@ -25,11 +34,9 @@ class Benchmark(metaclass=ABCMeta):
         if self.robot_name == "doosan":
             self.robot.setup_link_name("base_0", "right_hand")
             
-
-    @abstractclassmethod
     def _load_objects(self):
-        raise NotImplementedError
-
-    @abstractclassmethod
+        pass
+        
     def _load_scene(self):
-        raise NotImplementedError
+        pass
+        

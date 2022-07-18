@@ -16,23 +16,23 @@ class State:
 
 class Scene:
     def __init__(self, benchmark:dict):
+        if benchmark is not None:
+            self.benchmark_config:int = benchmark
+            self.bench_num:int = list(self.benchmark_config.keys())[0]
+            self.goal_object = 'goal_box'
 
-        self.benchmark_config:int = benchmark
-        self.bench_num:int = list(self.benchmark_config.keys())[0]
-        self.goal_object = 'goal_box'
+            if self.bench_num == 1:
+                if self.benchmark_config[self.bench_num].get("goal_object"):
+                    self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
+                self.goal_stacked_num:int = self.benchmark_config[self.bench_num]["stack_num"]
+                self.alphabet_list:list = list(string.ascii_uppercase)[:self.goal_stacked_num]
+                self.goal_boxes:list = [alphabet + '_box' for alphabet in self.alphabet_list]
+                self.stacked_box_num = 0
+                self.success_stacked_box_num = 0
 
-        if self.bench_num == 1:
-            if self.benchmark_config[self.bench_num].get("goal_object"):
-                self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
-            self.goal_stacked_num:int = self.benchmark_config[self.bench_num]["stack_num"]
-            self.alphabet_list:list = list(string.ascii_uppercase)[:self.goal_stacked_num]
-            self.goal_boxes:list = [alphabet + '_box' for alphabet in self.alphabet_list]
-            self.stacked_box_num = 0
-            self.success_stacked_box_num = 0
-
-        if self.bench_num == 2 and self.benchmark_config[self.bench_num] is not None:
-            if self.benchmark_config[self.bench_num].get("goal_object"):
-                self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
+            if self.bench_num == 2 and self.benchmark_config[self.bench_num] is not None:
+                if self.benchmark_config[self.bench_num].get("goal_object"):
+                    self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
 
         self.objs:dict = {}
         self.robot:SingleArm = None

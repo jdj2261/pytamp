@@ -2,7 +2,6 @@ import numpy as np
 
 from pykin.kinematics.transform import Transform
 from pykin.utils.mesh_utils import get_object_mesh
-from pytamp.scene.scene_manager import SceneManager
 from pytamp.benchmark.benchmark import Benchmark
 
 class Benchmark1(Benchmark):
@@ -14,9 +13,9 @@ class Benchmark1(Benchmark):
         is_pyplot=True
     ):
         self.box_num = box_num
-        self.geom = geom
-        self.is_pyplot = is_pyplot
-        super().__init__(robot_name)
+        self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
+        self.benchmark_config = {1 : self.param}
+        super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
         self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
         self._load_objects()
@@ -62,11 +61,6 @@ class Benchmark1(Benchmark):
         self.tray_blue_pose = Transform(pos=np.array([0.6, 0.5, 0.8]))
 
     def _load_scene(self):
-        self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
-        self.benchmark_config = {1 : self.param}
-
-        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=self.benchmark_config)
-
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
         for i in range(self.box_num):
             box_name = self.scene_mngr.scene.alphabet_list[i] + '_box'
