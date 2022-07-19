@@ -14,7 +14,9 @@ class Benchmark3(Benchmark):
         self.benchmark_config = {3 : None}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
-        self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
+        if self.robot_name == "doosan":
+            self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3, 0])
+        
         self._load_objects()
         self._load_scene()
 

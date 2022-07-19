@@ -65,7 +65,7 @@ scene_mngr.scene.logical_states[scene_mngr.gripper_name] = {scene_mngr.scene.log
 scene_mngr.update_logical_states()
 
 scene_mngr.scene.pick_obj_name = "C_box"
-# print(scene_mngr.scene.goal_boxes)
+# print(scene_mngr.scene.goal_objects)
 print(scene_mngr.scene.get_objs_chain_list_from_bottom("goal_box"))
 
 print(scene_mngr.scene.check_terminal_state_bench_1())

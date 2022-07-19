@@ -50,8 +50,10 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
                 tcp_pose[:3,3] = center_point + [0, 0, 0.005]
                 yield tcp_pose
 
+    # TODO
     if bench_num == 4:
         if "hanoi_disk" in object_name:
+            split_num = float(object_name.split('_')[-1])
             obj_pose = np.eye(4)
             obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
             obj_pose[:3, 3] = object_mesh.center_mass

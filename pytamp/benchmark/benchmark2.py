@@ -16,7 +16,9 @@ class Benchmark2(Benchmark):
         param = {'bottle_num' : self.bottle_num, 'goal_object' : 'goal_bottle'}
         self.benchmark_config = {2 : param}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
-        self.robot.init_qpos = np.array([0, -np.pi/3, np.pi/1.5, 0, np.pi/3,  np.pi/2])
+        
+        if self.robot_name == "doosan":
+            self.robot.init_qpos = np.array([0, -np.pi/3, np.pi/1.5, 0, np.pi/3,  np.pi/2])
         
         self._load_objects()
         self._load_scene()

@@ -72,6 +72,7 @@ class PlaceAction(ActivityBase):
         return action_level_1
 
     # Not Expand, only check possible action using ik
+    #! It will be removed !!
     def get_possible_ik_solve_level_2(self, scene:Scene=None, release_poses:dict={}):
         self.deepcopy_scene(scene)
         
@@ -188,15 +189,15 @@ class PlaceAction(ActivityBase):
             next_scene.logical_states[held_obj_name][next_scene.logical_state.on] = next_scene.objs[place_obj_name]
             next_scene.update_logical_states()
 
-            # Check stability
-            copied_scene = deepcopy(next_scene)
-            held_obj = copied_scene.objs[held_obj_name]
-            held_obj_mesh:Trimesh = deepcopy(held_obj.gparam)
-            held_obj_mesh.apply_transform(obj_pose_transformed)
-            com = held_obj_mesh.center_mass
-
-            if not self._check_stability(next_scene, held_obj_name, com) and self.scene_mngr.scene.bench_num == 1:
-                continue
+            if self.scene_mngr.scene.bench_num == 1:
+                # Check stability
+                copied_scene = deepcopy(next_scene)
+                held_obj = copied_scene.objs[held_obj_name]
+                held_obj_mesh:Trimesh = deepcopy(held_obj.gparam)
+                held_obj_mesh.apply_transform(obj_pose_transformed)
+                com = held_obj_mesh.center_mass
+                if not self._check_stability(next_scene, held_obj_name, com):
+                    continue
 
             yield next_scene
 
@@ -449,7 +450,8 @@ class PlaceAction(ActivityBase):
                 else:
                     yield None, held_obj_pose_transformed
 
-    def _get_obj_pose_transformed(self, held_obj_pose, sup_obj_point, held_obj_point_transformed, rot_mat):
+    @staticmethod
+    def _get_obj_pose_transformed(held_obj_pose, sup_obj_point, held_obj_point_transformed, rot_mat):
         obj_pose_rotated = np.eye(4)
         obj_pose_rotated[:3, :3] = np.dot(rot_mat, held_obj_pose[:3, :3])
         obj_pose_rotated[:3, 3] = held_obj_pose[:3, 3]

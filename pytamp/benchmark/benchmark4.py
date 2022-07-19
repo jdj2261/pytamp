@@ -13,10 +13,13 @@ class Benchmark4(Benchmark):
         is_pyplot=True
     ):
         self.disk_num = disk_num
-        self.benchmark_config = {4 : None}
+        param = {"disk_num" : disk_num}
+        self.benchmark_config = {4 : param}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
-        self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
+        if self.robot_name == "doosan":
+            self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3, 0])
+        
         self._load_objects()
         self._load_scene()
 
@@ -39,16 +42,6 @@ class Benchmark4(Benchmark):
         self.disk_object = [ 0 for _ in range(self.disk_num)]
 
     def _load_scene(self):
-        theta = np.linspace(-np.pi, np.pi, self.disk_num)
-        for i in range(self.disk_num):
-            disk_pos = np.array([0.59, 0.25, self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])
-            disk_ori = Transform._to_quaternion([0, 0, theta[i]])
-            disk_ori = Transform._to_quaternion([0, 0, np.pi])
-            self.disk_pose[i] = Transform(pos=self.disk_mesh.center_mass + disk_pos, rot=disk_ori)
-            disk_name = "hanoi_disk_" + str(i)
-            hanoi_mesh = get_object_mesh(f'hanoi_disk.stl', scale=[1.5-0.1*i, 1.5-0.1*i, 1])
-            self.scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=self.disk_pose[i].h_mat, color=[0., 1., 0.])
-
         self.scene_mngr.add_object(name="cylinder_1", gtype="mesh", gparam=self.cylinder_mesh, h_mat=self.cylinder1_pose.h_mat, color=[0., 0., 1.])
         self.scene_mngr.add_object(name="cylinder_2", gtype="mesh", gparam=self.cylinder_mesh, h_mat=self.cylinder2_pose.h_mat, color=[0., 0., 1.])
         self.scene_mngr.add_object(name="cylinder_3", gtype="mesh", gparam=self.cylinder_mesh, h_mat=self.cylinder3_pose.h_mat, color=[0., 0., 1.])
@@ -58,13 +51,21 @@ class Benchmark4(Benchmark):
         self.scene_mngr.set_logical_state("cylinder_1", ("on", "table"), ("static", True)) 
         self.scene_mngr.set_logical_state("cylinder_2", ("on", "table"), ("static", True)) 
         self.scene_mngr.set_logical_state("cylinder_3", ("on", "table"), ("static", True)) 
-        
-        self.scene_mngr.set_logical_state("hanoi_disk_0", ("on", "table"))
-        self.scene_mngr.set_logical_state("hanoi_disk_1", ("on", "hanoi_disk_0"))
-        self.scene_mngr.set_logical_state("hanoi_disk_2", ("on", "hanoi_disk_1"))
-        self.scene_mngr.set_logical_state("hanoi_disk_3", ("on", "hanoi_disk_2"))
-        self.scene_mngr.set_logical_state("hanoi_disk_4", ("on", "hanoi_disk_3"))
-        self.scene_mngr.set_logical_state("hanoi_disk_5", ("on", "hanoi_disk_4"))
+    
+        for i in range(self.disk_num):
+            disk_pos = np.array([0.59, 0.25, self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])
+            disk_ori = Transform._to_quaternion([0, 0, np.pi])
+            self.disk_pose[i] = Transform(pos=self.disk_mesh.center_mass + disk_pos, rot=disk_ori)
+            disk_name = "hanoi_disk_" + str(i)
+            hanoi_mesh = get_object_mesh(f'hanoi_disk.stl', scale=[1.5-0.1*i, 1.5-0.1*i, 1])
+            self.scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=self.disk_pose[i].h_mat, color=[0., 1., 0.])
+
+        for i in range(self.disk_num-1):
+            if disk_name == "hanoi_disk_0":
+                self.scene_mngr.set_logical_state(disk_name, ("on", "table"))
+            else:
+                next_disk_name = "hanoi_disk_" + str(i+1)
+                self.scene_mngr.set_logical_state(disk_name, ("on", next_disk_name))
 
         self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True), (self.scene_mngr.scene.logical_state.holding, None))
         self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))

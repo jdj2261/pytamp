@@ -26,7 +26,7 @@ class Scene:
                     self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
                 self.goal_stacked_num:int = self.benchmark_config[self.bench_num]["stack_num"]
                 self.alphabet_list:list = list(string.ascii_uppercase)[:self.goal_stacked_num]
-                self.goal_boxes:list = [alphabet + '_box' for alphabet in self.alphabet_list]
+                self.goal_objects:list = [alphabet + '_box' for alphabet in self.alphabet_list]
                 self.stacked_box_num = 0
                 self.success_stacked_box_num = 0
 
@@ -34,6 +34,15 @@ class Scene:
                 if self.benchmark_config[self.bench_num].get("goal_object"):
                     self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
 
+            # TODO
+            if self.bench_num == 3:
+                pass
+
+            # TODO
+            if self.bench_num == 4 and self.benchmark_config[self.bench_num] is not None:
+                if self.benchmark_config[self.bench_num].get("disk_num"):
+                    self.disk_num = self.benchmark_config[self.bench_num].get("disk_num")
+                
         self.objs:dict = {}
         self.robot:SingleArm = None
         self.logical_states:OrderedDict = OrderedDict()
@@ -82,9 +91,9 @@ class Scene:
         if self.bench_num == 2:
             return self.check_terminal_state_bench_2()
         if self.bench_num == 3:
-            pass
+            return self.check_terminal_state_bench_3()
         if self.bench_num == 4:
-            pass
+            return self.check_terminal_state_bench_4()
 
     def check_terminal_state_bench_1(self):
         is_success = self.check_success_stacked_bench_1(is_terminal=True)
@@ -100,7 +109,7 @@ class Scene:
         self.stacked_box_num = stacked_box_num
 
         if stacked_box_num <= self.goal_stacked_num:
-            goal_stacked_boxes = self.goal_boxes[:stacked_box_num]
+            goal_stacked_boxes = self.goal_objects[:stacked_box_num]
             if stacked_boxes == goal_stacked_boxes:
                 is_success = True
                 if not is_terminal:
@@ -122,3 +131,11 @@ class Scene:
         if self.robot.gripper.attached_obj_name == self.goal_object:
             is_success = True
         return is_success
+
+    # TODO
+    def check_terminal_state_bench_3(self):
+        pass
+    
+    # TODO
+    def check_terminal_state_bench_4(self):
+        pass

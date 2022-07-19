@@ -3,7 +3,7 @@ from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 from pytamp.benchmark import Benchmark3
 
-benchmark3 = Benchmark3(robot_name="doosan", geom="collision", is_pyplot=True)
+benchmark3 = Benchmark3(robot_name="panda", geom="collision", is_pyplot=True)
 pick = PickAction(benchmark3.scene_mngr, n_contacts=3, n_directions=5, retreat_distance=0.1)
 place = PlaceAction(benchmark3.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
 
@@ -21,6 +21,6 @@ for pick_obj in ["arch_box", "can", "rect_box", "half_cylinder_box", "square_box
                 place.scene_mngr.render.render_axis(ax, release_pose[place.move_data.MOVE_release])
                 place.scene_mngr.render.render_object(ax, place.scene_mngr.scene.objs[pick_obj], obj_pose)
             
-    place.scene_mngr.render_objects(ax, alpha=0.1)
+    place.scene_mngr.render_scene(ax, alpha=0.8)
     p_utils.plot_basis(ax)
     place.show()
