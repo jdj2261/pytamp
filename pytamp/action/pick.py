@@ -72,7 +72,7 @@ class PickAction(ActivityBase):
         ik_solve, grasp_poses_filtered = self.compute_ik_solve_for_robot(grasp_poses)
         return ik_solve, grasp_poses_filtered
  
-    def get_possible_joint_path_level_2(self, scene:Scene=None, grasp_poses:dict={}, init_thetas=None):
+    def get_possible_joint_path_level_3(self, scene:Scene=None, grasp_poses:dict={}, init_thetas=None):
         self.deepcopy_scene(scene)
         
         pick_obj = self.scene_mngr.scene.robot.gripper.attached_obj_name
@@ -162,14 +162,13 @@ class PickAction(ActivityBase):
             transform_bet_gripper_n_obj = m_utils.get_relative_transform(gripper_pose, next_scene.objs[pick_obj].h_mat)
             
             # Attach Object to gripper
-            next_scene.pick_obj_name = pick_obj
             next_scene.robot.gripper.attached_obj_name = pick_obj
             next_scene.robot.gripper.pick_obj_pose = deepcopy(next_scene.objs[pick_obj].h_mat)
             next_scene.robot.gripper.transform_bet_gripper_n_obj = transform_bet_gripper_n_obj
 
             # Move a gripper to default pose
             default_thetas = self.scene_mngr.scene.robot.init_qpos
-            default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)[self.scene_mngr.scene.robot.eef_name].h_mat
+            default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)["right_gripper"].h_mat
             next_scene.robot.gripper.set_gripper_pose(default_pose)
             
             # Move pick object to default pose
@@ -285,13 +284,13 @@ class PickAction(ActivityBase):
         len_y = abs(center_point[1] - copied_mesh.bounds[0][1])
         len_z = abs(center_point[2] - copied_mesh.bounds[0][2])
 
-        # weights = self._get_weights_for_held_obj(copied_mesh)
+        weights = self._get_weights_for_held_obj(copied_mesh)
 
         cnt = 0
         margin = 1
         surface_point_list = []
         while cnt < self.n_contacts:
-            surface_points, normals = self.get_surface_points_from_mesh(copied_mesh, 2)
+            surface_points, normals = self.get_surface_points_from_mesh(copied_mesh, 2, weights)
             is_success = False
             if self._is_force_closure(surface_points, normals, self.limit_angle):
                 
