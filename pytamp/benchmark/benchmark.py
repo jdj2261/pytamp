@@ -33,7 +33,7 @@ class Benchmark:
             
         if self.robot_name == "doosan":
             self.robot.setup_link_name("base_0", "right_hand")
-            
+        
     def _load_objects(self):
         pass
         

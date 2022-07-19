@@ -145,11 +145,13 @@ class SceneManager:
         self._scene.robot.gripper.is_attached = False
         # self._scene.robot.gripper.attached_obj_name = None
 
-    def set_logical_state(self, obj_name, state:tuple):
-        if isinstance(state[1], str):
-            self._scene.logical_states[obj_name] = {state[0] : self._scene.objs[state[1]]}
-        else:
-            self._scene.logical_states[obj_name] = {state[0] : state[1]}
+    def set_logical_state(self, obj_name, *states:tuple):
+        self._scene.logical_states[obj_name] = {}
+        for state in states:
+            if isinstance(state[1], str):
+                self._scene.logical_states[obj_name].update({state[0] : self._scene.objs[state[1]]})
+            else:
+                self._scene.logical_states[obj_name].update({state[0] : state[1]})
 
     def get_object_pose(self, name):
         if name not in self._scene.objs:

@@ -46,7 +46,7 @@ class MCTS:
         self.tree = self._create_tree(self.state)
         self.nodes = None
         
-        self.infeasible_reward = -3
+        self.infeasible_reward = -1000
         self.goal_reward = 3
         self.rewards_for_level_1 = []
         self.total_rewards = []

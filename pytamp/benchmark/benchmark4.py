@@ -16,6 +16,7 @@ class Benchmark4(Benchmark):
         self.benchmark_config = {4 : None}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
+        self.robot.init_qpos = np.array([ 0, 0, np.pi/1.5, 0, np.pi/3,  0])
         self._load_objects()
         self._load_scene()
 
@@ -53,21 +54,19 @@ class Benchmark4(Benchmark):
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
         self.scene_mngr.add_robot(self.robot)
 
-        self.scene_mngr.scene.logical_states["cylinder_1"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["table"]}
-        self.scene_mngr.scene.logical_states["cylinder_2"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["table"]}
-        self.scene_mngr.scene.logical_states["cylinder_3"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["table"]}
-        self.scene_mngr.scene.logical_states["cylinder_1"] = {self.scene_mngr.scene.logical_state.static : True}
-        self.scene_mngr.scene.logical_states["cylinder_2"] = {self.scene_mngr.scene.logical_state.static : True}
-        self.scene_mngr.scene.logical_states["cylinder_3"] = {self.scene_mngr.scene.logical_state.static : True}
+        self.scene_mngr.set_logical_state("cylinder_1", ("on", "table"), ("static", True)) 
+        self.scene_mngr.set_logical_state("cylinder_2", ("on", "table"), ("static", True)) 
+        self.scene_mngr.set_logical_state("cylinder_3", ("on", "table"), ("static", True)) 
+        
 
-        self.scene_mngr.scene.logical_states["hanoi_disk_0"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["table"]}
-        self.scene_mngr.scene.logical_states["hanoi_disk_1"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["hanoi_disk_0"]}
-        self.scene_mngr.scene.logical_states["hanoi_disk_2"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["hanoi_disk_1"]}
-        self.scene_mngr.scene.logical_states["hanoi_disk_3"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["hanoi_disk_2"]}
-        self.scene_mngr.scene.logical_states["hanoi_disk_4"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["hanoi_disk_3"]}
-        self.scene_mngr.scene.logical_states["hanoi_disk_5"] = {self.scene_mngr.scene.logical_state.on : self.scene_mngr.scene.objs["hanoi_disk_4"]}
+        self.scene_mngr.set_logical_state("hanoi_disk_0", ("on", "table"))
+        self.scene_mngr.set_logical_state("hanoi_disk_1", ("on", "hanoi_disk_0"))
+        self.scene_mngr.set_logical_state("hanoi_disk_2", ("on", "hanoi_disk_1"))
+        self.scene_mngr.set_logical_state("hanoi_disk_3", ("on", "hanoi_disk_2"))
+        self.scene_mngr.set_logical_state("hanoi_disk_4", ("on", "hanoi_disk_3"))
+        self.scene_mngr.set_logical_state("hanoi_disk_5", ("on", "hanoi_disk_4"))
 
-        self.scene_mngr.scene.logical_states["table"] = {self.scene_mngr.scene.logical_state.static : True}
-        self.scene_mngr.scene.logical_states[self.scene_mngr.gripper_name] = {self.scene_mngr.scene.logical_state.holding : None}
+        self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True), (self.scene_mngr.scene.logical_state.holding, None))
+        self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))
         self.scene_mngr.update_logical_states(is_init=True)
         self.scene_mngr.show_logical_states()

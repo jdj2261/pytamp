@@ -18,23 +18,24 @@ robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0
 """
 8, 16
 """
+clearbox_8_mesh = get_object_mesh(f'clearbox_8.stl', scale=[1.2, 1.2, 1.2])
 
 table_mesh = get_object_mesh('ben_table.stl')
 table_height = table_mesh.bounds[1][2] - table_mesh.bounds[0][2]
 table_pose = Transform(pos=np.array([1.0, -0.4, -0.03]))
-clearbox1_pose = Transform(pos=np.array([0.6, 0.25, table_height + 0.0607473]))
-clearbox2_pose = Transform(pos=np.array([0.6, -0.25, table_height + 0.0607473]))
+clearbox1_pose = Transform(pos=np.array([0.6, 0.25, table_height + abs(clearbox_8_mesh.bounds[0][2])]))
+clearbox2_pose = Transform(pos=np.array([0.6, -0.25, table_height + abs(clearbox_8_mesh.bounds[0][2])]))
 
 benchmark_config = {3 : None}
 scene_mngr = SceneManager("collision", is_pyplot=False, benchmark=benchmark_config)
 
 for i in range(20):
     clearbox_1_name = 'clearbox_1_' + str(i)
-    clearbox_1_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=0.9)
+    clearbox_1_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=1.2)
     scene_mngr.add_object(name=clearbox_1_name, gtype="mesh", h_mat=clearbox1_pose.h_mat, gparam=clearbox_1_mesh, color=[0.8 + i*0.01, 0.8 + i*0.01, 0.8 + i*0.01])
 
     clearbox_2_name = 'clearbox_2_' + str(i)
-    clearbox_2_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=0.9)
+    clearbox_2_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=1.2)
     scene_mngr.add_object(name=clearbox_2_name, gtype="mesh", h_mat=clearbox2_pose.h_mat, gparam=clearbox_2_mesh, color=[0.8 + i*0.01, 0.8 + i*0.01, 0.8 + i*0.01])
 
 scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.39, 0.263, 0.129])
