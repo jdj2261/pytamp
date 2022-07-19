@@ -28,12 +28,17 @@ half_cylinder_box_pose = Transform(np.array([0.7, -0.2, table_height + half_cyli
 square_box_pose = Transform(np.array([0.7, -0.1, table_height + square_box.bounds[1][2]]))
 box_mesh_pose = Transform(pos=np.array([0.8, -0.2, table_height + box_mesh.bounds[1][2]]))
 
-benchmark3.scene_mngr.add_object("arch_box", gtype="mesh", gparam=arch_box, h_mat=arch_box_pose.h_mat)
-benchmark3.scene_mngr.add_object("can", gtype="mesh", gparam=can, h_mat=can_pose.h_mat)
-benchmark3.scene_mngr.add_object("rect_box", gtype="mesh", gparam=rect_box, h_mat=rect_box_pose.h_mat)
-benchmark3.scene_mngr.add_object("half_cylinder_box", gtype="mesh", gparam=half_cylinder_box, h_mat=half_cylinder_box_pose.h_mat)
-benchmark3.scene_mngr.add_object("square_box", gtype="mesh", gparam=square_box, h_mat=square_box_pose.h_mat)
-benchmark3.scene_mngr.add_object("ben_cube", gtype="mesh", gparam=box_mesh, h_mat=box_mesh_pose.h_mat)
+
+#  error 
+#  ValueError: Duplicate name: object can already exists
+#  I commented out the 6 lines below.
+
+#benchmark3.scene_mngr.add_object("arch_box", gtype="mesh", gparam=arch_box, h_mat=arch_box_pose.h_mat)
+#benchmark3.scene_mngr.add_object("can", gtype="mesh", gparam=can, h_mat=can_pose.h_mat)
+#benchmark3.scene_mngr.add_object("rect_box", gtype="mesh", gparam=rect_box, h_mat=rect_box_pose.h_mat)
+#benchmark3.scene_mngr.add_object("half_cylinder_box", gtype="mesh", gparam=half_cylinder_box, h_mat=half_cylinder_box_pose.h_mat)
+#benchmark3.scene_mngr.add_object("square_box", gtype="mesh", gparam=square_box, h_mat=square_box_pose.h_mat)
+#benchmark3.scene_mngr.add_object("ben_cube", gtype="mesh", gparam=box_mesh, h_mat=box_mesh_pose.h_mat)
 
 fig, ax = p_utils.init_3d_figure(name="benchmark3 Test")
 benchmark3.scene_mngr.render_scene(ax, alpha=0.8)

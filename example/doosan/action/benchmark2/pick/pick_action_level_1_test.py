@@ -16,5 +16,5 @@ for pick_actions in actions:
         pick.scene_mngr.render.render_axis(ax, all_grasp_pose[pick.move_data.MOVE_post_grasp])
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax, pick.scene_mngr.scene.robot)
-ax.view_init(20, 150, 'z')
+ax.view_init(20, 150)
 pick.show()
