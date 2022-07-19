@@ -36,18 +36,22 @@ class PlaceAction(ActivityBase):
                 continue
 
             #? for benchmark 1
-            if "ceiling" in sup_obj:
-                continue
+            if self.scene_mngr.scene.bench_num == 1:
+                if "ceiling" in sup_obj:
+                    continue
 
             #? for benchmark 2
-            if "bin" in sup_obj or "bottle" in sup_obj:
-                continue
-        
-            if self.scene_mngr.scene.bench_num == 2 and sup_obj not in ["shelf_9"]:
-                continue
+            if self.scene_mngr.scene.bench_num == 2:
+                if sup_obj not in ["shelf_9"]:
+                    continue
+            
+            #? for benchmark 3
+            if self.scene_mngr.scene.bench_num == 3:
+                if sup_obj not in ["clearbox_1_8", "clearbox_1_16", "table"]:
+                    continue
             
             if sup_obj == self.scene_mngr.scene.place_obj_name:
-                if sup_obj not in ["table", "shelf_9", "shelf_15"]:
+                if sup_obj not in ["table", "shelf_9"]:
                     continue
 
             if not any(logical_state in self.scene_mngr.scene.logical_states[sup_obj] for logical_state in self.filter_logical_states):
@@ -171,6 +175,7 @@ class PlaceAction(ActivityBase):
             next_scene.objs[held_obj_name].h_mat = obj_pose_transformed
             self.scene_mngr.obj_collision_mngr.set_transform(held_obj_name, obj_pose_transformed)
             next_scene.pick_obj_name = held_obj_name
+            next_scene.place_obj_name = place_obj_name
             
             ## Change Logical State
             # Clear logical_state of held obj
@@ -383,10 +388,16 @@ class PlaceAction(ActivityBase):
 
     def get_transformed_eef_poses(self, support_obj_name, held_obj_name, eef_pose=None):
         bench_num = self.scene_mngr.scene.bench_num
+        alpha = 1
+        
         if bench_num == 1:
             alpha = 0.2
         elif bench_num == 2:
             alpha = 0.8
+        elif bench_num == 3:
+            alpha = 1
+        else:
+            alpha = 0.5
         
         held_obj_pose = deepcopy(self.scene_mngr.scene.objs[held_obj_name].h_mat)
         surface_points_for_sup_obj = list(self.get_surface_points_for_support_obj(support_obj_name, alpha=alpha))
@@ -405,17 +416,25 @@ class PlaceAction(ActivityBase):
                 copied_mesh.apply_transform(held_obj_pose_transformed)
                 center_point = copied_mesh.center_mass
 
-                if "table" in support_obj_name:
-                    if not (min_x - 0.2 <= center_point[0] <= min_x):
-                        continue
-                    if not (min_y - 0.1 <= center_point[1] <= max_y + 0.1):
-                        continue
-                elif "shelf_9" in support_obj_name:
-                    center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2
-                    if not (min_x + 0.05 <= center_point[0] <= max_x - 0.05):
-                        continue
-                    if not (min_y - 0.5 <= center_point[1] <= max_y - 0.5):
-                        continue
+                if bench_num == 1:
+                    if "table" in support_obj_name:
+                        if not (min_x - 0.2 <= center_point[0] <= min_x):
+                            continue
+                        if not (min_y - 0.1 <= center_point[1] <= max_y + 0.1):
+                            continue
+                if bench_num == 2:
+                    if "shelf_9" in support_obj_name:
+                        center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2
+                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.05):
+                            continue
+                        if not (min_y - 0.5 <= center_point[1] <= max_y - 0.5):
+                            continue
+                if bench_num == 3 :
+                    if "table" in support_obj_name:
+                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.5):
+                            continue
+                        if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
+                            continue
                 else:
                     if not (min_x <= center_point[0] <= max_x):
                         continue

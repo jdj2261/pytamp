@@ -162,6 +162,7 @@ class PickAction(ActivityBase):
             transform_bet_gripper_n_obj = m_utils.get_relative_transform(gripper_pose, next_scene.objs[pick_obj].h_mat)
             
             # Attach Object to gripper
+            next_scene.pick_obj_name = pick_obj
             next_scene.robot.gripper.attached_obj_name = pick_obj
             next_scene.robot.gripper.pick_obj_pose = deepcopy(next_scene.objs[pick_obj].h_mat)
             next_scene.robot.gripper.transform_bet_gripper_n_obj = transform_bet_gripper_n_obj
@@ -284,13 +285,13 @@ class PickAction(ActivityBase):
         len_y = abs(center_point[1] - copied_mesh.bounds[0][1])
         len_z = abs(center_point[2] - copied_mesh.bounds[0][2])
 
-        weights = self._get_weights_for_held_obj(copied_mesh)
+        # weights = self._get_weights_for_held_obj(copied_mesh)
 
         cnt = 0
         margin = 1
         surface_point_list = []
         while cnt < self.n_contacts:
-            surface_points, normals = self.get_surface_points_from_mesh(copied_mesh, 2, weights)
+            surface_points, normals = self.get_surface_points_from_mesh(copied_mesh, 2)
             is_success = False
             if self._is_force_closure(surface_points, normals, self.limit_angle):
                 
