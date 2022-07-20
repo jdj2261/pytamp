@@ -54,11 +54,12 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
     if bench_num == 4:
         if "hanoi_disk" in object_name:
             split_num = float(object_name.split('_')[-1])
+            disk_num = scene_mngr.scene.disk_num
             obj_pose = np.eye(4)
             obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
-            obj_pose[:3, 3] = object_mesh.center_mass
-            heuristic_pose = np.dot(obj_pose, t_utils.get_h_mat(position=np.array([0.060, 0, 0])))
-            for theta in np.linspace(np.pi, np.pi-np.pi/24, 1):
+            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, -0.005]
+            heuristic_pose = np.dot(obj_pose, t_utils.get_h_mat(position=np.array([0.05+0.01*int(disk_num - split_num), 0, 0])))
+            for theta in np.linspace(np.pi-np.pi/24, np.pi-np.pi/12, 1):
                 tcp_pose = np.eye(4)
                 tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
                 tcp_pose[:3,1] = [0, 1, 0]

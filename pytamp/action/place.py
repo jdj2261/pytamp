@@ -50,6 +50,11 @@ class PlaceAction(ActivityBase):
                 if sup_obj not in ["clearbox_1_8", "clearbox_1_16", "table"]:
                     continue
             
+            #? for benchmark 4
+            if self.scene_mngr.scene.bench_num == 4:
+                if sup_obj not in ["table"]:
+                    continue
+
             if sup_obj == self.scene_mngr.scene.place_obj_name:
                 if sup_obj not in ["table", "shelf_9"]:
                     continue
@@ -395,10 +400,6 @@ class PlaceAction(ActivityBase):
             alpha = 0.2
         elif bench_num == 2:
             alpha = 0.8
-        elif bench_num == 3:
-            alpha = 1
-        else:
-            alpha = 0.5
         
         held_obj_pose = deepcopy(self.scene_mngr.scene.objs[held_obj_name].h_mat)
         surface_points_for_sup_obj = list(self.get_surface_points_for_support_obj(support_obj_name, alpha=alpha))
@@ -430,17 +431,12 @@ class PlaceAction(ActivityBase):
                             continue
                         if not (min_y - 0.5 <= center_point[1] <= max_y - 0.5):
                             continue
-                if bench_num == 3 :
+                if bench_num == 3 or bench_num ==4 :
                     if "table" in support_obj_name:
                         if not (min_x + 0.05 <= center_point[0] <= max_x - 0.5):
                             continue
                         if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
                             continue
-                else:
-                    if not (min_x <= center_point[0] <= max_x):
-                        continue
-                    if not (min_y <= center_point[1] <= max_y):
-                        continue
                 
                 if eef_pose is not None:
                     T_obj_pose_and_obj_pose_transformed = np.dot(held_obj_pose, np.linalg.inv(held_obj_pose_rotated))

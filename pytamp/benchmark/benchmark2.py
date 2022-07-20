@@ -12,6 +12,7 @@ class Benchmark2(Benchmark):
         is_pyplot=True,
         bottle_num=6
     ):
+        assert bottle_num <= 6, f"The number of bottles must be 6 or less."
         self.bottle_num = bottle_num
         param = {'bottle_num' : self.bottle_num, 'goal_object' : 'goal_bottle'}
         self.benchmark_config = {2 : param}

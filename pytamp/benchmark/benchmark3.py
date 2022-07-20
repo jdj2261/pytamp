@@ -22,7 +22,6 @@ class Benchmark3(Benchmark):
 
     def _load_objects(self):
         self.table_mesh = get_object_mesh('ben_table.stl', [1.0, 1.5, 1.0])
-        print(self.table_mesh.bounds)
         self.table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
         self.table_pose = Transform(pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]]))
         

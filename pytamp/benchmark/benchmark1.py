@@ -12,6 +12,7 @@ class Benchmark1(Benchmark):
         geom="visual", 
         is_pyplot=True
     ):
+        assert box_num <= 6, f"The number of boxes must be 6 or less."
         self.box_num = box_num
         self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
         self.benchmark_config = {1 : self.param}

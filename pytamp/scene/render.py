@@ -30,7 +30,7 @@ class SceneRender(metaclass=ABCMeta):
 class RenderTriMesh(SceneRender):
 
     def __init__(self):
-        self.scene = trimesh.Scene()
+        self.trimesh_scene = trimesh.Scene()
     
     def render_scene(self, objs, robot, geom="collision"):
         self.render_objects(objs)
@@ -41,25 +41,25 @@ class RenderTriMesh(SceneRender):
         self.render_gripper(robot)
 
     def render_objects(self, objs):
-        self.scene = apply_objects_to_scene(trimesh_scene=self.scene, objs=objs)
+        self.trimesh_scene = apply_objects_to_scene(trimesh_scene=self.trimesh_scene, objs=objs)
 
     def render_robot(self, robot, geom):
-        self.scene = apply_robot_to_scene(trimesh_scene=self.scene, robot=robot, geom=geom)
+        self.trimesh_scene = apply_robot_to_scene(trimesh_scene=self.trimesh_scene, robot=robot, geom=geom)
         
     def render_gripper(self, robot):
-        self.scene = apply_gripper_to_scene(trimesh_scene=self.scene, robot=robot)
+        self.trimesh_scene = apply_gripper_to_scene(trimesh_scene=self.trimesh_scene, robot=robot)
 
     def render_point(self, ax=None, point=np.zeros(3), radius=0.001, color=[1.0, 0.0, 0.]):
         pose = np.eye(4)
         pose[:3, 3] = point
         sphere_mesh = trimesh.creation.icosphere(radius=radius)
         sphere_mesh.visual.face_colors = color
-        self.scene.add_geometry(sphere_mesh, transform=pose)
+        self.trimesh_scene.add_geometry(sphere_mesh, transform=pose)
 
     def show(self):
-        self.scene.set_camera(np.array([np.pi/2, 0, np.pi/2]), 5, resolution=(1024, 512))
-        self.scene.show('gl')
-        self.scene = None
+        self.trimesh_scene.set_camera(np.array([np.pi/2, 0, np.pi/2]), 5, resolution=(1024, 512))
+        self.trimesh_scene.show('gl')
+        self.trimesh_scene = None
 
 class RenderPyPlot(SceneRender):
 

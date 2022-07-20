@@ -167,15 +167,8 @@ class SceneManager:
             raise ValueError("Expecting the shape of the pose to be (4,4), instead got: "
                              "{}".format(pose.shape))
 
-        if "hanoi_disk" in name:
-            test = '_'.join(self._scene.objs[name].name.split('_')[:-1])
-            for j in range(7):
-                disk_name = test + "_" + str(j)
-                self._scene.objs[disk_name].h_mat = pose
-                self.obj_collision_mngr.set_transform(disk_name, pose)
-        else:
-            self._scene.objs[name].h_mat = pose
-            self.obj_collision_mngr.set_transform(name, pose)
+        self._scene.objs[name].h_mat = pose
+        self.obj_collision_mngr.set_transform(name, pose)
 
     def compute_ik(self, pose=np.eye(4), method="LM", max_iter=100):
         if self._scene.robot is None:
@@ -335,7 +328,8 @@ class SceneManager:
                 only_visible_geom=only_visible_geom,
                 visible_text=visible_text)
         else:
-            self.render = RenderTriMesh()
+            if not self.render.trimesh_scene:
+                self.render = RenderTriMesh()
             self.render.render_scene(objs=scene.objs, robot=scene.robot, geom=self.geom)
             
     def render_objects_and_gripper(
@@ -360,7 +354,8 @@ class SceneManager:
                 scene.robot, 
                 alpha, robot_color, visible_tcp=visible_tcp)
         else:
-            self.render = RenderTriMesh()
+            if not self.render.trimesh_scene:
+                self.render = RenderTriMesh()
             self.render.render_objects_and_gripper(objs=scene.objs, robot=scene.robot)
 
     def render_objects(self, ax=None, scene=None, alpha=1.0):
@@ -371,7 +366,8 @@ class SceneManager:
         if self.is_pyplot:
             self.render.render_objects(ax, scene.objs, alpha)
         else:
-            self.render = RenderTriMesh()
+            if not self.render.trimesh_scene:
+                self.render = RenderTriMesh()
             self.render.render_objects(objs=scene.objs)
 
     def render_robot(
@@ -394,7 +390,8 @@ class SceneManager:
             self.render.render_robot(
                 ax, scene.robot, alpha, robot_color, self.geom, only_visible_geom, visible_text)
         else:
-            self.render = RenderTriMesh()
+            if not self.render.trimesh_scene:
+                self.render = RenderTriMesh()
             self.render.render_robot(scene.robot, self.geom)
 
     def render_gripper(
@@ -424,7 +421,8 @@ class SceneManager:
                 pose=pose,
                 only_visible_axis=only_visible_axis)
         else:
-            self.render = RenderTriMesh()
+            if not self.render.trimesh_scene:
+                self.render = RenderTriMesh()
             self.render.render_gripper(scene.robot)
 
     def animation(
