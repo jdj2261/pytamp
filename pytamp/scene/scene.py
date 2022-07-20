@@ -127,7 +127,6 @@ class Scene:
 
     def check_terminal_state_bench_2(self):
         is_success = False
-        print(self.robot.gripper.attached_obj_name, self.goal_object)
         if self.robot.gripper.attached_obj_name == self.goal_object:
             is_success = True
         return is_success

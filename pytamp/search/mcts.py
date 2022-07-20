@@ -31,7 +31,7 @@ class MCTS:
         self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
 
         if self.scene_mngr.scene.bench_num == 2:
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=1, n_samples_support_obj=10)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
         else:
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
@@ -46,7 +46,7 @@ class MCTS:
         self.tree = self._create_tree(self.state)
         self.nodes = None
         
-        self.infeasible_reward = -1000
+        self.infeasible_reward = -3
         self.goal_reward = 3
         self.rewards_for_level_1 = []
         self.total_rewards = []

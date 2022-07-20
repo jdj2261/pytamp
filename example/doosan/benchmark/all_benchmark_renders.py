@@ -1,9 +1,12 @@
 from pytamp.benchmark import Benchmark, Benchmark1, Benchmark2, Benchmark3, Benchmark4
 from pykin.utils import plot_utils as p_utils
+from pykin.robots.single_arm import SingleArm
+from pykin.kinematics.transform import Transform
 
 benchmark = Benchmark(robot_name="doosan", geom="visual", is_pyplot=True)
 fig, ax = p_utils.init_3d_figure(name="Benchmark")
-benchmark.scene_mngr.add_robot(benchmark.robot)
+robot = SingleArm(benchmark.urdf_file, offset=Transform(pos=[0, 0, 0.913]))
+benchmark.scene_mngr.add_robot(robot)
 benchmark.scene_mngr.render_scene(ax)
 benchmark.scene_mngr.show()
 

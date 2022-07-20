@@ -24,16 +24,16 @@ algo = args.algo
 seed = args.seed
 # np.random.seed(seed)
 
-benchmark2 = Benchmark2(robot_name="doosan", geom="collision", is_pyplot=True, bottle_num=3)
+benchmark2 = Benchmark2(robot_name="doosan", geom="collision", is_pyplot=True, bottle_num=4)
 mcts = MCTS(benchmark2.scene_mngr)
-fig, ax = p_utils.init_3d_figure(name="Benchmark 3")
-mcts.scene_mngr.render_scene(ax)
-mcts.scene_mngr.show()
+# fig, ax = p_utils.init_3d_figure(name="Benchmark 2")
+# mcts.scene_mngr.render_scene(ax)
+# mcts.scene_mngr.show()
 
 mcts.debug_mode = False
 
 # 최대부터
-mcts.budgets = 300
+mcts.budgets = 100
 mcts.max_depth = 20
 mcts.c = 30
 # mcts.sampling_method = 'bai_ucb' # 405

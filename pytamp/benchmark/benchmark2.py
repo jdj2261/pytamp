@@ -1,5 +1,6 @@
 import numpy as np
 
+from pykin.robots.single_arm import SingleArm
 from pykin.kinematics.transform import Transform
 from pykin.utils.mesh_utils import get_object_mesh
 from pytamp.benchmark.benchmark import Benchmark
@@ -18,12 +19,21 @@ class Benchmark2(Benchmark):
         self.benchmark_config = {2 : param}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
-        if self.robot_name == "doosan":
-            self.robot.init_qpos = np.array([0, -np.pi/3, np.pi/1.5, 0, np.pi/3,  np.pi/2])
-        
+        self._load_robot()
         self._load_objects()
         self._load_scene()
 
+    def _load_robot(self):
+        self.robot = SingleArm(f_name=self.urdf_file, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0.3, 0, 0.913]), has_gripper=True, gripper_name=self.gripper_name)
+        
+        if self.robot_name == "panda":
+            self.robot.setup_link_name("panda_link_0", "right_hand")
+            self.robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
+            
+        if self.robot_name == "doosan":
+            self.robot.setup_link_name("base_0", "right_hand")
+            self.robot.init_qpos = np.array([0, -np.pi/3, np.pi/1.5, 0, np.pi/3, np.pi/2])
+        
     def _load_objects(self):
         self.shelf_pose = Transform(pos=np.array([0.9, 0, 1.41725156]),rot=np.array([0, 0, np.pi/2]))
         self.bin_pose = Transform(pos=np.array([0.0, 1.0, 0.3864222]))
