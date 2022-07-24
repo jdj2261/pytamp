@@ -126,7 +126,8 @@ class RRTStarPlanner(Planner):
                             self._scene_mngr.obj_collision_mngr.show_collision_info("Object")
 
                             # ![DEBUG]
-                            self._scene_mngr.render_debug(title="Collision Fail")
+                            if self._scene_mngr.is_debug_mode:
+                                self._scene_mngr.render_debug(title="Collision Fail")
                     else:
                         if limit_cnt > 1:
                             print(f"{sc.WARNING}Retry compute IK.. Pose error is {pose_error:6f}{sc.ENDC} ")
@@ -135,7 +136,8 @@ class RRTStarPlanner(Planner):
             if not success_check_limit:
                 self.tree = None
                 logger.error("Not found IK solution")
-                self._scene_mngr.render_debug(title="IK Fail")
+                if self._scene_mngr.is_debug_mode:
+                    self._scene_mngr.render_debug(title="IK Fail")
                 break
 
             self.goal_node = None
@@ -197,7 +199,8 @@ class RRTStarPlanner(Planner):
             if cnt > total_cnt:
                 logger.error(f"Failed Generate Path.. The number of retries of {cnt} exceeded")    
                 self.tree = None
-                self._scene_mngr.render_debug(title="Excess")
+                if self._scene_mngr.is_debug_mode:
+                    self._scene_mngr.render_debug(title="Excess")
                 break
             self._max_iter += 100
 

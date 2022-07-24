@@ -52,7 +52,7 @@ fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 for obj in ["red_box", "blue_box", "green_box"]:
     pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj))
     for i in range(len(pose)):
-        pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
+        pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
 
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)
@@ -64,9 +64,9 @@ for pick_actions in actions:
     for all_grasp_pose in pick_actions[pick.info.GRASP_POSES]:
         ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(grasp_poses=all_grasp_pose)
         if ik_solve is not None:
-            pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
-            pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
-            pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_post_grasp])
+            pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+            pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
+            pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_post_grasp])
             
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)

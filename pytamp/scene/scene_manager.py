@@ -17,11 +17,13 @@ class SceneManager:
         geom="collision", 
         is_pyplot=True, 
         scene:Scene=None,
-        benchmark:dict={1 : {'stack_num': 3, 'goal_object':'goal_box'}}
+        benchmark:dict={1 : {'stack_num': 3, 'goal_object':'goal_box'}},
+        debug_mode=True
     ):
         # Element for Scene
         self.geom = geom
         self._scene = scene
+        self.is_debug_mode = debug_mode
         self._heuristic = True
         if scene is None:
             self._scene = Scene(benchmark)
@@ -38,7 +40,7 @@ class SceneManager:
         self.gripper_collision_mngr = None
 
         # Render
-        self.is_pyplot = is_pyplot
+        self._is_pyplot = is_pyplot
         if is_pyplot:
             self.render = RenderPyPlot()
         else:
@@ -143,8 +145,7 @@ class SceneManager:
 
         self.is_attached = False
         self._scene.robot.gripper.is_attached = False
-        # self._scene.robot.gripper.attached_obj_name = None
-
+  
     def set_logical_state(self, obj_name, *states:tuple):
         self._scene.logical_states[obj_name] = {}
         for state in states:
@@ -292,13 +293,13 @@ class SceneManager:
         fig, ax = p_utils.init_3d_figure(name=title)
         self.render_scene(ax)
         if self.scene.grasp_poses:
-            self.render.render_axis(ax, self.scene.grasp_poses["grasp"])
-            self.render.render_axis(ax, self.scene.grasp_poses["pre_grasp"])
-            self.render.render_axis(ax, self.scene.grasp_poses["post_grasp"])
+            self.render_axis(ax, self.scene.grasp_poses["grasp"])
+            self.render_axis(ax, self.scene.grasp_poses["pre_grasp"])
+            self.render_axis(ax, self.scene.grasp_poses["post_grasp"])
         if self.scene.release_poses:
-            self.render.render_axis(ax, self.scene.release_poses["release"])
-            self.render.render_axis(ax, self.scene.release_poses["pre_release"])
-            self.render.render_axis(ax, self.scene.release_poses["post_release"])
+            self.render_axis(ax, self.scene.release_poses["release"])
+            self.render_axis(ax, self.scene.release_poses["pre_release"])
+            self.render_axis(ax, self.scene.release_poses["post_release"])
         self.show()
 
     def render_scene(
@@ -308,7 +309,8 @@ class SceneManager:
         alpha=0.9, 
         robot_color=None,
         only_visible_geom=True,
-        visible_text=False
+        visible_text=False,
+        geom=None
     ):
         scene = scene
         if scene is None:
@@ -317,6 +319,9 @@ class SceneManager:
         if scene.robot is None:
             raise ValueError("Robot needs to be added first")
 
+        if geom is None:
+            geom = self.geom
+
         if self.is_pyplot:
             self.render.render_scene(
                 ax, 
@@ -324,13 +329,13 @@ class SceneManager:
                 scene.robot, 
                 alpha, 
                 robot_color, 
-                geom=self.geom, 
+                geom=geom,
                 only_visible_geom=only_visible_geom,
                 visible_text=visible_text)
         else:
             if not self.render.trimesh_scene:
                 self.render = RenderTriMesh()
-            self.render.render_scene(objs=scene.objs, robot=scene.robot, geom=self.geom)
+            self.render.render_scene(objs=scene.objs, robot=scene.robot, geom=geom)
             
     def render_objects_and_gripper(
         self, 
@@ -424,6 +429,19 @@ class SceneManager:
             if not self.render.trimesh_scene:
                 self.render = RenderTriMesh()
             self.render.render_gripper(scene.robot)
+
+    def render_axis(
+        self,
+        ax,
+        pose,
+        scale=0.05
+    ):
+        if self.is_pyplot:
+            self.render.render_axis(ax, pose, axis=[1,1,1], scale=scale)
+        else:
+            if not self.render.trimesh_scene:
+                self.render = RenderTriMesh()
+            self.render.render_axis(pose, scale)
 
     def animation(
         self,
@@ -550,3 +568,15 @@ class SceneManager:
     @heuristic.setter
     def heuristic(self, heuristic):
         self._heuristic = heuristic
+
+    @property
+    def is_pyplot(self):
+        return self._is_pyplot
+
+    @is_pyplot.setter
+    def is_pyplot(self, is_pyplot):
+        self._is_pyplot = is_pyplot
+        if is_pyplot:
+            self.render = RenderPyPlot()
+        else:
+            self.render = RenderTriMesh()

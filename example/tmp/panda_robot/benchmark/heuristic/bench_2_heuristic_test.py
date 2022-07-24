@@ -30,7 +30,7 @@ goal_box_mesh = get_object_mesh('goal_box.stl', 0.001)
 table_mesh = get_object_mesh('custom_table.stl', 0.01)
 
 benchmark_config = {2 : None}
-scene_mngr = SceneManager("visual", is_pyplot=True, benchmark=benchmark_config)
+scene_mngr = SceneManager("visual", is_pyplot=False, benchmark=benchmark_config)
 scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.39, 0.263, 0.129])
 scene_mngr.add_object(name="bottle1", gtype="mesh", gparam=bottle_meshes[0], h_mat=bottle_pose1.h_mat, color=[1.0, 0.0, 0.0])
 scene_mngr.add_object(name="bottle2", gtype="mesh", gparam=bottle_meshes[1], h_mat=bottle_pose2.h_mat, color=[0.0, 0.0, 1.0])
@@ -54,7 +54,7 @@ fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 for obj in ["bottle1", "bottle2", "bottle3"]:
     pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj))
     for i in range(len(pose)):
-        pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
+        pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
 
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)

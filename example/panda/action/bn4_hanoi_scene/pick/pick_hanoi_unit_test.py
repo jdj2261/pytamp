@@ -87,7 +87,7 @@ fig, ax = p_utils.init_3d_figure(name="Get Grasp Pose")
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)
 for grasp_pose in grasp_poses:
-    pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+    pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
     
 # ###### Level wise - 1 #######
 fig, ax = p_utils.init_3d_figure(name="Level wise 1")
@@ -95,9 +95,9 @@ pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)
 grasp_poses_for_only_gripper = list(pick.get_all_grasp_poses_not_collision(grasp_poses))
 for grasp_pose_for_only_gripper in grasp_poses_for_only_gripper:
-    pick.scene_mngr.render.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
-    pick.scene_mngr.render.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp])
-    pick.scene_mngr.render.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp])
+    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
+    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp])
+    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp])
     pick.scene_mngr.render_gripper(ax, alpha=0.7, pose=grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
 
 ####### Level wise - 2 #######
@@ -107,6 +107,6 @@ p_utils.plot_basis(ax)
 for grasp_pose_for_only_gripper in grasp_poses_for_only_gripper:
     thetas, grasp_pose = pick.compute_ik_solve_for_robot(grasp_pose=grasp_pose_for_only_gripper)
     if grasp_pose:
-        pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+        pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
 
 pick.show()

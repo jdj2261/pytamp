@@ -155,7 +155,8 @@ class CartesianPlanner(Planner):
                 joint_path = []
 
                 # ![DEBUG]
-                self._scene_mngr.render_debug(title="Failed Cartesian Path")
+                if self._scene_mngr.is_debug_mode:
+                    self._scene_mngr.render_debug()
                 break
             
             if err < self._goal_tolerance:

@@ -49,6 +49,14 @@ class RenderTriMesh(SceneRender):
     def render_gripper(self, robot):
         self.trimesh_scene = apply_gripper_to_scene(trimesh_scene=self.trimesh_scene, robot=robot)
 
+    def render_axis(
+        self,
+        pose,
+        scale=0.05
+    ):
+        axis = trimesh.creation.axis(origin_size=0.01, transform=pose)
+        self.trimesh_scene.add_geometry(axis)
+
     def render_point(self, ax=None, point=np.zeros(3), radius=0.001, color=[1.0, 0.0, 0.]):
         pose = np.eye(4)
         pose[:3, 3] = point

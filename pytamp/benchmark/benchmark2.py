@@ -5,6 +5,13 @@ from pykin.kinematics.transform import Transform
 from pykin.utils.mesh_utils import get_object_mesh
 from pytamp.benchmark.benchmark import Benchmark
 
+"""
+shelf mesh num
+13, 8, 0
+15,  9
+17, 16, 2
+"""
+
 class Benchmark2(Benchmark):
     def __init__(
         self, 

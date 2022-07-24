@@ -30,9 +30,13 @@ class PickAction(ActivityBase):
         for obj_name in self.scene_mngr.scene.objs:
             if obj_name == self.scene_mngr.scene.pick_obj_name:
                 continue
+            
+            if self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on):
+                placed_obj_name = self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on).name
+                if placed_obj_name in ["shelf_8", "shelf_15"]:
+                    continue
 
             if not any(logical_state in self.scene_mngr.scene.logical_states[obj_name] for logical_state in self.filter_logical_states):
-                # print(f"pick : {obj_name}")
                 action_level_1 = self.get_action_level_1_for_single_object(obj_name=obj_name)
                 if not action_level_1[self.info.GRASP_POSES]:
                     continue

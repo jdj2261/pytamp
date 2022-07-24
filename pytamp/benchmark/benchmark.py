@@ -20,7 +20,7 @@ class Benchmark:
             self.gripper_name = "robotiq140"
         self.urdf_file = 'urdf/' + self.robot_name + '/' + urdf_file_name + '.urdf'
 
-        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=benchmark_config)
+        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=benchmark_config, debug_mode=True)
     
     def _load_robot(self):
         pass

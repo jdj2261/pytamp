@@ -42,7 +42,7 @@ class PlaceAction(ActivityBase):
 
             #? for benchmark 2
             if self.scene_mngr.scene.bench_num == 2:
-                if sup_obj not in ["shelf_8", "shelf_9", "shelf_15"]:
+                if sup_obj not in ["shelf_9", "shelf_8"]:
                     continue
             
             #? for benchmark 3
@@ -429,7 +429,7 @@ class PlaceAction(ActivityBase):
                     if "shelf_8" in support_obj_name:
                         if not (min_x + 0.05 <= center_point[0] <= max_x - 0.1):
                             continue
-                        if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
+                        if not (min_y + 0.1 <= center_point[1] <= max_y - 0.05):
                             continue
                     if "shelf_9" in support_obj_name:
                         if not (min_x + 0.05 <= center_point[0] <= max_x - 0.05):

@@ -36,7 +36,8 @@ disk_num = 6
 disk_pose = [ Transform() for _ in range(disk_num)]
 disk_object = [ 0 for _ in range(disk_num)]
 
-benchmark_config = {4 : None}
+param = {"disk_num" : disk_num}
+benchmark_config = {4 : param}
 scene_mngr = SceneManager("collision", is_pyplot=True, benchmark=benchmark_config)
 
 theta = np.linspace(-np.pi, np.pi, disk_num)
@@ -58,6 +59,6 @@ p_utils.plot_basis(ax)
 for obj in ["hanoi_disk_0", "hanoi_disk_1", "hanoi_disk_2", "hanoi_disk_3", "hanoi_disk_4", "hanoi_disk_5"]:
     pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj))
     for i in range(len(pose)):
-        pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
+        pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
 
 pick.show()

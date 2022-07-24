@@ -21,7 +21,7 @@ scene_mngr.add_object(name="tray_red", gtype="mesh", gparam=tray_red_mesh, h_mat
 scene_mngr.add_object(name="tray_blue", gtype="mesh", gparam=tray_blue_mesh, h_mat=tray_blue_pose.h_mat, color=[0, 0, 1.0])
 
 place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=100)
-surface_points_for_support_obj = list(place_action.get_surface_points_for_support_obj("tray_red"))
+surface_points_for_support_obj = list(place_action.get_surface_points_for_support_obj("tray_red", alpha=1))
 fig, ax = p_utils.init_3d_figure(figsize=(10,6), dpi=120, name="Sampling Object")
 p_utils.plot_basis(ax)
 place_action.scene_mngr.render_objects(ax, alpha=0.1)
@@ -30,6 +30,6 @@ for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_ob
         continue
     if not (min_y <= point[1] <= max_y):
         continue
-    place_action.scene_mngr.render.render_point(ax, point)
+    place_action.scene_mngr.render.render_point(ax, point, color=[0., 1.0, 0.], radius=0.005)
 
 place_action.show()

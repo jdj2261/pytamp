@@ -54,8 +54,9 @@ class ActivityBase(metaclass=ABCMeta):
         self.info = ActionInfo
         self.move_data = MoveData
 
-        self.cartesian_planner = CartesianPlanner(dimension=self.scene_mngr.scene.robot.arm_dof)
-        self.rrt_planner = RRTStarPlanner(delta_distance=0.05, epsilon=0.2, gamma_RRT_star=2, dimension=self.scene_mngr.scene.robot.arm_dof)
+        if self.scene_mngr.scene.robot is not None:
+            self.cartesian_planner = CartesianPlanner(dimension=self.scene_mngr.scene.robot.arm_dof)
+            self.rrt_planner = RRTStarPlanner(delta_distance=0.05, epsilon=0.2, gamma_RRT_star=2, dimension=self.scene_mngr.scene.robot.arm_dof)
 
     def __repr__(self) -> str:
         return 'pytamp.action.activity.{}()'.format(type(self).__name__)
@@ -119,8 +120,9 @@ class ActivityBase(metaclass=ABCMeta):
         place_all_object_poses,
         visible_path=False,
         fig=None,
-        ax=None
+        ax=None,
     ):
+        self.scene_mngr.is_pyplot = True
         eef_poses = None
         for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(pnp_all_joint_path, pick_all_objects, place_all_object_poses):
             result_joint = []

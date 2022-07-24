@@ -11,9 +11,9 @@ fig, ax = p_utils.init_3d_figure(name="Heuristic")
 for obj in benchmark1.scene_mngr.scene.goal_objects:
     pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj))
     for i in range(len(pose)):
-        pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
+        pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
         pick.scene_mngr.set_gripper_pose(pose[i][pick.move_data.MOVE_grasp])
-        pick.scene_mngr.render.render_axis(ax, pose=pick.scene_mngr.scene.robot.gripper.info["tcp"][3])
+        pick.scene_mngr.render_axis(ax, pose=pick.scene_mngr.scene.robot.gripper.info["tcp"][3])
         pick.scene_mngr.render_gripper(ax)
 
 pick.scene_mngr.render_objects(ax)

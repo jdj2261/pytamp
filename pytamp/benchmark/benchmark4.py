@@ -65,7 +65,7 @@ class Benchmark4(Benchmark):
     
         # theta = np.linspace(-np.pi, np.pi, disk_num)
         for i in range(self.disk_num):
-            disk_pos = np.array([0.69, 0., self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])
+            disk_pos = np.array([0.69, 0.2, self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])
             self.disk_pose[i] = Transform(pos=self.disk_mesh.center_mass + disk_pos)
             disk_name = "hanoi_disk_" + str(i)
             print(disk_name)

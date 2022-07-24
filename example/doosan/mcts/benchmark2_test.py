@@ -7,7 +7,7 @@ from pytamp.benchmark import Benchmark2
 from pytamp.search.mcts import MCTS
 
 
-#? python3 bench_1_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
+# #? python3 bench_1_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 1.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
@@ -22,20 +22,16 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-# np.random.seed(seed)
+np.random.seed(seed)
 
-benchmark2 = Benchmark2(robot_name="doosan", geom="collision", is_pyplot=True, bottle_num=4)
+benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=3)
 mcts = MCTS(benchmark2.scene_mngr)
-# fig, ax = p_utils.init_3d_figure(name="Benchmark 2")
-# mcts.scene_mngr.render_scene(ax)
-# mcts.scene_mngr.show()
 
 mcts.debug_mode = False
-
-# 최대부터
 mcts.budgets = 100
 mcts.max_depth = 20
-mcts.c = 30
+mcts.c = 300
+
 # mcts.sampling_method = 'bai_ucb' # 405
 mcts.sampling_method = 'bai_perturb' # 58
 # mcts.sampling_method = 'uct' # 369
@@ -43,22 +39,23 @@ mcts.sampling_method = 'bai_perturb' # 58
 for i in range(mcts.budgets):
     mcts.do_planning(i)
 
-subtree = mcts.get_success_subtree()
+subtree = mcts.get_success_subtree(optimizer_level=1)
 mcts.visualize_tree("MCTS", subtree)
-
 best_nodes = mcts.get_best_node(subtree)
-if best_nodes:
-    print("\nBest Action Node")
-    for node in best_nodes:
-        mcts.show_logical_action(node)
 
 rewards = mcts.rewards_for_level_1
 max_iter = np.argmax(rewards)
+
 print(max_iter)
-plt.plot(rewards)
+plt.plot(rewards, label="Sum of Reward")
+plt.xticks(fontsize=10)
+plt.yticks(fontsize=10)
+plt.xlabel("Number of simulations",fontsize=12)
+plt.ylabel("Max Value",fontsize=12)
+plt.legend(prop={'size' : 12})
+plt.show()
 plt.show()
 
 # Do planning
-best_nodes = mcts.get_best_node(subtree)
-pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
-mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+# pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
+# mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

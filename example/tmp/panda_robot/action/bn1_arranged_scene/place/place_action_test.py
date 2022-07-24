@@ -69,9 +69,9 @@ for eef_pose in eef_poses:
     release_poses = list(place.get_all_release_poses("goal_box", "green_box", eef_pose[pick.move_data.MOVE_grasp]))
     for release_pose, obj_pose in release_poses:
         all_release_poses.append((release_pose, obj_pose))
-        pick.scene_mngr.render.render_axis(ax, release_pose[place.move_data.MOVE_release])
-        # pick.scene_mngr.render.render_axis(ax, release_pose[place.move_data.MOVE_pre_release])
-        # pick.scene_mngr.render.render_axis(ax, release_pose[place.move_data.MOVE_post_release])
+        pick.scene_mngr.render_axis(ax, release_pose[place.move_data.MOVE_release])
+        # pick.scene_mngr.render_axis(ax, release_pose[place.move_data.MOVE_pre_release])
+        # pick.scene_mngr.render_axis(ax, release_pose[place.move_data.MOVE_post_release])
         place.scene_mngr.render.render_object(ax, place.scene_mngr.scene.objs["green_box"], obj_pose)
 p_utils.plot_basis(ax)
 place.scene_mngr.render_objects(ax)

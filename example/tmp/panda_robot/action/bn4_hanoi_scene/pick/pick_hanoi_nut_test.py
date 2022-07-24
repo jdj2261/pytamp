@@ -80,13 +80,13 @@ scene_mngr.show()
 # # pose = list(pick.get_grasp_pose_from_heuristic(obj_name="hanoi_disk_2_6"))
 
 # # for i in range(len(pose)):
-# #     pick.scene_mngr.render.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
+# #     pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
 
 # actions = pick.get_action_level_1_for_single_object(obj_name="hanoi_disk_2_6")
 
 # for grasp_pose in actions[pick.info.GRASP_POSES]:
-#     # pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
-#     pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+#     # pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
+#     pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
     
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_pre_grasp])
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_grasp])
@@ -103,16 +103,16 @@ scene_mngr.show()
 # # p_utils.plot_basis(ax)
 
 # # pose = pick.get_grasp_pose_from_heuristic(obj_name="hanoi_disk_2_6")
-# # pick.scene_mngr.render.render_axis(ax, pose[pick.move_data.MOVE_grasp])
+# # pick.scene_mngr.render_axis(ax, pose[pick.move_data.MOVE_grasp])
 # # pick.scene_mngr.render_gripper(ax, pose=pose[pick.move_data.MOVE_grasp])
 # # print(pose)
 
 # # # grasp_poses = list(pick.get_all_grasp_poses("hanoi_disk_2_6"))
 # # # fig, ax = p_utils.init_3d_figure(name="Get Grasp Pose")
 # # # for grasp_pose in grasp_poses:
-# # #     # pick.scene_mngr.render.render_axis(ax, grasp_pose["pre_grasp_pose"])
-# # #     pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
-# # #     # pick.scene_mngr.render.render_axis(ax, grasp_pose["post_grasp_pose"])
+# # #     # pick.scene_mngr.render_axis(ax, grasp_pose["pre_grasp_pose"])
+# # #     pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+# # #     # pick.scene_mngr.render_axis(ax, grasp_pose["post_grasp_pose"])
 # # # pick.scene_mngr.render_objects(ax)
 # # # p_utils.plot_basis(ax)
 # # pick.show()
@@ -120,9 +120,9 @@ scene_mngr.show()
 # # fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 # # grasp_poses_for_only_gripper = list(pick.get_all_grasp_poses_not_collision(grasp_poses))
 # # for grasp_pose_for_only_gripper in grasp_poses_for_only_gripper:
-# #     pick.scene_mngr.render.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
-# #     pick.scene_mngr.render.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp])
-# #     pick.scene_mngr.render.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp])
+# #     pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
+# #     pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp])
+# #     pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp])
 # #     # pick.scene_mngr.render_gripper(ax, alpha=0.7, pose=grasp_pose_for_only_gripper[pick.move_data.PRE_GRASP])
 # # pick.scene_mngr.render_objects(ax)
 # # p_utils.plot_basis(ax)
@@ -130,8 +130,8 @@ scene_mngr.show()
 # # actions = pick.get_action_level_1_for_single_object(obj_name="hanoi_disk_2_6")
 # # fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 # # for grasp_pose in actions[pick.info.GRASP_POSES]:
-# #     # pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
-# #     pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+# #     # pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
+# #     pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
     
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_pre_grasp])
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_grasp])
@@ -145,9 +145,9 @@ scene_mngr.show()
 # # fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 # # for pick_actions in actions:
 # #     for all_grasp_pose in pick_actions[pick.info.GRASP_POSES]:
-# #         pick.scene_mngr.render.render_axis(ax, all_grasp_pose[pick.move_data.MOVE_grasp])
-# #         pick.scene_mngr.render.render_axis(ax, all_grasp_pose[pick.move_data.MOVE_pre_grasp])
-# #         pick.scene_mngr.render.render_axis(ax, all_grasp_pose[pick.move_data.MOVE_post_grasp])
+# #         pick.scene_mngr.render_axis(ax, all_grasp_pose[pick.move_data.MOVE_grasp])
+# #         pick.scene_mngr.render_axis(ax, all_grasp_pose[pick.move_data.MOVE_pre_grasp])
+# #         pick.scene_mngr.render_axis(ax, all_grasp_pose[pick.move_data.MOVE_post_grasp])
 # #         pick.scene_mngr.render_gripper(ax, pose=all_grasp_pose[pick.move_data.MOVE_grasp])
 # # pick.scene_mngr.render_objects(ax)
 # # p_utils.plot_basis(ax)
@@ -158,9 +158,9 @@ scene_mngr.show()
 # #     for all_grasp_pose in pick_actions[pick.info.GRASP_POSES]:
 # #         ik_solve, grasp_pose = pick.get_possible_ik_solve_level_2(grasp_poses=all_grasp_pose)
 # #         if ik_solve is not None:
-# #             pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
-# #             pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
-# #             pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_post_grasp])
+# #             pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+# #             pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
+# #             pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_post_grasp])
             
 # # pick.scene_mngr.render_objects(ax)
 # # p_utils.plot_basis(ax)

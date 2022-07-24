@@ -12,7 +12,7 @@ fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.init_scene, "goal_bottle")
 
 for grasp_pose in pick_action[pick.info.GRASP_POSES]:
-    pick.scene_mngr.render.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
+    pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
 
 for pick_scene in pick.get_possible_transitions(pick.scene_mngr.init_scene, pick_action):
     place_action = place.get_action_level_1_for_single_object("shelf_9", "goal_bottle", pick_scene.robot.gripper.grasp_pose, scene=pick_scene)
