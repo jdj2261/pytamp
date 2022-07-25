@@ -58,7 +58,7 @@ class MCTS:
         self.level_wise_1_success = False
         self.infeasible_sub_nodes = []
         self.optimal_nodes = []
-        
+
     def _create_tree(self, state:Scene):
         tree = nx.DiGraph()
         tree.add_node(0)
@@ -381,6 +381,7 @@ class MCTS:
         
         init_thetas = []
         success_pick = False
+        place_scene = None
         
         for sub_optimal_node in sub_optimal_nodes:
             node_type = "action" if self.tree.nodes[sub_optimal_node]['type'] == self.node_data.ACTION else "state"
@@ -388,7 +389,6 @@ class MCTS:
                 continue
             success_place = False
             action = self.tree.nodes[sub_optimal_node].get(self.node_data.ACTION)
-
             if action:
                 if list(action.keys())[0] == 'grasp':
                     pick_scene:Scene = self.tree.nodes[sub_optimal_node]['state']
@@ -400,7 +400,6 @@ class MCTS:
                     pick_joint_path = self.pick_action.get_possible_joint_path_level_2(scene=pick_scene, 
                                                                                        grasp_poses=pick_scene.grasp_poses,
                                                                                        init_thetas=init_theta)
-
                     if pick_joint_path:
                         success_pick = True                    
                         init_theta = pick_joint_path[-1][self.pick_action.move_data.MOVE_default_grasp][-1]
@@ -450,9 +449,12 @@ class MCTS:
                         success_pick = False
                         break
 
-        if self.scene_mngr.scene.bench_num == 2:    
+        if self.scene_mngr.scene.bench_num == 2:      
             if success_pick:
-                pass
+                print(f"{sc.COLOR_YELLOW}move {pick_scene.pick_obj_name} to bin{sc.ENDC}")
+                if not self.scene_mngr.scene.has_already_final_path:
+                    self.scene_mngr.scene.ben_2_final_path = self.place_action.get_rrt_star_path(self.scene_mngr.scene.robot.init_qpos, goal_q=self.scene_mngr.scene.goal_q)
+                    self.scene_mngr.scene.has_already_final_path = True
             else:
                 self.infeasible_sub_nodes.append(sub_optimal_nodes)
                 print(self.infeasible_sub_nodes)
@@ -521,18 +523,12 @@ class MCTS:
                 if node_type == self.node_data.ACTION:
                     sate_nodes = [child for child in self.tree.neighbors(sub_optimal_node)]
                     if not sate_nodes:
-                        print("not state nodes")
                         break
                     max_state_node_idx = np.argmax([self.tree.nodes[sate_node][self.node_data.VALUE] for sate_node in sate_nodes])
                     max_state_node = sate_nodes[max_state_node_idx]
                     if self.tree.nodes[max_state_node][self.node_data.SUCCESS]:
                         max_state_value = self.tree.nodes[max_state_node][self.node_data.VALUE]
-                        print("{} {:.2f} {:.2f}".format(
-                            self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.SUCCESS],
-                            self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE],
-                             max_state_value))
                         if self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE] >= max_state_value:
-                            # value_sum += self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE]
                             value_sum += self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.COST]
                         else:
                             value_sum = 0
@@ -540,20 +536,12 @@ class MCTS:
                 if node_type == self.node_data.STATE:
                     action_nodes = [child for child in self.tree.neighbors(sub_optimal_node)]
                     if not action_nodes:
-                        print("not action nodes")
                         break
                     max_action_node_idx = np.argmax([self.tree.nodes[action_node][self.node_data.VALUE] for action_node in action_nodes])
                     max_action_node = action_nodes[max_action_node_idx]
                     if self.tree.nodes[max_action_node][self.node_data.SUCCESS]:
                         max_action_value = self.tree.nodes[max_action_node][self.node_data.VALUE]
-                        print("{} {:.2f} {:.2f}".format(
-                            self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.SUCCESS],
-                            self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE],
-                             max_action_value))
-                        if self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE] >= max_action_value:
-                            pass
-                            # value_sum += self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE]
-                        else:
+                        if self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE] < max_action_value:
                             value_sum = 0
                             break
 
@@ -565,6 +553,42 @@ class MCTS:
                 self.optimal_nodes = sub_optimal_nodes
                 self.level2_max_value = np.round(value_sum, 6)
             return self.level2_max_value
+
+    def get_all_joint_path(self, nodes):
+        pnp_all_joint_path = []
+        place_all_object_poses = []
+        pick_all_objects = []
+
+        pnp_path = []
+        pick_objects = []
+        place_object_poses = []
+
+        pick_joint_path = []
+        for node in nodes:
+            node_type = "action" if self.tree.nodes[node]['type'] == self.node_data.ACTION else "state"
+            if node_type == self.node_data.ACTION:
+                continue
+            action = self.tree.nodes[node].get(self.node_data.ACTION)
+            if action:
+                if list(action.keys())[0] == 'grasp':
+                    pick_joint_path = self.tree.nodes[node][self.node_data.JOINTS]
+                else:
+                    place_joint_path = self.tree.nodes[node][self.node_data.JOINTS]
+                    pnp_path += pick_joint_path + place_joint_path
+                    pick_object, place_obj_pose = self.tree.nodes[node][NodeData.TEST]
+                    pick_objects.append(pick_object)
+                    place_object_poses.append(place_obj_pose)
+        
+        if self.scene_mngr.scene.bench_num == 2:
+            pnp_path += pick_joint_path
+            pnp_path[-1][self.pick_action.move_data.MOVE_default_grasp] += self.scene_mngr.scene.ben_2_final_path
+            pick_objects.append(self.scene_mngr.scene.goal_object)
+            
+        pnp_all_joint_path.append(pnp_path)
+        pick_all_objects.append(pick_objects)
+        place_all_object_poses.append(place_object_poses)
+
+        return pnp_all_joint_path, pick_all_objects, place_all_object_poses
 
     def show_logical_action(self, node):
         logical_action = self.tree.nodes[node][NodeData.ACTION]
@@ -658,123 +682,6 @@ class MCTS:
         self.pick_action.scene_mngr.render_objects(ax, scene)
         p_utils.plot_basis(ax)
         self.pick_action.show()
-
-    def get_all_joint_path(self, nodes):
-        pnp_all_joint_path = []
-        place_all_object_poses = []
-        pick_all_objects = []
-
-        pnp_path = []
-        pick_objects = []
-        place_object_poses = []
-
-        for node in nodes:
-            node_type = "action" if self.tree.nodes[node]['type'] == self.node_data.ACTION else "state"
-            if node_type == self.node_data.ACTION:
-                continue
-            action = self.tree.nodes[node].get(self.node_data.ACTION)
-            if action:
-                if list(action.keys())[0] == 'grasp':
-                    pick_joint_path = self.tree.nodes[node][self.node_data.JOINTS]
-                else:
-                    place_joint_path = self.tree.nodes[node][self.node_data.JOINTS]
-                    pnp_path += pick_joint_path + place_joint_path
-                    pick_object, place_obj_pose = self.tree.nodes[node][NodeData.TEST]
-                    pick_objects.append(pick_object)
-                    place_object_poses.append(place_obj_pose)
-        
-        pnp_all_joint_path.append(pnp_path)
-        pick_all_objects.append(pick_objects)
-        place_all_object_poses.append(place_object_poses)
-
-        return pnp_all_joint_path, pick_all_objects, place_all_object_poses
-
-    # def get_all_joint_path(self, nodes):
-    #     pnp_all_joint_path = []
-    #     place_all_object_poses = []
-    #     pick_all_objects = []
-
-    #     print(nodes)
-    #     if not nodes:
-    #         print("Not found any nodes..")
-    #         return pnp_all_joint_path, place_all_object_poses, pick_all_objects
-
-    #     for node in nodes:
-    #         self.show_logical_action(node)
-
-    #     init_theta = None
-    #     success_pick = False
-    #     pnp_path = []
-    #     pick_objects = []
-    #     place_object_poses = []
-
-    #     for node in nodes:
-    #         if self.tree.nodes[node]['type'] == self.node_data.ACTION:
-    #             continue
-    #         success_place = False
-    #         action = self.tree.nodes[node].get(self.node_data.ACTION)
-    #         if action:
-    #             if list(action.keys())[0] == 'grasp':
-    #                 pick_scene:Scene = self.tree.nodes[node]['state']
-    #                 print(f"{sc.COLOR_YELLOW}pick {pick_scene.pick_obj_name}{sc.ENDC}")
-    #                 if init_theta is None:
-    #                     init_theta = self.pick_action.scene_mngr.scene.robot.init_qpos
-    #                 pick_joint_path = self.pick_action.get_possible_joint_path_level_2(
-    #                     scene=pick_scene, 
-    #                     grasp_poses=pick_scene.grasp_poses,
-    #                     init_thetas=init_theta)
-    #                 if pick_joint_path:
-    #                     init_theta = pick_joint_path[-1][self.pick_action.move_data.MOVE_default_grasp][-1]
-    #                     success_pick = True
-    #                 else:
-    #                     print("Pick joint Fail")
-    #                     success_pick = False
-    #                     break
-    #             else:
-    #                 place_scene:Scene = self.tree.nodes[node]['state']
-    #                 print(f"{sc.COLOR_YELLOW}place {place_scene.pick_obj_name} on {place_scene.place_obj_name}{sc.ENDC}")
-    #                 place_joint_path = self.place_action.get_possible_joint_path_level_2(
-    #                     scene=place_scene, 
-    #                     release_poses=place_scene.release_poses, 
-    #                     init_thetas=init_theta)
-    #                 if place_joint_path:
-    #                     success_place = True
-    #                     init_theta = place_joint_path[-1][self.place_action.move_data.MOVE_default_release][-1]
-    #                     if success_pick and success_place:
-    #                         print("Success pnp")
-    #                         pnp_path += pick_joint_path + place_joint_path
-    #                         pick_objects.append(pick_scene.robot.gripper.attached_obj_name)
-    #                         place_object_poses.append(place_scene.objs[place_scene.pick_obj_name].h_mat)
-    #                     else:
-    #                         print("PNP Fail")
-    #                         break
-    #                 else:
-    #                     print("Place joint Fail")
-    #                     success_pick = False
-    #                     break
-        
-    #     if self.scene_mngr.scene.bench_num == 2:
-    #         if success_pick:
-    #             print("Pick End")
-    #             pnp_path += pick_joint_path
-    #             pick_objects.append(pick_scene.robot.gripper.attached_obj_name)
-    #         else:
-    #             pnp_all_joint_path = []
-    #             place_all_object_poses = []
-    #             pick_all_objects = []
-    #             return pnp_all_joint_path, place_all_object_poses, pick_all_objects
-    #     else:
-    #         if not success_pick or not success_place:
-    #             pnp_all_joint_path = []
-    #             place_all_object_poses = []
-    #             pick_all_objects = []
-    #             return pnp_all_joint_path, place_all_object_poses, pick_all_objects
-        
-    #     pnp_all_joint_path.append(pnp_path)
-    #     pick_all_objects.append(pick_objects)
-    #     place_all_object_poses.append(place_object_poses)
-            
-    #     return pnp_all_joint_path, pick_all_objects, place_all_object_poses
 
     @staticmethod
     def weird_division(n, d):

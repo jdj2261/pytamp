@@ -461,8 +461,7 @@ class SceneManager:
         detach_idx:list = None,
         place_obj_pose=None
     ):
-        if not self.is_pyplot:
-            ValueError("Only pyplot can render.")
+        self.is_pyplot = True       
         
         if init_scene is not None:
             self._scene = deepcopy(init_scene)
