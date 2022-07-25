@@ -23,6 +23,7 @@ class PlaceAction(ActivityBase):
         self.n_samples_sup_obj = n_samples_support_obj
         self.release_distance = release_distance
         self.filter_logical_states = [scene_mngr.scene.logical_state.held]                                    
+        
 
     def get_possible_actions_level_1(self, scene:Scene=None) -> dict:
         self.deepcopy_scene(scene)
@@ -42,7 +43,7 @@ class PlaceAction(ActivityBase):
 
             #? for benchmark 2
             if self.scene_mngr.scene.bench_num == 2:
-                if sup_obj not in ["shelf_9", "shelf_8"]:
+                if sup_obj not in ["shelf_9", "shelf_8", "shelf_15"]:
                     continue
             
             #? for benchmark 3
@@ -105,7 +106,9 @@ class PlaceAction(ActivityBase):
         self.scene_mngr.attach_object_on_gripper(self.scene_mngr.scene.robot.gripper.attached_obj_name, True)
         
         pre_release_joint_path = self.get_rrt_star_path(default_thetas, pre_release_pose)
+        self.cost = 0
         if pre_release_joint_path:
+            self.cost += self.rrt_planner.goal_node_cost
             # pre_release_pose -> release_pose (cartesian)
             release_joint_path = self.get_cartesian_path(pre_release_joint_path[-1], release_pose)
             if release_joint_path:
@@ -141,6 +144,7 @@ class PlaceAction(ActivityBase):
             return result_all_joint_path
 
         if default_joint_path:
+            self.cost += self.rrt_planner.goal_node_cost
             result_joint_path.update({self.move_data.MOVE_pre_release: pre_release_joint_path})
             result_joint_path.update({self.move_data.MOVE_release: release_joint_path})
             result_joint_path.update({self.move_data.MOVE_post_release: post_release_joint_path})

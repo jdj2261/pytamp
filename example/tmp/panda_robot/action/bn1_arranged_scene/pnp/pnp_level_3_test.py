@@ -1,4 +1,3 @@
-from cmath import pi
 import numpy as np
 
 import pykin.utils.plot_utils as p_utils

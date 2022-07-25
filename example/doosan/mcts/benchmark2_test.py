@@ -28,7 +28,7 @@ benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=3)
 mcts = MCTS(benchmark2.scene_mngr)
 
 mcts.debug_mode = False
-mcts.budgets = 100
+mcts.budgets = 10
 mcts.max_depth = 20
 mcts.c = 300
 
@@ -39,23 +39,33 @@ mcts.sampling_method = 'bai_perturb' # 58
 for i in range(mcts.budgets):
     mcts.do_planning(i)
 
-subtree = mcts.get_success_subtree(optimizer_level=1)
+subtree = mcts.get_success_subtree(optimizer_level=2)
 mcts.visualize_tree("MCTS", subtree)
 best_nodes = mcts.get_best_node(subtree)
 
-rewards = mcts.rewards_for_level_1
-max_iter = np.argmax(rewards)
+level_1_max_value = mcts.values_for_level_1
+max_iter = np.argmax(level_1_max_value)
 
-print(max_iter)
-plt.plot(rewards, label="Sum of Reward")
+# print(max_iter)
+plt.plot(level_1_max_value, label="Sum of Reward")
 plt.xticks(fontsize=10)
 plt.yticks(fontsize=10)
 plt.xlabel("Number of simulations",fontsize=12)
 plt.ylabel("Max Value",fontsize=12)
 plt.legend(prop={'size' : 12})
-plt.show()
+# plt.show()
+
+level_2_max_values = mcts.values_for_level_2
+plt.plot(level_2_max_values, label="Result Reward")
+plt.xticks(fontsize=10)
+# plt.yticks(np.arange(np.min(level_1_max_value), np.max(level_2_max_values)+0.001, step=0.0005))
+# plt.ylim([np.min(level_1_max_value), np.max(level_2_max_values)])
+plt.xlabel("Number of simulations",fontsize=12)
+plt.ylabel("Max Sum of Value",fontsize=12)
+plt.legend(prop={'size' : 12})
 plt.show()
 
 # Do planning
-# pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
-# mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+# mcts.get_all_joint_path(mcts.optimal_nodes)
+pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

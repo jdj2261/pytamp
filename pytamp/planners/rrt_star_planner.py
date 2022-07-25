@@ -76,6 +76,7 @@ class RRTStarPlanner(Planner):
         self._cur_qpos = super()._convert_numpy_type(cur_q)
         self._goal_pose = super()._convert_numpy_type(goal_pose)
         self._max_iter = max_iter
+        self.goal_node_cost = 0
 
         if not super()._check_robot_col_mngr():
             logger.warning(f"This Planner does not do collision checking")
@@ -97,11 +98,11 @@ class RRTStarPlanner(Planner):
                 while not success_check_limit:
                     limit_cnt += 1
 
-                    if limit_cnt > 200:
+                    if limit_cnt > 50:
                         break
                     
                     self.goal_q = self._scene_mngr.scene.robot.inverse_kin(
-                        init_q, self._goal_pose, max_iter=300)
+                        init_q, self._goal_pose, max_iter=100)
                     
                     if not self._check_q_in_limits(self.goal_q):
                         init_q = np.random.randn(self._scene_mngr.scene.robot.arm_dof)
@@ -193,6 +194,8 @@ class RRTStarPlanner(Planner):
                         self.goal_node = new_node
 
             if self.goal_node:
+                self.goal_node_cost = round(self.tree.nodes[self.goal_node][NodeData.COST], 3)
+                print(f"Cost is {self.goal_node_cost}")
                 logger.info(f"Generate Path Successfully!!")  
                 break 
 
