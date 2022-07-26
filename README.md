@@ -62,12 +62,13 @@ pip install pytamp
   | :----------------------------------------------------------: | :--------------------------------------------------------: |
   | <img src="img/cartesian_planning.gif" width="400" height="300"/> | <img src="img/rrt_planning.gif" width="400" height="300"/> |
 
-- **Benchmark**
+## Benchmark
 
-  You can use the 4 benchmarks.
-  
-  |                        Benchmark1                        |                        Benchmark2                        |                        Benchmark3                        |                        Benchmark4                        |
-  | :------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: |
-  | <img src="img/benchmark1.png" width="300" height="200"/> | <img src="img/benchmark2.png" width="300" height="200"/> | <img src="img/benchmark3.png" width="300" height="200"/> | <img src="img/benchmark4.png" width="300" height="200"/> |
-  
-  
+You can use the 4 benchmarks.
+
+|                        Benchmark1                        |                        Benchmark2                        |                        Benchmark3                        |                        Benchmark4                        |
+| :------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: |
+| <img src="img/benchmark1.png" width="300" height="200"/> | <img src="img/benchmark2.png" width="300" height="200"/> | <img src="img/benchmark3.png" width="300" height="200"/> | <img src="img/benchmark4.png" width="300" height="200"/> |
+
+
+
