@@ -9,3 +9,7 @@ docs/build
 docs_backup
 pykin
 result_images/
+benchmark1_result/
+benchmark2_result/
+benchmark3_result/
+benchmark4_result/

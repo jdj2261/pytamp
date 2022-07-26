@@ -15,7 +15,7 @@ pnp_path = []
 pick_objects = []
 place_object_poses = []
     
-for pick_obj in ["arch_box", "can", "rect_box", "half_cylinder_box", "square_box"]:
+for pick_obj in ["arch_box", "rect_box", "half_cylinder_box"]:
     pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.scene, pick_obj)
     success_joint_path = False
 

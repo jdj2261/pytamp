@@ -9,7 +9,7 @@ pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=0, retreat_d
 ################# Action Test ##################
 fig, ax = p_utils.init_3d_figure(name="Heuristic")
 
-for object in ["arch_box", "can", "rect_box", "half_cylinder_box", "square_box"]:
+for object in ["arch_box", "rect_box", "half_cylinder_box"]:
     pose = list(pick.get_grasp_pose_from_heuristic(obj_name=object))
     for i in range(len(pose)):
         pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])

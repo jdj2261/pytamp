@@ -62,7 +62,7 @@ for step, (all_joint_pathes, pick_object, pick_object_pose) in enumerate(zip(pic
         cnt = 0
         result_joint = []
         eef_poses = []
-        fig, ax = p_utils.init_3d_figure( name="Level wise 3")
+        fig, ax = p_utils.init_3d_figure( name="Level wise 2")
         for j, (task, joint_path) in enumerate(all_joint_path.items()):
             for k, joint in enumerate(joint_path):
                 cnt += 1

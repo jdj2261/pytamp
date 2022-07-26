@@ -91,7 +91,7 @@ for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
 # print(pnp_joint_all_pathes)
 
 for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(pnp_joint_all_pathes, pick_all_objects, place_all_object_poses):
-    fig, ax = p_utils.init_3d_figure( name="Level wise 3")
+    fig, ax = p_utils.init_3d_figure( name="Level wise 2")
     result_joint = []
     eef_poses = []
     attach_idx_list = []

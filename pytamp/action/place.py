@@ -4,6 +4,7 @@ from copy import deepcopy
 from trimesh import Trimesh, proximity
 
 from pykin.utils import mesh_utils as m_utils
+from pykin.utils import transform_utils as t_utils
 from pykin.utils.log_utils import create_logger
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene
@@ -219,6 +220,15 @@ class PlaceAction(ActivityBase):
             if self.scene_mngr._scene.bench_num == 1:
                 if not self._check_support(support_obj_name, held_obj_name, obj_pose_transformed):
                     continue
+            
+            if self.scene_mngr._scene.bench_num == 3:
+                if held_obj_name == "rect_box" or held_obj_name == "half_cylinder_box":
+                    r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, np.pi/2])
+                    h_mat_z = np.eye(4)
+                    h_mat_z[:3, :3] = r_mat_z
+
+                    obj_pose_transformed = np.dot(obj_pose_transformed, h_mat_z)
+                    eef_pose = np.dot(eef_pose, h_mat_z)
 
             release_pose = {}
             release_pose[self.move_data.MOVE_release] = eef_pose

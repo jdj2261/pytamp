@@ -1,7 +1,7 @@
 import numpy as np
 import argparse
-import matplotlib.pyplot as plt
 
+from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark1
 from pytamp.search.mcts import MCTS
 
@@ -23,12 +23,12 @@ algo = args.algo
 seed = args.seed
 np.random.seed(seed)
 
-benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=2)
+benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=3)
 mcts = MCTS(benchmark1.scene_mngr)
 mcts.debug_mode = False
 
 # 최대부터
-mcts.budgets = 30
+mcts.budgets = 10
 mcts.max_depth = 20
 mcts.c = 30
 # mcts.sampling_method = 'bai_ucb' # 405
@@ -38,7 +38,6 @@ mcts.sampling_method = 'bai_perturb' # 58
 for i in range(mcts.budgets):
     mcts.do_planning(i)
 
-
 subtree = mcts.get_success_subtree(optimizer_level=2)
 mcts.visualize_tree("MCTS", subtree)
 best_nodes = mcts.get_best_node(subtree)
@@ -46,24 +45,13 @@ best_nodes = mcts.get_best_node(subtree)
 level_1_max_value = mcts.values_for_level_1
 max_iter = np.argmax(level_1_max_value)
 
-# print(max_iter)
-plt.plot(level_1_max_value, label="Sum of Reward")
-plt.xticks(fontsize=10)
-plt.yticks(fontsize=10)
-plt.xlabel("Number of simulations",fontsize=12)
-plt.ylabel("Max Value",fontsize=12)
-plt.legend(prop={'size' : 12})
-# plt.show()
-
+level_1_max_values = mcts.values_for_level_1
 level_2_max_values = mcts.values_for_level_2
-plt.plot(level_2_max_values, label="Result Reward")
-plt.xticks(fontsize=10)
-# plt.yticks(np.arange(np.min(level_1_max_value), np.max(level_2_max_values)+0.001, step=0.0005))
-# plt.ylim([np.min(level_1_max_value), np.max(level_2_max_values)])
-plt.xlabel("Number of simulations",fontsize=12)
-plt.ylabel("Max Sum of Value",fontsize=12)
-plt.legend(prop={'size' : 12})
-plt.show()
+
+p_utils.init_2d_figure("test")
+p_utils.plot_values(level_1_max_values, label="Sum of Values", title="Benchamrk1_Level_1", save_dir_name='benchmark1_result', is_save=False)
+p_utils.plot_values(level_2_max_values, label="Optiaml Values", title="Benchamrk1_Level_2", save_dir_name='benchmark1_result', is_save=True)
+p_utils.show_figure()
 
 # Do planning
 # mcts.get_all_joint_path(mcts.optimal_nodes)

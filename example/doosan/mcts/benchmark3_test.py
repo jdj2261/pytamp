@@ -1,13 +1,12 @@
 import numpy as np
 import argparse
-import matplotlib.pyplot as plt
 
 from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark3
 from pytamp.search.mcts import MCTS
 
 
-# #? python3 benchmark2_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
+# #? python3 benchmark3_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 2.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
@@ -28,7 +27,7 @@ benchmark3 = Benchmark3(robot_name="doosan", geom="collision")
 mcts = MCTS(benchmark3.scene_mngr)
 
 mcts.debug_mode = False
-mcts.budgets = 300
+mcts.budgets = 100
 mcts.max_depth = 20
 mcts.c = 300
 
@@ -46,14 +45,12 @@ best_nodes = mcts.get_best_node(subtree)
 level_1_max_values = mcts.values_for_level_1
 level_2_max_values = mcts.values_for_level_2
 
-plt.xticks(fontsize=10)
-plt.yticks(fontsize=10)
-plt.xlabel("Number of simulations",fontsize=12)
-plt.ylabel("Max Value",fontsize=12)
-plt.legend(prop={'size' : 12})
-plt.plot(level_1_max_values, label="Sum of Values")
-plt.plot(level_2_max_values, label="Result Values")
-plt.show()
+fig = p_utils.init_2d_figure("test")
+# fig = plt.figure(title, figsize=(15,7.5), dpi= 80)
+p_utils.plot_values(level_1_max_values, label="Sum of Values", title="Level_1", is_save=False)
+p_utils.plot_values(level_2_max_values, label="Optiaml Values", title="Level_2", is_save=True)
+p_utils.show_figure()
 
+# Do planning
 pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
 mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

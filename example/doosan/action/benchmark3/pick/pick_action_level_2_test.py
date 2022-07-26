@@ -33,5 +33,5 @@ for pick_action in actions:
 pick_all_joint_path.append(pick_path)
 pick_all_objects.append(pick_objects)
 pick_all_object_poses.append(pick_object_poses)
-fig, ax = p_utils.init_3d_figure(name="Level wise 3")
+fig, ax = p_utils.init_3d_figure(name="Level wise 2")
 pick.simulate_path(pick_all_joint_path, pick_all_objects, pick_all_object_poses, fig=fig, ax=ax)

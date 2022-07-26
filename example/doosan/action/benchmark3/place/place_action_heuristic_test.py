@@ -5,11 +5,11 @@ from pytamp.benchmark import Benchmark3
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="collision", is_pyplot=True)
 pick = PickAction(benchmark3.scene_mngr, n_contacts=3, n_directions=5, retreat_distance=0.1)
-place = PlaceAction(benchmark3.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
+place = PlaceAction(benchmark3.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=30)
 
 ################# Action Test ##################
 
-for pick_obj in ["arch_box", "can", "rect_box", "half_cylinder_box", "square_box"]:
+for pick_obj in ["arch_box", "rect_box", "half_cylinder_box"]:
     fig, ax = p_utils.init_3d_figure(name="Level wise 1")
     for place_obj in ["clearbox_1_8", "clearbox_1_16", "table"]:
         pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.init_scene, pick_obj)

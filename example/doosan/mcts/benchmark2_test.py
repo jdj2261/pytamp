@@ -1,9 +1,7 @@
 import numpy as np
 import argparse
-import matplotlib.pyplot as plt
 
 from pykin.utils import plot_utils as p_utils
-from pytamp.utils import heuristic_utils as h_utils
 from pytamp.benchmark import Benchmark2
 from pytamp.search.mcts import MCTS
 
@@ -49,8 +47,8 @@ level_2_max_values = mcts.values_for_level_2
 
 fig = p_utils.init_2d_figure("test")
 # fig = plt.figure(title, figsize=(15,7.5), dpi= 80)
-p_utils.plot_values(level_1_max_values, label="Sum of Values", title="Level_1", is_save=False)
-p_utils.plot_values(level_2_max_values, label="Optiaml Values", title="Level_2", is_save=True)
+p_utils.plot_values(level_1_max_values, label="Sum of Values", title="Benchamrk2_Level_1", save_dir_name='benchmark2_result', is_save=False)
+p_utils.plot_values(level_2_max_values, label="Optiaml Values", title="Benchamrk2_Level_2", save_dir_name='benchmark2_result', is_save=True)
 p_utils.show_figure()
 
 # Do planning

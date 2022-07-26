@@ -122,6 +122,8 @@ class ActivityBase(metaclass=ABCMeta):
         fig=None,
         ax=None,
     ):
+        assert pnp_all_joint_path[0], f"Cannot simulate joint path"
+
         self.scene_mngr.is_pyplot = True
         eef_poses = None
         for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(pnp_all_joint_path, pick_all_objects, place_all_object_poses):
@@ -164,7 +166,7 @@ class ActivityBase(metaclass=ABCMeta):
                             eef_poses.append(fk[self.scene_mngr.scene.robot.eef_name].pos)
 
             if ax is None and fig is None:
-                fig, ax = p_utils.init_3d_figure( name="Level wise 3")
+                fig, ax = p_utils.init_3d_figure( name="Level wise 2")
             self.scene_mngr.animation(
                 ax,
                 fig,

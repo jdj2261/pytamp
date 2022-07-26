@@ -40,14 +40,20 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
                 yield tcp_pose
 
     if bench_num == 3:
-        if object_name in ["arch_box", "can", "rect_box", "half_cylinder_box", "square_box"]:
+        if object_name in ["arch_box", "rect_box", "half_cylinder_box"]:
             center_point = object_mesh.bounds[0] + (object_mesh.bounds[1] - object_mesh.bounds[0])/2
             for theta in np.linspace(np.pi - np.pi/24, np.pi + np.pi/24, 3):
+                r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, theta, 0])
                 tcp_pose = np.eye(4)
-                tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
-                tcp_pose[:3,1] = [0, 1, 0]
-                tcp_pose[:3,2] = [-np.sin(theta), 0, np.cos(theta)]
+                tcp_pose[:3, :3] = r_mat_y
                 tcp_pose[:3,3] = center_point + [0, 0, 0.005]
+
+                if object_name == "rect_box" or object_name == "half_cylinder_box":
+                    r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, np.pi/2])
+                    h_mat_z = np.eye(4)
+                    h_mat_z[:3, :3] = r_mat_z
+                    tcp_pose = np.dot(tcp_pose, h_mat_z)
+
                 yield tcp_pose
 
     # TODO

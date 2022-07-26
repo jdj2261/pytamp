@@ -404,7 +404,7 @@ class MCTS:
                         success_pick = True                    
                         init_theta = pick_joint_path[-1][self.pick_action.move_data.MOVE_default_grasp][-1]
                         
-                        current_cost = round(self.weird_division(1, self.pick_action.cost) / 100, 6)
+                        current_cost = round(self.weird_division(1, self.pick_action.cost) / 10, 6)
                         if current_cost > self.tree.nodes[sub_optimal_node][NodeData.COST]:
                             self.tree.nodes[sub_optimal_node][NodeData.COST] = current_cost
                             self.tree.nodes[sub_optimal_node][NodeData.JOINTS] = pick_joint_path
@@ -428,7 +428,7 @@ class MCTS:
                         success_place = True
                         init_theta = place_joint_path[-1][self.place_action.move_data.MOVE_default_release][-1]
 
-                        current_cost = round(self.weird_division(1, self.place_action.cost) / 100, 6)
+                        current_cost = round(self.weird_division(1, self.place_action.cost) / 10, 6)
                         if current_cost > self.tree.nodes[sub_optimal_node][NodeData.COST]:
                             self.tree.nodes[sub_optimal_node][NodeData.COST] = current_cost
                             self.tree.nodes[sub_optimal_node][NodeData.JOINTS] = place_joint_path

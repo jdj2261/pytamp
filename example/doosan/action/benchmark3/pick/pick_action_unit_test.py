@@ -6,7 +6,7 @@ benchmark3 = Benchmark3(robot_name="doosan", geom="visual", is_pyplot=True)
 pick = PickAction(benchmark3.scene_mngr, n_contacts=10, n_directions=5, retreat_distance=0.1)
 
 ###### All Contact Points #######
-for obj in ["arch_box", "can", "rect_box", "half_cylinder_box", "square_box"]:
+for obj in ["arch_box", "rect_box", "half_cylinder_box"]:
     fig, ax = p_utils.init_3d_figure(name="Get contact points")
     contact_points = pick.get_contact_points(obj_name=obj)
     pick.scene_mngr.render.render_points(ax, contact_points)
