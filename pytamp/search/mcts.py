@@ -30,11 +30,15 @@ class MCTS:
         self.scene_mngr = scene_mngr
         self.scene_mngr.is_debug_mode = False
         self.state = scene_mngr.scene
-        self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
-
+        
         if self.scene_mngr.scene.bench_num == 2:
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
+        elif self.scene_mngr.scene.bench_num == 3:
+            self.pick_action = PickAction(scene_mngr, n_contacts=3, n_directions=5, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
         else:
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
         self._sampling_method = sampling_method
@@ -355,6 +359,13 @@ class MCTS:
         
         if self.scene_mngr.scene.bench_num == 2:
             return 0
+
+        if self.scene_mngr.scene.bench_num == 3:
+            return 0
+
+        if self.scene_mngr.scene.bench_num == 4:
+            return 0
+
         return 0
 
     def _level_wise_2_optimize(self, sub_optimal_nodes):

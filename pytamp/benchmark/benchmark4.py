@@ -1,3 +1,4 @@
+from matplotlib.pyplot import sca
 import numpy as np
 
 from pykin.robots.single_arm import SingleArm
@@ -9,11 +10,11 @@ class Benchmark4(Benchmark):
     def __init__(
         self, 
         robot_name="panda", 
-        disk_num=6,
+        disk_num=5,
         geom="visual", 
         is_pyplot=True
     ):
-        assert disk_num <= 6, f"The number of disks must be 6 or less."
+        assert disk_num <= 5, f"The number of disks must be 5 or less."
         self.disk_num = disk_num
         param = {"disk_num" : disk_num}
         self.benchmark_config = {4 : param}
@@ -36,8 +37,8 @@ class Benchmark4(Benchmark):
         
     def _load_objects(self):
         self.table_mesh = get_object_mesh('ben_table.stl', [1.0, 1.5, 1.0])
-        self.cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[0.9, 0.9, 1.0])
-        self.disk_mesh = get_object_mesh('hanoi_disk.stl')
+        self.cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[1.0, 1.0, 1.0])
+        self.disk_mesh = get_object_mesh('hanoi_disk.stl', scale=[1, 1, 2.0])
 
         self.cylinder_mesh_bound = get_mesh_bounds(mesh=self.cylinder_mesh)
         self.disk_mesh_bound = get_mesh_bounds(mesh=self.disk_mesh)
@@ -69,7 +70,7 @@ class Benchmark4(Benchmark):
             self.disk_pose[i] = Transform(pos=self.disk_mesh.center_mass + disk_pos)
             disk_name = "hanoi_disk_" + str(i)
             print(disk_name)
-            hanoi_mesh = get_object_mesh(f'hanoi_disk.stl', scale=[1.5-0.1*i, 1.5-0.1*i, 1])
+            hanoi_mesh = get_object_mesh(f'hanoi_disk.stl', scale=[1.5-0.1*i, 1.5-0.1*i, 2.0])
             self.scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=self.disk_pose[i].h_mat, color=[0., 1., 0.])
         
         for i in range(self.disk_num):

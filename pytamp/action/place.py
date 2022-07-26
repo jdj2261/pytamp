@@ -25,7 +25,6 @@ class PlaceAction(ActivityBase):
         self.release_distance = release_distance
         self.filter_logical_states = [scene_mngr.scene.logical_state.held]                                    
         
-
     def get_possible_actions_level_1(self, scene:Scene=None) -> dict:
         self.deepcopy_scene(scene)
         held_obj = self.scene_mngr.scene.robot.gripper.attached_obj_name
@@ -506,7 +505,6 @@ class PlaceAction(ActivityBase):
             if safe_com:
                 return PlaceAction._check_stability(copied_scene, support_obj.name, com)
             else:
-                # logger.warning("Not satisfied stability")
                 return False
         else:
             return True
@@ -534,5 +532,4 @@ class PlaceAction(ActivityBase):
                     ray_directions=[[0, 0, -1]])
         if len(locations) != 0:
             return True
-        # logger.warning("Not found support point")
         return False

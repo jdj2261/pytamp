@@ -42,7 +42,7 @@ pip install pytamp
   You can manage entire scene using SceneManager class. We recommend using the SceneManager.  
   For example, You can manage robot, object, gripper pose or collision as well as visualize their geom.   
   In addition, You can compute cartesian or RRT-star motion planning.  
-  You can see various examples in `example/scene` directory. 
+  You can see various examples in `examples/scene` directory. 
 
   - Render using trimesh.Scene
 
@@ -56,16 +56,18 @@ pip install pytamp
   
 - **Planning**
 
-  You can see an animation of planning that visualizes trajectory in `example/planning` directory. 
+  You can see an animation of planning that visualizes trajectory in `examples/planning` directory. 
 
   |                        Cartesian (X1)                        |                       RRT-star (X1)                        |
   | :----------------------------------------------------------: | :--------------------------------------------------------: |
-  | <img src="img/cartesian_planning.gif" width="500" height="300"/> | <img src="img/rrt_planning.gif" width="500" height="300"/> |
+  | <img src="img/cartesian_planning.gif" width="400" height="300"/> | <img src="img/rrt_planning.gif" width="400" height="300"/> |
 
-- **Pick and Place**
+- **Benchmark**
 
-  You can see an animation of pick and place that visualizes trajectory  in `example/action` directory.
+  You can use the 4 benchmarks.
   
-  |                Scene arranged objects (X4)                 |                Scene stacked objects (X4)                 |
-  | :--------------------------------------------------------: | :-------------------------------------------------------: |
-  | <img src="img/pnp_arranged.gif" width="500" height="300"/> | <img src="img/pnp_stacked.gif" width="500" height="300"/> |
+  |                        Benchmark1                        |                        Benchmark2                        |                        Benchmark3                        |                        Benchmark4                        |
+  | :------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: | :------------------------------------------------------: |
+  | <img src="img/benchmark1.png" width="300" height="200"/> | <img src="img/benchmark2.png" width="300" height="200"/> | <img src="img/benchmark3.png" width="300" height="200"/> | <img src="img/benchmark4.png" width="300" height="200"/> |
+  
+  
