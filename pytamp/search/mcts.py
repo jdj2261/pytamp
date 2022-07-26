@@ -362,8 +362,8 @@ class MCTS:
             print(f"{sc.FAIL}Not found any sub optimal nodes.{sc.ENDC}")
             return
 
-        if self.tree.nodes[0][self.node_data.SUCCESS]:
-            if self.tree.nodes[0][self.node_data.VALUE_HISTORY][-1] < self.tree.nodes[0][self.node_data.VALUE]:
+        if self.tree.nodes[0][NodeData.SUCCESS]:
+            if self.tree.nodes[0][NodeData.VALUE_HISTORY][-1] < self.tree.nodes[0][NodeData.VALUE]:
                 print(f"{sc.FAIL}A value of this optimal nodes is lower than maximum value.{sc.ENDC}")
                 return
 
@@ -384,11 +384,11 @@ class MCTS:
         place_scene = None
         
         for sub_optimal_node in sub_optimal_nodes:
-            node_type = "action" if self.tree.nodes[sub_optimal_node]['type'] == self.node_data.ACTION else "state"
+            node_type = "action" if self.tree.nodes[sub_optimal_node]['type'] == NodeData.ACTION else "state"
             if node_type == "action":
                 continue
             success_place = False
-            action = self.tree.nodes[sub_optimal_node].get(self.node_data.ACTION)
+            action = self.tree.nodes[sub_optimal_node].get(NodeData.ACTION)
             if action:
                 if list(action.keys())[0] == 'grasp':
                     pick_scene:Scene = self.tree.nodes[sub_optimal_node]['state']
@@ -461,12 +461,12 @@ class MCTS:
 
     def _update_success_level_1_and_2(self, sub_optimal_nodes):
         sub_optimal_leaf_node = sub_optimal_nodes[-1]
-        success_level_1 = self.tree.nodes[sub_optimal_leaf_node][self.node_data.LEVEL1]
-        success_level_2 = self.tree.nodes[sub_optimal_leaf_node][self.node_data.LEVEL2]
+        success_level_1 = self.tree.nodes[sub_optimal_leaf_node][NodeData.LEVEL1]
+        success_level_2 = self.tree.nodes[sub_optimal_leaf_node][NodeData.LEVEL2]
 
         if success_level_1 and success_level_2:
             for sub_optimal_node in sub_optimal_nodes:
-                self.tree.nodes[sub_optimal_node][self.node_data.SUCCESS] = True
+                self.tree.nodes[sub_optimal_node][NodeData.SUCCESS] = True
 
     def get_nodes_from_leaf_node(self, leaf_node):
         parent_nodes = [node for node in self.tree.predecessors(leaf_node)]
@@ -517,38 +517,38 @@ class MCTS:
     
     def get_max_value_level_2(self, sub_optimal_nodes):
         value_sum = 0
-        if self.tree.nodes[sub_optimal_nodes[-1]][self.node_data.SUCCESS]:
+        if self.tree.nodes[sub_optimal_nodes[-1]][NodeData.SUCCESS]:
             for idx, sub_optimal_node in enumerate(sub_optimal_nodes):
-                node_type = "action" if self.tree.nodes[sub_optimal_node]['type'] == self.node_data.ACTION else "state"
-                if node_type == self.node_data.ACTION:
+                node_type = "action" if self.tree.nodes[sub_optimal_node]['type'] == NodeData.ACTION else "state"
+                if node_type == NodeData.ACTION:
                     sate_nodes = [child for child in self.tree.neighbors(sub_optimal_node)]
                     if not sate_nodes:
                         break
-                    max_state_node_idx = np.argmax([self.tree.nodes[sate_node][self.node_data.VALUE] for sate_node in sate_nodes])
+                    max_state_node_idx = np.argmax([self.tree.nodes[sate_node][NodeData.VALUE] for sate_node in sate_nodes])
                     max_state_node = sate_nodes[max_state_node_idx]
-                    if self.tree.nodes[max_state_node][self.node_data.SUCCESS]:
-                        max_state_value = self.tree.nodes[max_state_node][self.node_data.VALUE]
-                        if self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE] >= max_state_value:
-                            value_sum += self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.COST]
+                    if self.tree.nodes[max_state_node][NodeData.SUCCESS]:
+                        max_state_value = self.tree.nodes[max_state_node][NodeData.VALUE]
+                        if self.tree.nodes[sub_optimal_nodes[idx+1]][NodeData.VALUE] >= max_state_value:
+                            value_sum += self.tree.nodes[sub_optimal_nodes[idx+1]][NodeData.COST]
                         else:
                             value_sum = 0
                             break
-                if node_type == self.node_data.STATE:
+                if node_type == NodeData.STATE:
                     action_nodes = [child for child in self.tree.neighbors(sub_optimal_node)]
                     if not action_nodes:
                         break
-                    max_action_node_idx = np.argmax([self.tree.nodes[action_node][self.node_data.VALUE] for action_node in action_nodes])
+                    max_action_node_idx = np.argmax([self.tree.nodes[action_node][NodeData.VALUE] for action_node in action_nodes])
                     max_action_node = action_nodes[max_action_node_idx]
-                    if self.tree.nodes[max_action_node][self.node_data.SUCCESS]:
-                        max_action_value = self.tree.nodes[max_action_node][self.node_data.VALUE]
-                        if self.tree.nodes[sub_optimal_nodes[idx+1]][self.node_data.VALUE] < max_action_value:
+                    if self.tree.nodes[max_action_node][NodeData.SUCCESS]:
+                        max_action_value = self.tree.nodes[max_action_node][NodeData.VALUE]
+                        if self.tree.nodes[sub_optimal_nodes[idx+1]][NodeData.VALUE] < max_action_value:
                             value_sum = 0
                             break
 
         if value_sum == 0:
             return self.level2_max_value
         else:
-            value_sum = self.tree.nodes[0][self.node_data.VALUE_HISTORY][-1] + value_sum
+            value_sum = self.tree.nodes[0][NodeData.VALUE_HISTORY][-1] + value_sum
             if self.level2_max_value <= value_sum:
                 self.optimal_nodes = sub_optimal_nodes
                 self.level2_max_value = np.round(value_sum, 6)
@@ -565,15 +565,15 @@ class MCTS:
 
         pick_joint_path = []
         for node in nodes:
-            node_type = "action" if self.tree.nodes[node]['type'] == self.node_data.ACTION else "state"
-            if node_type == self.node_data.ACTION:
+            node_type = "action" if self.tree.nodes[node]['type'] == NodeData.ACTION else "state"
+            if node_type == NodeData.ACTION:
                 continue
-            action = self.tree.nodes[node].get(self.node_data.ACTION)
+            action = self.tree.nodes[node].get(NodeData.ACTION)
             if action:
                 if list(action.keys())[0] == 'grasp':
-                    pick_joint_path = self.tree.nodes[node][self.node_data.JOINTS]
+                    pick_joint_path = self.tree.nodes[node][NodeData.JOINTS]
                 else:
-                    place_joint_path = self.tree.nodes[node][self.node_data.JOINTS]
+                    place_joint_path = self.tree.nodes[node][NodeData.JOINTS]
                     pnp_path += pick_joint_path + place_joint_path
                     pick_object, place_obj_pose = self.tree.nodes[node][NodeData.TEST]
                     pick_objects.append(pick_object)

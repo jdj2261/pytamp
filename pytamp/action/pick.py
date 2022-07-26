@@ -5,7 +5,7 @@ from copy import deepcopy
 from pykin.utils import mesh_utils as m_utils
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene
-from pytamp.utils import benchmark_utils as b_utils
+from pytamp.utils import heuristic_utils as h_utils
 
 class PickAction(ActivityBase):
     def __init__(
@@ -57,7 +57,7 @@ class PickAction(ActivityBase):
     def get_grasp_pose_from_heuristic(self, obj_name):
         copied_mesh = deepcopy(self.scene_mngr.scene.objs[obj_name].gparam)
         copied_mesh.apply_transform(self.scene_mngr.scene.objs[obj_name].h_mat)
-        tcp_poses = b_utils.get_heuristic_tcp_pose(scene_mngr=self.scene_mngr, 
+        tcp_poses = h_utils.get_heuristic_tcp_pose(scene_mngr=self.scene_mngr, 
                                                    object_name=obj_name,
                                                    object_mesh=copied_mesh)
         

@@ -3,12 +3,13 @@ import argparse
 import matplotlib.pyplot as plt
 
 from pykin.utils import plot_utils as p_utils
+from pytamp.utils import heuristic_utils as h_utils
 from pytamp.benchmark import Benchmark2
 from pytamp.search.mcts import MCTS
 
 
-# #? python3 bench_1_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
-parser = argparse.ArgumentParser(description='Test Benchmark 1.')
+# #? python3 benchmark2_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
+parser = argparse.ArgumentParser(description='Test Benchmark 2.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
 parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
@@ -24,11 +25,11 @@ algo = args.algo
 seed = args.seed
 np.random.seed(seed)
 
-benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=3)
+benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=6)
 mcts = MCTS(benchmark2.scene_mngr)
 
 mcts.debug_mode = False
-mcts.budgets = 10
+mcts.budgets = 100
 mcts.max_depth = 20
 mcts.c = 300
 
@@ -43,29 +44,15 @@ subtree = mcts.get_success_subtree(optimizer_level=2)
 mcts.visualize_tree("MCTS", subtree)
 best_nodes = mcts.get_best_node(subtree)
 
-level_1_max_value = mcts.values_for_level_1
-max_iter = np.argmax(level_1_max_value)
-
-# print(max_iter)
-plt.plot(level_1_max_value, label="Sum of Reward")
-plt.xticks(fontsize=10)
-plt.yticks(fontsize=10)
-plt.xlabel("Number of simulations",fontsize=12)
-plt.ylabel("Max Value",fontsize=12)
-plt.legend(prop={'size' : 12})
-# plt.show()
-
+level_1_max_values = mcts.values_for_level_1
 level_2_max_values = mcts.values_for_level_2
-plt.plot(level_2_max_values, label="Result Reward")
-plt.xticks(fontsize=10)
-# plt.yticks(np.arange(np.min(level_1_max_value), np.max(level_2_max_values)+0.001, step=0.0005))
-# plt.ylim([np.min(level_1_max_value), np.max(level_2_max_values)])
-plt.xlabel("Number of simulations",fontsize=12)
-plt.ylabel("Max Sum of Value",fontsize=12)
-plt.legend(prop={'size' : 12})
-plt.show()
+
+fig = p_utils.init_2d_figure("test")
+# fig = plt.figure(title, figsize=(15,7.5), dpi= 80)
+p_utils.plot_values(level_1_max_values, label="Sum of Values", title="Level_1", is_save=False)
+p_utils.plot_values(level_2_max_values, label="Optiaml Values", title="Level_2", is_save=True)
+p_utils.show_figure()
 
 # Do planning
-# mcts.get_all_joint_path(mcts.optimal_nodes)
 pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
 mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
