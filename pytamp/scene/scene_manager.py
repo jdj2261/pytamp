@@ -1,3 +1,4 @@
+from re import A
 import numpy as np
 import matplotlib.animation as animation
 from collections import OrderedDict
@@ -246,6 +247,36 @@ class SceneManager:
         for link, info in self._scene.robot.gripper.info.items():
             if link in self.gripper_collision_mngr._objs:
                 self.gripper_collision_mngr.set_transform(link, info[3])
+
+    def close_gripper(self, z_dis=0.02):
+        if not self._scene.robot.has_gripper:
+            raise ValueError("Robot doesn't have a gripper")
+
+        self._scene.robot.close_gripper(z_dis)
+        self._scene.robot.gripper.close_gripper(z_dis)
+
+        for link, info in self._scene.robot.info[self.geom].items():
+            if link in self._scene.robot.gripper.finger_names:
+                self.robot_collision_mngr.set_transform(link, info[3])
+            
+            if self._scene.robot.has_gripper:
+                if link in self._scene.robot.gripper.finger_names:
+                    self.gripper_collision_mngr.set_transform(link, info[3])
+
+    def open_gripper(self, z_dis=0.02):
+        if not self._scene.robot.has_gripper:
+            raise ValueError("Robot doesn't have a gripper")
+
+        self._scene.robot.open_gripper(z_dis)
+        self._scene.robot.gripper.open_gripper(z_dis)
+
+        for link, info in self._scene.robot.info[self.geom].items():
+            if link in self._scene.robot.gripper.finger_names:
+                self.robot_collision_mngr.set_transform(link, info[3])
+            
+            if self._scene.robot.has_gripper:
+                if link in self._scene.robot.gripper.finger_names:
+                    self.gripper_collision_mngr.set_transform(link, info[3])
 
     def collide_objs_and_robot(self, return_names=False):
         if self._scene.robot is None:
