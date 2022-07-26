@@ -52,7 +52,7 @@ scene_mngr.render_objects_and_gripper(ax)
 scene_mngr.gripper_collision_mngr.show_collision_info()
 
 scene_mngr.set_gripper_tcp_pose(scene_mngr.scene.robot.init_fk["right_gripper"].h_mat)
-scene_mngr.close_gripper(0.05)
+scene_mngr.close_gripper()
 scene_mngr.render_objects_and_gripper(ax)
 scene_mngr.gripper_collision_mngr.show_collision_info()
 

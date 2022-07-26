@@ -2,7 +2,7 @@ from pykin.utils import plot_utils as p_utils
 from pytamp.action.pick import PickAction
 from pytamp.benchmark import Benchmark3
 
-benchmark3 = Benchmark3(robot_name="doosan", geom="visual", is_pyplot=True)
+benchmark3 = Benchmark3(robot_name="doosan", geom="visual", is_pyplot=False)
 pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1)
 
 ################# Action Test ##################

@@ -8,6 +8,7 @@ from pykin.utils import plot_utils as p_utils
 from pykin.robots.single_arm import SingleArm
 from pykin.collision.collision_manager import CollisionManager
 from pykin.utils.mesh_utils import get_relative_transform
+from torch import detach
 from pytamp.scene.scene import Scene
 from pytamp.scene.object import Object
 from pytamp.scene.render import RenderPyPlot, RenderTriMesh
@@ -248,10 +249,15 @@ class SceneManager:
             if link in self.gripper_collision_mngr._objs:
                 self.gripper_collision_mngr.set_transform(link, info[3])
 
-    def close_gripper(self, z_dis=0.02):
+    def close_gripper(self):
         if not self._scene.robot.has_gripper:
             raise ValueError("Robot doesn't have a gripper")
 
+        if "panda" in self._scene.robot.gripper_name:
+            z_dis = 0.003
+        else:
+            z_dis = 0.015
+    
         self._scene.robot.close_gripper(z_dis)
         self._scene.robot.gripper.close_gripper(z_dis)
 
@@ -263,9 +269,14 @@ class SceneManager:
                 if link in self._scene.robot.gripper.finger_names:
                     self.gripper_collision_mngr.set_transform(link, info[3])
 
-    def open_gripper(self, z_dis=0.02):
+    def open_gripper(self):
         if not self._scene.robot.has_gripper:
             raise ValueError("Robot doesn't have a gripper")
+
+        if "panda" in self._scene.robot.gripper_name:
+            z_dis = 0.003
+        else:
+            z_dis = 0.015
 
         self._scene.robot.open_gripper(z_dis)
         self._scene.robot.gripper.open_gripper(z_dis)
@@ -406,6 +417,15 @@ class SceneManager:
                 self.render = RenderTriMesh()
             self.render.render_objects(objs=scene.objs)
 
+    def render_object(self, ax, obj, pose, alpha=0.8):
+        if self.is_pyplot:
+            self.render.render_object(ax, obj, pose, alpha)
+        else:
+            if not self.render.trimesh_scene:
+                self.render = RenderTriMesh()
+            self.render.render_object(obj, pose)
+
+
     def render_robot(
         self, 
         ax=None, 
@@ -500,6 +520,7 @@ class SceneManager:
         if pick_object is None:
             pick_object = self.attached_obj_name
 
+        self.is_attach = False
         def update(i):
             ax.clear()
             ax._axis3don = False
@@ -516,7 +537,11 @@ class SceneManager:
                 if i in attach_idx:
                     idx = attach_idx.index(i)
                     self.attach_object_on_gripper(pick_object[idx], False)
-            
+                    self.is_attach = True
+                
+            if self.is_attach:
+                self.close_gripper()
+
             if detach_idx is not None:
                 if i in detach_idx:
                     idx = detach_idx.index(i)
@@ -530,6 +555,8 @@ class SceneManager:
                                     gparam=self.init_objects[pick_object[idx]].gparam,
                                     h_mat=object_pose,
                                     color=self.init_objects[pick_object[idx]].color)
+                    self.is_attach = False
+                    self.open_gripper()
 
             visible_geom = True
             if visible_gripper:

@@ -43,6 +43,14 @@ class RenderTriMesh(SceneRender):
     def render_objects(self, objs):
         self.trimesh_scene = apply_objects_to_scene(trimesh_scene=self.trimesh_scene, objs=objs)
 
+    def render_object(self, obj, pose=None):
+        o_type = obj.gtype
+        mesh = obj.gparam
+        if o_type == "mesh":
+            mesh = obj.gparam
+            mesh.visual.face_colors = obj.color
+            self.trimesh_scene.add_geometry(mesh, transform=pose)
+
     def render_robot(self, robot, geom):
         self.trimesh_scene = apply_robot_to_scene(trimesh_scene=self.trimesh_scene, robot=robot, geom=geom)
         

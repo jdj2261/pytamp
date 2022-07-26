@@ -162,18 +162,27 @@ class Planner(NodeData, metaclass=ABCMeta):
             gripper_pose = fk[self._scene_mngr.scene.robot.eef_name].h_mat
             h_mat = np.dot(gripper_pose, self._scene_mngr._transform_bet_gripper_n_obj)
             self._scene_mngr.robot_collision_mngr.set_transform(name=self._scene_mngr.attached_obj_name, h_mat=h_mat)
-
+            self._scene_mngr.close_gripper()
+            
         is_self_collision = self._scene_mngr.robot_collision_mngr.in_collision_internal(return_names=False)
-
+        
         if visible_name:
             is_object_collision, col_name = self._scene_mngr.robot_collision_mngr.in_collision_other(
                 other_manager=self._scene_mngr.obj_collision_mngr, return_names=visible_name)  
+            
+            if is_attached:
+                self._scene_mngr.open_gripper()
+
             if is_self_collision or is_object_collision:
                 return True, col_name
             return False, col_name
             
         is_object_collision = self._scene_mngr.robot_collision_mngr.in_collision_other(
             other_manager=self._scene_mngr.obj_collision_mngr, return_names=False)  
+        
+        if is_attached:
+            self._scene_mngr.open_gripper()
+        
         if is_self_collision or is_object_collision:
             return True
         return False

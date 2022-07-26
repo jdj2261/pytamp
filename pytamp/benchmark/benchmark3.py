@@ -41,14 +41,14 @@ class Benchmark3(Benchmark):
         clearbox_8_mesh = get_object_mesh(f'clearbox_8.stl', scale=[1.5, 1.4, 1.5])
         self.clearbox1_pose = Transform(pos=np.array([0.7, 0.4, self.table_height + abs(clearbox_8_mesh.bounds[0][2])]), rot=[0, 0, np.pi/2])
 
-        self.arch_box = get_object_mesh('arch_box.stl', [0.002, 0.002, 0.004])
+        self.arch_box = get_object_mesh('arch_box.stl', [0.002, 0.002, 0.002])
         self.arch_box.apply_transform(get_h_mat(orientation=[0, np.pi/2, np.pi/2]))
         self.arch_box.apply_translation(-self.arch_box.center_mass)
 
-        self.rect_box = get_object_mesh('rect_box.stl', [0.003, 0.001, 0.002])
+        self.rect_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.002])
         self.rect_box.apply_translation(-self.rect_box.center_mass)
         
-        self.half_cylinder_box = get_object_mesh('half_cylinder_box.stl', [0.003, 0.002, 0.002])
+        self.half_cylinder_box = get_object_mesh('half_cylinder_box.stl', [0.002, 0.002, 0.002])
         self.half_cylinder_box.apply_transform(get_h_mat(orientation=[0, -np.pi/2, 0]))
         self.half_cylinder_box.apply_translation(-self.half_cylinder_box.center_mass)
 

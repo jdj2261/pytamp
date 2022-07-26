@@ -49,7 +49,7 @@ class PlaceAction(ActivityBase):
             
             #? for benchmark 3
             if self.scene_mngr.scene.bench_num == 3:
-                if sup_obj not in ["clearbox_1_8", "clearbox_1_16", "table"]:
+                if sup_obj not in ["clearbox_1_8", "clearbox_1_16"]:
                     continue
             
             #? for benchmark 4
@@ -222,7 +222,7 @@ class PlaceAction(ActivityBase):
                     continue
             
             if self.scene_mngr._scene.bench_num == 3:
-                if held_obj_name == "rect_box" or held_obj_name == "half_cylinder_box":
+                if held_obj_name == "half_cylinder_box":
                     r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, np.pi/2])
                     h_mat_z = np.eye(4)
                     h_mat_z[:3, :3] = r_mat_z
@@ -256,7 +256,9 @@ class PlaceAction(ActivityBase):
         for all_release_pose, obj_pose_transformed in release_poses:
             if is_attached:
                 self.scene_mngr.attach_object_on_gripper(self.scene_mngr.scene.robot.gripper.attached_obj_name, True)
+            self.scene_mngr.close_gripper()
             for name, pose in all_release_pose.items():
+                
                 is_collision = False
                 if name == self.move_data.MOVE_release:
                     self.scene_mngr.set_gripper_pose(pose)
@@ -284,7 +286,7 @@ class PlaceAction(ActivityBase):
                     self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].gparam,
                     self.scene_mngr.scene.robot.gripper.pick_obj_pose,
                     self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].color)
-
+            self.scene_mngr.open_gripper()
             if not is_collision:
                 yield all_release_pose, obj_pose_transformed
 
