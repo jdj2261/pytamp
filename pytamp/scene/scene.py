@@ -22,29 +22,17 @@ class Scene:
             self.goal_object = 'goal_box'
 
             if self.bench_num == 1:
-                if self.benchmark_config[self.bench_num].get("goal_object"):
-                    self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
-                self.goal_stacked_num:int = self.benchmark_config[self.bench_num]["stack_num"]
-                self.alphabet_list:list = list(string.ascii_uppercase)[:self.goal_stacked_num]
-                self.goal_objects:list = [alphabet + '_box' for alphabet in self.alphabet_list]
-                self.stacked_box_num = 0
-                self.success_stacked_box_num = 0
+                self._init_bench_1()
 
             if self.bench_num == 2:
-                if self.benchmark_config[self.bench_num].get("goal_object"):
-                    self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
-                self.goal_q = [-1.2417, -1.415, 0.3991, 0.0, -2.05, 0]
-                self.ben_2_final_path = []
-                self.has_already_final_path = False
-            
-            if self.bench_num == 3:
-              self.goal_objects = ["clearbox_1_8", "clearbox_1_16"]
+                self._init_bench_2()
 
-            # TODO
+            if self.bench_num == 3:
+                self._init_bench_3()
+
             if self.bench_num == 4:
-                if self.benchmark_config[self.bench_num].get("disk_num"):
-                    self.disk_num = self.benchmark_config[self.bench_num].get("disk_num")
-                
+                self._init_bench_4()
+
         self.objs:dict = {}
         self.robot:SingleArm = None
         self.logical_states:OrderedDict = OrderedDict()
@@ -57,6 +45,31 @@ class Scene:
         self.place_obj_name = None
         self.pick_obj_default_pose = None
         
+    def _init_bench_1(self):
+        if self.benchmark_config[self.bench_num].get("goal_object"):
+            self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
+        self.goal_stacked_num:int = self.benchmark_config[self.bench_num]["stack_num"]
+        self.alphabet_list:list = list(string.ascii_uppercase)[:self.goal_stacked_num]
+        self.goal_objects:list = [alphabet + '_box' for alphabet in self.alphabet_list]
+        self.stacked_box_num = 0
+        self.success_stacked_box_num = 0
+
+    def _init_bench_2(self):
+        if self.benchmark_config[self.bench_num].get("goal_object"):
+            self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
+        self.goal_q = [-1.2417, -1.415, 0.3991, 0.0, -2.05, 0]
+        self.ben_2_final_path = []
+        self.has_already_final_path = False
+
+    def _init_bench_3(self):
+        self.goal_objects = ["clearbox_1_8", "clearbox_1_16"]
+
+    def _init_bench_4(self):
+        if self.benchmark_config[self.bench_num].get("disk_num"):
+            self.disk_num = self.benchmark_config[self.bench_num].get("disk_num")
+        self.goal_objects = ["hanoi_disk_" + str(i) for i in range(self.disk_num)]
+        self.pegs = ["peg_1", "peg_2", "peg_3"]
+
     def show_scene_info(self):
         print(f"*"*23 + f" {sc.OKGREEN}Scene{sc.ENDC} "+ f"*"*23)
         pprint.pprint(self.objs)

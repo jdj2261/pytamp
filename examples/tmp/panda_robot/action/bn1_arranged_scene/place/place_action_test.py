@@ -66,7 +66,7 @@ fig, ax = p_utils.init_3d_figure( name="Get Release Pose")
 eef_poses = list(pick.get_all_grasp_poses("green_box"))
 all_release_poses = []
 for eef_pose in eef_poses:
-    release_poses = list(place.get_all_release_poses("goal_box", "green_box", eef_pose[pick.move_data.MOVE_grasp]))
+    release_poses = list(place.get_all_release_poses_and_obj_pose("goal_box", "green_box", eef_pose[pick.move_data.MOVE_grasp]))
     for release_pose, obj_pose in release_poses:
         all_release_poses.append((release_pose, obj_pose))
         pick.scene_mngr.render_axis(ax, release_pose[place.move_data.MOVE_release])

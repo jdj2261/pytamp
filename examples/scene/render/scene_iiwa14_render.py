@@ -2,7 +2,7 @@ import numpy as np
 import sys, os
 import yaml
 
-from pykin import asset
+from pykin import assets
 
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
@@ -10,7 +10,7 @@ from pytamp.scene.scene_manager import SceneManager
 from pykin.utils.mesh_utils import get_object_mesh
 from pykin.utils import plot_utils as p_utils
 
-asset_file_path = os.path.abspath(asset.__file__ + "/../")
+asset_file_path = os.path.abspath(assets.__file__ + "/../")
 
 fig, ax = p_utils.init_3d_figure()
 urdf_path = 'urdf/iiwa14/iiwa14.urdf'

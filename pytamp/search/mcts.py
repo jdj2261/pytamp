@@ -36,10 +36,10 @@ class MCTS:
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
         elif self.scene_mngr.scene.bench_num == 3:
             self.pick_action = PickAction(scene_mngr, n_contacts=3, n_directions=5, retreat_distance=0.15)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10, n_directions=10)
         else:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=5)
 
         self._sampling_method = sampling_method
         self._budgets = budgets
@@ -383,8 +383,7 @@ class MCTS:
                 print(f"{sc.FAIL}This optimal subnodes({infeasible_node}) is infeasible subnodes.{sc.ENDC}")
                 return
 
-        for node in sub_optimal_nodes:
-            self.show_logical_action(node)
+        self.show_logical_actions(sub_optimal_nodes)
 
         # if self.debug_mode:
         # subtree = self.get_success_subtree(optimizer_level=1)
@@ -415,7 +414,7 @@ class MCTS:
                         success_pick = True                    
                         init_theta = pick_joint_path[-1][self.pick_action.move_data.MOVE_default_grasp][-1]
                         
-                        current_cost = round(self.weird_division(1, self.pick_action.cost) / 10, 6)
+                        current_cost = round(self.weird_division(1, self.pick_action.cost), 6)
                         if current_cost > self.tree.nodes[sub_optimal_node][NodeData.COST]:
                             self.tree.nodes[sub_optimal_node][NodeData.COST] = current_cost
                             self.tree.nodes[sub_optimal_node][NodeData.JOINTS] = pick_joint_path
@@ -439,7 +438,7 @@ class MCTS:
                         success_place = True
                         init_theta = place_joint_path[-1][self.place_action.move_data.MOVE_default_release][-1]
 
-                        current_cost = round(self.weird_division(1, self.place_action.cost) / 10, 6)
+                        current_cost = round(self.weird_division(1, self.place_action.cost), 6)
                         if current_cost > self.tree.nodes[sub_optimal_node][NodeData.COST]:
                             self.tree.nodes[sub_optimal_node][NodeData.COST] = current_cost
                             self.tree.nodes[sub_optimal_node][NodeData.JOINTS] = place_joint_path
@@ -563,6 +562,7 @@ class MCTS:
             if self.level2_max_value <= value_sum:
                 self.optimal_nodes = sub_optimal_nodes
                 self.level2_max_value = np.round(value_sum, 6)
+                print(f"{sc.COLOR_CYAN}Update Sub optimal Nodes!! Value is {self.level2_max_value}.{sc.ENDC}")
             return self.level2_max_value
 
     def get_all_joint_path(self, nodes):
@@ -601,14 +601,15 @@ class MCTS:
 
         return pnp_all_joint_path, pick_all_objects, place_all_object_poses
 
-    def show_logical_action(self, node):
-        logical_action = self.tree.nodes[node][NodeData.ACTION]
-        if logical_action is not None:
-            if self.tree.nodes[node][NodeData.TYPE] == "action":
-                if logical_action[self.pick_action.info.TYPE] == "pick":
-                    print(f"Action Node: {node} {sc.OKGREEN}Action: Pick {logical_action[self.pick_action.info.PICK_OBJ_NAME]}{sc.ENDC}")
-                if logical_action[self.pick_action.info.TYPE] == "place":
-                    print(f"Action Node: {node}  {sc.OKGREEN}Action: Place {logical_action[self.pick_action.info.HELD_OBJ_NAME]} on {logical_action[self.pick_action.info.PLACE_OBJ_NAME]}{sc.ENDC}")
+    def show_logical_actions(self, nodes):
+        for node in nodes:
+            logical_action = self.tree.nodes[node][NodeData.ACTION]
+            if logical_action is not None:
+                if self.tree.nodes[node][NodeData.TYPE] == "action":
+                    if logical_action[self.pick_action.info.TYPE] == "pick":
+                        print(f"Action Node: {node} {sc.OKGREEN}Action: Pick {logical_action[self.pick_action.info.PICK_OBJ_NAME]}{sc.ENDC}")
+                    if logical_action[self.pick_action.info.TYPE] == "place":
+                        print(f"Action Node: {node}  {sc.OKGREEN}Action: Place {logical_action[self.pick_action.info.HELD_OBJ_NAME]} on {logical_action[self.pick_action.info.PLACE_OBJ_NAME]}{sc.ENDC}")
     
     def visualize_tree(self, title, tree=None):
         if tree is None:

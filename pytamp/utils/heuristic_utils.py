@@ -64,7 +64,7 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
             obj_pose = np.eye(4)
             obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
             obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, -0.005]
-            heuristic_pose = np.dot(obj_pose, t_utils.get_h_mat(position=np.array([0.05+0.01*int(disk_num - split_num), 0, 0])))
+            heuristic_pose = np.dot(obj_pose, t_utils.get_h_mat(position=np.array([0.062+0.005*int(5 - split_num), 0, 0])))
             for theta in np.linspace(np.pi-np.pi/24, np.pi-np.pi/12, 1):
                 tcp_pose = np.eye(4)
                 tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
@@ -72,3 +72,19 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
                 tcp_pose[:3,2] = [-np.sin(theta), 0, np.cos(theta)]
                 tcp_pose = np.dot(heuristic_pose, tcp_pose)
                 yield tcp_pose
+
+def get_heuristic_release_eef_pose(obj_pose_transformed,
+                                   eef_pose,
+                                   num=10):
+    for theta in np.linspace(0, np.pi, num):
+        eef_r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, -theta])
+        eef_h_mat_z = np.eye(4)
+        eef_h_mat_z[:3, :3] = eef_r_mat_z
+        eef_pose = np.dot(eef_pose, eef_h_mat_z)
+        
+        obj_r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta])
+        obj_h_mat_z = np.eye(4)
+        obj_h_mat_z[:3, :3] = obj_r_mat_z
+        obj_pose_transformed = np.dot(obj_pose_transformed, obj_h_mat_z)
+        
+        yield eef_pose, obj_pose_transformed

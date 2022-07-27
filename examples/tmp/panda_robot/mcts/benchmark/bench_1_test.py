@@ -43,8 +43,8 @@ for c in c_list:
 #     subtree = mcts.get_subtree()
 #     mcts.visualize_tree("MCTS", subtree)
 #     best_nodes = mcts.get_best_node(subtree)
-#     # for node in best_nodes:
-#         # mcts.show_logical_action(node)
+
+#     mcts.show_logical_actions(best_nodes)
 #     pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(best_nodes)
 #     # mcts.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
 #     # mcts_list(mcts.do_planning())

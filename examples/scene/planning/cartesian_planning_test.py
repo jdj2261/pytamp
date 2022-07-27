@@ -2,7 +2,7 @@ import numpy as np
 import sys, os
 import yaml
 
-from pykin import asset
+from pykin import assets
 from pykin.utils import plot_utils as p_utils
 from pykin.kinematics.transform import Transform
 from pykin.robots.single_arm import SingleArm
@@ -13,7 +13,7 @@ from pytamp.planners.cartesian_planner import CartesianPlanner
 from pytamp.scene.scene_manager import SceneManager
 
 fig, ax = p_utils.init_3d_figure()
-asset_file_path = os.path.abspath(asset.__file__ + "/../")
+asset_file_path = os.path.abspath(assets.__file__ + "/../")
 file_path = 'urdf/panda/panda.urdf'
 robot = SingleArm(
     f_name=file_path, 

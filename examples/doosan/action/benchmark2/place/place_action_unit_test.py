@@ -30,7 +30,7 @@ eef_poses.extend(list(pick.get_grasp_pose_from_heuristic("goal_bottle")))
 
 all_release_poses = []
 for eef_pose in eef_poses:
-    release_poses = list(place.get_all_release_poses("shelf_9", "goal_bottle", eef_pose[pick.move_data.MOVE_grasp]))
+    release_poses = list(place.get_all_release_poses_and_obj_pose("shelf_9", "goal_bottle", eef_pose[pick.move_data.MOVE_grasp]))
     pick.scene_mngr.render.render_gripper(ax, benchmark2.robot, pose=eef_pose[place.move_data.MOVE_grasp])
     for release_pose, obj_pose in release_poses:
         all_release_poses.append((release_pose, obj_pose))

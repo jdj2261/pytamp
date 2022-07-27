@@ -4,10 +4,10 @@ from copy import deepcopy
 from trimesh import Trimesh, proximity
 
 from pykin.utils import mesh_utils as m_utils
-from pykin.utils import transform_utils as t_utils
 from pykin.utils.log_utils import create_logger
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene
+from pytamp.utils.heuristic_utils import get_heuristic_release_eef_pose
 
 logger = create_logger('PlaceAction', "debug")
 
@@ -17,11 +17,18 @@ class PlaceAction(ActivityBase):
         scene_mngr,
         n_samples_held_obj=10,
         n_samples_support_obj=10,
+        n_directions=1,
         release_distance=0.01,
     ):
         super().__init__(scene_mngr)
         self.n_samples_held_obj = n_samples_held_obj
         self.n_samples_sup_obj = n_samples_support_obj
+        
+        print(n_directions)
+        if n_directions < 1:
+            n_directions = 1
+        self.n_directions = n_directions
+        
         self.release_distance = release_distance
         self.filter_logical_states = [scene_mngr.scene.logical_state.held]                                    
         
@@ -53,7 +60,8 @@ class PlaceAction(ActivityBase):
             
             #? for benchmark 4
             if self.scene_mngr.scene.bench_num == 4:
-                if sup_obj not in ["table"]:
+                support_objects = self.scene_mngr.scene.goal_objects + ["table"]
+                if sup_obj not in support_objects:
                     continue
 
             if sup_obj == self.scene_mngr.scene.place_obj_name:
@@ -72,7 +80,7 @@ class PlaceAction(ActivityBase):
             scene.objs[held_obj_name].h_mat = scene.robot.gripper.pick_obj_pose
             self.deepcopy_scene(scene)
             
-        release_poses = list(self.get_all_release_poses(sup_obj_name, held_obj_name, eef_pose))
+        release_poses = list(self.get_all_release_poses_and_obj_pose(sup_obj_name, held_obj_name, eef_pose))
         release_poses_not_collision = list(self.get_release_poses_not_collision(release_poses))
         action_level_1 = self.get_action(held_obj_name, sup_obj_name, release_poses_not_collision)
         return action_level_1
@@ -175,16 +183,10 @@ class PlaceAction(ActivityBase):
             next_scene.release_poses = release_poses
             next_scene.robot.gripper.place_obj_pose = obj_pose_transformed
             next_scene.robot.gripper.release_pose = release_poses[self.move_data.MOVE_release]
-        
-            # Move a gripper to default pose
-            default_thetas = self.scene_mngr.scene.robot.init_qpos
-            default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)[self.scene_mngr.scene.robot.eef_name].h_mat
-            next_scene.robot.gripper.set_gripper_pose(default_pose)
 
             # Move pick object on support obj
             next_scene.objs[held_obj_name].h_mat = obj_pose_transformed
             self.scene_mngr.obj_collision_mngr.set_transform(held_obj_name, obj_pose_transformed)
-            next_scene.pick_obj_name = held_obj_name
             next_scene.place_obj_name = place_obj_name
             
             ## Change Logical State
@@ -211,7 +213,7 @@ class PlaceAction(ActivityBase):
             yield next_scene
 
     # Not consider collision
-    def get_all_release_poses(self, support_obj_name, held_obj_name, eef_pose=None):
+    def get_all_release_poses_and_obj_pose(self, support_obj_name, held_obj_name, eef_pose=None):
         # gripper = self.scene_mngr.scene.robot.gripper
         transformed_eef_poses = list(self.get_transformed_eef_poses(support_obj_name, held_obj_name, eef_pose))
         
@@ -220,20 +222,21 @@ class PlaceAction(ActivityBase):
                 if not self._check_support(support_obj_name, held_obj_name, obj_pose_transformed):
                     continue
             
-            if self.scene_mngr._scene.bench_num == 3:
-                if held_obj_name == "half_cylinder_box":
-                    r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, np.pi/2])
-                    h_mat_z = np.eye(4)
-                    h_mat_z[:3, :3] = r_mat_z
+            if self.scene_mngr.heuristic:
+                heuristic_poses = get_heuristic_release_eef_pose(obj_pose_transformed, eef_pose, self.n_directions)
+                for eef_pose, obj_pose_transformed in heuristic_poses:
+                    release_poses = self.get_all_release_poses(eef_pose)
+                    yield release_poses, obj_pose_transformed
+            else:
+                release_poses = self.get_all_release_poses(eef_pose)
+                yield release_poses, obj_pose_transformed
 
-                    obj_pose_transformed = np.dot(obj_pose_transformed, h_mat_z)
-                    eef_pose = np.dot(eef_pose, h_mat_z)
-
-            release_pose = {}
-            release_pose[self.move_data.MOVE_release] = eef_pose
-            release_pose[self.move_data.MOVE_pre_release] = self.get_pre_release_pose(eef_pose)
-            release_pose[self.move_data.MOVE_post_release] = self.get_post_release_pose(eef_pose)
-            yield release_pose, obj_pose_transformed
+    def get_all_release_poses(self, eef_pose):
+        release_pose = {}
+        release_pose[self.move_data.MOVE_release] = eef_pose
+        release_pose[self.move_data.MOVE_pre_release] = self.get_pre_release_pose(eef_pose)
+        release_pose[self.move_data.MOVE_post_release] = self.get_post_release_pose(eef_pose)
+        return release_pose
 
     def get_pre_release_pose(self, release_pose):
         pre_release_pose = np.eye(4)
@@ -351,13 +354,18 @@ class PlaceAction(ActivityBase):
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 
         # TODO heuristic
-        if obj_name not in ["table", "shelf_8", "shelf_9", "shelf_15"]:
-            center_upper_point = np.zeros(3)
-            center_upper_point[0] = center_point[0] + np.random.uniform(-0.002, 0.002)
-            center_upper_point[1] = center_point[1] + np.random.uniform(-0.002, 0.002)
-            center_upper_point[2] = copied_mesh.bounds[1, 2]
-            sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
-            normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)
+        if self.scene_mngr.scene.bench_num != 0:
+            if obj_name not in ["table", "shelf_8", "shelf_9", "shelf_15"]:
+                center_upper_point = np.zeros(3)
+                center_upper_point[0] = center_point[0] + np.random.uniform(-0.002, 0.002)
+                center_upper_point[1] = center_point[1] + np.random.uniform(-0.002, 0.002)
+                center_upper_point[2] = copied_mesh.bounds[1, 2]
+                sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
+                normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)
+        else:
+            if obj_name == "table":
+                center_upper_point = np.zeros(3)
+                pass
             
         for point, normal_vector in zip(sample_points, normals):
             yield point, normal_vector, margin

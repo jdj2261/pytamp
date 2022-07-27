@@ -19,18 +19,18 @@ robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
 table_mesh = get_object_mesh('ben_table.stl')
-cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[0.3, 0.3, 1.0])
+peg_mesh = get_object_mesh('hanoi_peg.stl', scale=[0.3, 0.3, 1.0])
 disk_mesh = get_object_mesh('hanoi_disk.stl')
 
-cylinder_mesh_bound = get_mesh_bounds(mesh=cylinder_mesh)
+peg_mesh_bound = get_mesh_bounds(mesh=peg_mesh)
 disk_mesh_bound = get_mesh_bounds(mesh=disk_mesh)
 disk_heigh = disk_mesh_bound[1][2] - disk_mesh_bound[0][2]
 table_height = table_mesh.bounds[1][2] - table_mesh.bounds[0][2]
 
 table_pose = Transform(pos=np.array([1.0, -0.4, -0.03]))
-cylinder1_pose = Transform(pos=np.array([0.6, -0.25, table_height + cylinder_mesh_bound[1][2]]))
-cylinder2_pose = Transform(pos=np.array([0.6, 0, table_height + cylinder_mesh_bound[1][2]]))
-cylinder3_pose = Transform(pos=np.array([0.6, 0.25, table_height + cylinder_mesh_bound[1][2]]))
+peg1_pose = Transform(pos=np.array([0.6, -0.25, table_height + peg_mesh_bound[1][2]]))
+peg2_pose = Transform(pos=np.array([0.6, 0, table_height + peg_mesh_bound[1][2]]))
+peg3_pose = Transform(pos=np.array([0.6, 0.25, table_height + peg_mesh_bound[1][2]]))
 
 disk_num = 6
 disk_pose = [ Transform() for _ in range(disk_num)]

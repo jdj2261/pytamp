@@ -37,32 +37,32 @@ class Benchmark4(Benchmark):
         
     def _load_objects(self):
         self.table_mesh = get_object_mesh('ben_table.stl', [1.0, 1.5, 1.0])
-        self.cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[1.0, 1.0, 1.0])
+        self.peg_mesh = get_object_mesh('hanoi_peg.stl', scale=[1.0, 1.0, 1.0])
         self.disk_mesh = get_object_mesh('hanoi_disk.stl', scale=[1, 1, 2.0])
 
-        self.cylinder_mesh_bound = get_mesh_bounds(mesh=self.cylinder_mesh)
+        self.peg_mesh_bound = get_mesh_bounds(mesh=self.peg_mesh)
         self.disk_mesh_bound = get_mesh_bounds(mesh=self.disk_mesh)
         self.disk_heigh = self.disk_mesh_bound[1][2] - self.disk_mesh_bound[0][2]
         self.table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
 
         self.table_pose = Transform(pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]]))
-        self.cylinder1_pose = Transform(pos=np.array([0.7, -0.20, self.table_height + self.cylinder_mesh_bound[1][2]]))
-        self.cylinder2_pose = Transform(pos=np.array([0.7, 0, self.table_height + self.cylinder_mesh_bound[1][2]]))
-        self.cylinder3_pose = Transform(pos=np.array([0.7, 0.20, self.table_height + self.cylinder_mesh_bound[1][2]]))
+        self.peg1_pose = Transform(pos=np.array([0.7, 0.20, self.table_height + self.peg_mesh_bound[1][2]]))
+        self.peg2_pose = Transform(pos=np.array([0.7, 0, self.table_height + self.peg_mesh_bound[1][2]]))
+        self.peg3_pose = Transform(pos=np.array([0.7, -0.20, self.table_height + self.peg_mesh_bound[1][2]]))
 
         self.disk_pose = [ Transform() for _ in range(self.disk_num)]
         self.disk_object = [ 0 for _ in range(self.disk_num)]
 
     def _load_scene(self):
-        self.scene_mngr.add_object(name="cylinder_1", gtype="mesh", gparam=self.cylinder_mesh, h_mat=self.cylinder1_pose.h_mat, color=[0., 0., 1.])
-        self.scene_mngr.add_object(name="cylinder_2", gtype="mesh", gparam=self.cylinder_mesh, h_mat=self.cylinder2_pose.h_mat, color=[0., 0., 1.])
-        self.scene_mngr.add_object(name="cylinder_3", gtype="mesh", gparam=self.cylinder_mesh, h_mat=self.cylinder3_pose.h_mat, color=[0., 0., 1.])
+        self.scene_mngr.add_object(name="peg_1", gtype="mesh", gparam=self.peg_mesh, h_mat=self.peg1_pose.h_mat, color=[0., 0., 1.])
+        self.scene_mngr.add_object(name="peg_2", gtype="mesh", gparam=self.peg_mesh, h_mat=self.peg2_pose.h_mat, color=[0., 0., 1.])
+        self.scene_mngr.add_object(name="peg_3", gtype="mesh", gparam=self.peg_mesh, h_mat=self.peg3_pose.h_mat, color=[0., 0., 1.])
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
         self.scene_mngr.add_robot(self.robot)
 
-        self.scene_mngr.set_logical_state("cylinder_1", ("on", "table"), ("static", True)) 
-        self.scene_mngr.set_logical_state("cylinder_2", ("on", "table"), ("static", True)) 
-        self.scene_mngr.set_logical_state("cylinder_3", ("on", "table"), ("static", True)) 
+        self.scene_mngr.set_logical_state("peg_1", ("on", "table"), ("static", True)) 
+        self.scene_mngr.set_logical_state("peg_2", ("on", "table"), ("static", True)) 
+        self.scene_mngr.set_logical_state("peg_3", ("on", "table"), ("static", True)) 
     
         # theta = np.linspace(-np.pi, np.pi, disk_num)
         for i in range(self.disk_num):

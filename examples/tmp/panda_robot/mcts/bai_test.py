@@ -85,8 +85,7 @@ mcts.visualize_tree("MCTS", subtree)
 best_nodes = mcts.get_best_node(subtree)
 if best_nodes:
     print("\nBest Action Node")
-    for node in best_nodes:
-        mcts.show_logical_action(node)
+    mcts.show_logical_actions(best_nodes)
 
 rewards = mcts.rewards_for_level_1
 max_iter = np.argmax(rewards)

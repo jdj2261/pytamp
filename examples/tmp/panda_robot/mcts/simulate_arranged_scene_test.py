@@ -192,8 +192,7 @@ if success_pnp:
                     fk = mcts.pick_action.scene_mngr.scene.robot.forward_kin(joint)
                     eef_poses.append(fk[mcts.place_action.scene_mngr.scene.robot.eef_name].pos)
 
-    for node in best_nodes:
-        mcts.show_logical_action(node)
+    mcts.show_logical_actions(best_nodes)
 
     fig, ax = p_utils.init_3d_figure( name="Level wise 2")
     mcts.place_action.scene_mngr.animation(

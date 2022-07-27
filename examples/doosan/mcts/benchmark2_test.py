@@ -56,11 +56,12 @@ p_utils.plot_values(
 p_utils.plot_values(
     level_2_max_values, 
     label="Optiaml Values", 
-    title="Benchamrk2_Level_1", 
+    title="Benchamrk2_Level_2", 
     save_dir_name='benchmark2_result', 
     is_save=True)
 p_utils.show_figure()
 
 # Do planning
 pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+mcts.show_logical_actions(mcts.optimal_nodes)
 mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

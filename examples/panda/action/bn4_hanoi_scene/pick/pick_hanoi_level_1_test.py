@@ -17,18 +17,18 @@ robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
 
 table_mesh = get_object_mesh('ben_table.stl')
-cylinder_mesh = get_object_mesh('hanoi_cylinder.stl', scale=[0.3, 0.3, 1.0])
+peg_mesh = get_object_mesh('hanoi_peg.stl', scale=[0.3, 0.3, 1.0])
 disk_mesh = get_object_mesh('hanoi_disk.stl')
 
-cylinder_mesh_bound = get_mesh_bounds(mesh=cylinder_mesh)
+peg_mesh_bound = get_mesh_bounds(mesh=peg_mesh)
 disk_mesh_bound = get_mesh_bounds(mesh=disk_mesh)
 disk_heigh = disk_mesh_bound[1][2] - disk_mesh_bound[0][2]
 table_height = table_mesh.bounds[1][2] - table_mesh.bounds[0][2]
 
 table_pose = Transform(pos=np.array([1.0, -0.4, -0.03]))
-cylinder1_pose = Transform(pos=np.array([0.6, -0.25, table_height + cylinder_mesh_bound[1][2]]))
-cylinder2_pose = Transform(pos=np.array([0.6, 0, table_height + cylinder_mesh_bound[1][2]]))
-cylinder3_pose = Transform(pos=np.array([0.6, 0.25, table_height + cylinder_mesh_bound[1][2]]))
+peg1_pose = Transform(pos=np.array([0.6, -0.25, table_height + peg_mesh_bound[1][2]]))
+peg2_pose = Transform(pos=np.array([0.6, 0, table_height + peg_mesh_bound[1][2]]))
+peg3_pose = Transform(pos=np.array([0.6, 0.25, table_height + peg_mesh_bound[1][2]]))
 
 disk_num = 6
 disk_pose = [ Transform() for _ in range(disk_num)]
@@ -46,18 +46,18 @@ for i in range(disk_num):
     hanoi_mesh = get_object_mesh(f'hanoi_disk.stl')
     scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=disk_pose[i].h_mat, color=[0., 1., 0.])
 
-scene_mngr.add_object(name="cylinder_1", gtype="mesh", gparam=cylinder_mesh, h_mat=cylinder1_pose.h_mat, color=[1, 0., 0.])
-scene_mngr.add_object(name="cylinder_2", gtype="mesh", gparam=cylinder_mesh, h_mat=cylinder2_pose.h_mat, color=[1, 0., 0.])
-scene_mngr.add_object(name="cylinder_3", gtype="mesh", gparam=cylinder_mesh, h_mat=cylinder3_pose.h_mat, color=[1, 0., 0.])
+scene_mngr.add_object(name="peg_1", gtype="mesh", gparam=peg_mesh, h_mat=peg1_pose.h_mat, color=[1, 0., 0.])
+scene_mngr.add_object(name="peg_2", gtype="mesh", gparam=peg_mesh, h_mat=peg2_pose.h_mat, color=[1, 0., 0.])
+scene_mngr.add_object(name="peg_3", gtype="mesh", gparam=peg_mesh, h_mat=peg3_pose.h_mat, color=[1, 0., 0.])
 scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.39, 0.263, 0.129])
 scene_mngr.add_robot(robot)
 
-scene_mngr.scene.logical_states["cylinder_1"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
-scene_mngr.scene.logical_states["cylinder_2"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
-scene_mngr.scene.logical_states["cylinder_3"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
-scene_mngr.scene.logical_states["cylinder_1"] = {scene_mngr.scene.logical_state.static : True}
-scene_mngr.scene.logical_states["cylinder_2"] = {scene_mngr.scene.logical_state.static : True}
-scene_mngr.scene.logical_states["cylinder_3"] = {scene_mngr.scene.logical_state.static : True}
+scene_mngr.scene.logical_states["peg_1"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
+scene_mngr.scene.logical_states["peg_2"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
+scene_mngr.scene.logical_states["peg_3"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
+scene_mngr.scene.logical_states["peg_1"] = {scene_mngr.scene.logical_state.static : True}
+scene_mngr.scene.logical_states["peg_2"] = {scene_mngr.scene.logical_state.static : True}
+scene_mngr.scene.logical_states["peg_3"] = {scene_mngr.scene.logical_state.static : True}
 
 scene_mngr.scene.logical_states["hanoi_disk_0"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}
 scene_mngr.scene.logical_states["hanoi_disk_1"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["hanoi_disk_0"]}

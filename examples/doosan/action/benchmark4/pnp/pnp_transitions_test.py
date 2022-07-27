@@ -3,7 +3,7 @@ from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 from pytamp.benchmark import Benchmark4
 
-benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True)
+benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True, disk_num=3)
 pick = PickAction(benchmark4.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1)
 place = PlaceAction(benchmark4.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
 
@@ -28,29 +28,35 @@ for pick_action in pick_actions:
                                                 fig, ax = p_utils.init_3d_figure( name="first pick")
                                                 place.scene_mngr.render_gripper(ax, pick_scene, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, pick_scene)
+                                                print(f"Pick1 {pick_scene.pick_obj_name}")
                                                 place.scene_mngr.show()
 
                                                 fig, ax = p_utils.init_3d_figure( name="first place")
                                                 place.scene_mngr.render_gripper(ax, place_scene, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, place_scene)
+                                                print(f"Place1 {place_scene.pick_obj_name} on {place_scene.place_obj_name}")
                                                 place.scene_mngr.show()
 
                                                 fig, ax = p_utils.init_3d_figure( name="second pick")
                                                 place.scene_mngr.render_gripper(ax, pick_scene_2, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, pick_scene_2)
+                                                print(f"Pick2 {pick_scene_2.pick_obj_name}")
                                                 place.scene_mngr.show()
 
                                                 fig, ax = p_utils.init_3d_figure( name="second place")
                                                 place.scene_mngr.render_gripper(ax, place_scene2, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, place_scene2)
+                                                print(f"Place2 {place_scene2.pick_obj_name} on {place_scene2.place_obj_name}")
                                                 place.scene_mngr.show()
 
                                                 fig, ax = p_utils.init_3d_figure( name="third pick")
                                                 place.scene_mngr.render_gripper(ax, pick_scene_3, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, pick_scene_3)
+                                                print(f"Pick3 {pick_scene_3.pick_obj_name}")
                                                 place.scene_mngr.show()
                                                 
                                                 fig, ax = p_utils.init_3d_figure( name="third place")
                                                 place.scene_mngr.render_gripper(ax, place_scene3, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, place_scene3)
+                                                print(f"Place3 {place_scene3.pick_obj_name} on {place_scene3.place_obj_name}")
                                                 place.scene_mngr.show()

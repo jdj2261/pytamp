@@ -28,7 +28,7 @@ mcts = MCTS(benchmark1.scene_mngr)
 mcts.debug_mode = False
 
 # 최대부터
-mcts.budgets = 10
+mcts.budgets = 30
 mcts.max_depth = 20
 mcts.c = 30
 # mcts.sampling_method = 'bai_ucb' # 405
@@ -59,7 +59,7 @@ p_utils.plot_values(
 p_utils.plot_values(
     level_2_max_values, 
     label="Optiaml Values", 
-    title="Benchamrk1_Level_1", 
+    title="Benchamrk1_Level_2", 
     save_dir_name='benchmark1_result', 
     is_save=True)
 p_utils.show_figure()
@@ -67,4 +67,5 @@ p_utils.show_figure()
 # Do planning
 # mcts.get_all_joint_path(mcts.optimal_nodes)
 pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+mcts.show_logical_actions(mcts.optimal_nodes)
 mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

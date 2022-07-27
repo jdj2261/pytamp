@@ -82,7 +82,7 @@ class RRTStarPlanner(Planner):
             logger.warning(f"This Planner does not do collision checking")
         
         cnt = 0
-        total_cnt = 10
+        total_cnt = 5
         init_q = self._cur_qpos
 
         while True:
@@ -205,7 +205,7 @@ class RRTStarPlanner(Planner):
                 if self._scene_mngr.is_debug_mode:
                     self._scene_mngr.render_debug(title="Excess")
                 break
-            self._max_iter += 100
+            self._max_iter += 200
 
             logger.error(f"Failed Generate Path..")
             print(f"{sc.BOLD}Retry Generate Path, the number of retries is {cnt}/{total_cnt} {sc.ENDC}\n")
