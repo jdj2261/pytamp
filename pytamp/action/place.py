@@ -18,17 +18,18 @@ class PlaceAction(ActivityBase):
         n_samples_held_obj=10,
         n_samples_support_obj=10,
         n_directions=1,
+        retreat_distance=0.1,
         release_distance=0.01,
     ):
         super().__init__(scene_mngr)
         self.n_samples_held_obj = n_samples_held_obj
         self.n_samples_sup_obj = n_samples_support_obj
         
-        print(n_directions)
         if n_directions < 1:
             n_directions = 1
         self.n_directions = n_directions
         
+        self.retreat_distance = retreat_distance
         self.release_distance = release_distance
         self.filter_logical_states = [scene_mngr.scene.logical_state.held]                                    
         
@@ -336,8 +337,9 @@ class PlaceAction(ActivityBase):
         return None, None
 
     def get_surface_points_for_support_obj(self, obj_name, alpha=0.2):
-        copied_mesh = deepcopy(self.scene_mngr.scene.objs[obj_name].gparam)
-        copied_mesh.apply_transform(self.scene_mngr.scene.objs[obj_name].h_mat)
+        support_obj = self.scene_mngr.scene.objs[obj_name]
+        copied_mesh = deepcopy(support_obj.gparam)
+        copied_mesh.apply_transform(support_obj.h_mat)
         center_point = copied_mesh.center_mass
 
         len_x = abs(center_point[0] - copied_mesh.bounds[0][0])
@@ -354,7 +356,7 @@ class PlaceAction(ActivityBase):
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 
         # TODO heuristic
-        if self.scene_mngr.scene.bench_num != 0:
+        if self.scene_mngr.scene.bench_num != 4:
             if obj_name not in ["table", "shelf_8", "shelf_9", "shelf_15"]:
                 center_upper_point = np.zeros(3)
                 center_upper_point[0] = center_point[0] + np.random.uniform(-0.002, 0.002)
@@ -363,9 +365,21 @@ class PlaceAction(ActivityBase):
                 sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
                 normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)
         else:
-            if obj_name == "table":
-                center_upper_point = np.zeros(3)
-                pass
+            pegs = self.scene_mngr.scene.pegs
+            normals = np.tile(np.array([0, 0, 1]), reps=(3, 1))
+            margin = (0, 0, 0, 0)
+            
+            if "table" in obj_name:    
+                sample_points = np.array([np.array(self.scene_mngr.get_object_pose(peg)[:3, 3]) for peg in pegs])
+                table_height = self.scene_mngr.scene.objs["table"].gparam.bounds[1][2] - self.scene_mngr.scene.objs["table"].gparam.bounds[0][2]
+                sample_points[:3, 2] = table_height
+            if "hanoi_disk" in obj_name:
+                sample_points = np.array([np.array(support_obj.h_mat[:3, 3])])
+                hanoi_disk_height = support_obj.h_mat[2, 3] + (support_obj.gparam.bounds[1][2] - support_obj.gparam.bounds[0][2])/2
+                sample_points[:3, 2] = hanoi_disk_height
+            
+                for point, normal_vector in zip(sample_points, normals):
+                    yield point, normal_vector, margin
             
         for point, normal_vector in zip(sample_points, normals):
             yield point, normal_vector, margin
@@ -382,28 +396,39 @@ class PlaceAction(ActivityBase):
 
     def get_surface_points_for_held_obj(self, obj_name):
         copied_mesh = deepcopy(self.scene_mngr.init_objects[obj_name].gparam)
+        copied_mesh.apply_translation(-copied_mesh.center_mass)
         copied_mesh.apply_transform(self.scene_mngr.scene.objs[obj_name].h_mat)
+        
         center_point = copied_mesh.center_mass
 
-        center_upper_point = center_point
-        center_upper_point[-1] = copied_mesh.bounds[0, 2]
+        center_lower_point = center_point
+        center_lower_point[-1] = copied_mesh.bounds[0, 2]
         
-        if "bottle" in obj_name:
-            sample_points = np.array([center_upper_point])
-            normals = np.array([[0, 0, -1]])
+        if self.scene_mngr.scene.bench_num == 2:
+            if "bottle" in obj_name:
+                sample_points = np.array([center_lower_point])
+                normals = np.array([[0, 0, -1]])
+
+                for point, normal_vector in zip(sample_points, normals):
+                    yield point, normal_vector
+        # TODO
+        elif self.scene_mngr.scene.bench_num == 4:
+            if "hanoi_disk" in obj_name:
+                sample_points = np.array([center_lower_point])
+                normals = np.array([[0, 0, -1]])
+
+                for point, normal_vector in zip(sample_points, normals):
+                    yield point, normal_vector
+        else:
+            weights = self._get_weights_for_held_obj(copied_mesh)
+            sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, self.n_samples_held_obj, weights)
+
+            # heuristic
+            sample_points = np.append(sample_points, np.array([center_lower_point]), axis=0)
+            normals = np.append(normals, np.array([[0, 0, -1]]), axis=0)
 
             for point, normal_vector in zip(sample_points, normals):
                 yield point, normal_vector
-
-        weights = self._get_weights_for_held_obj(copied_mesh)
-        sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, self.n_samples_held_obj, weights)
-
-        # heuristic
-        sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
-        normals = np.append(normals, np.array([[0, 0, -1]]), axis=0)
-
-        for point, normal_vector in zip(sample_points, normals):
-            yield point, normal_vector
 
     @staticmethod
     def _get_weights_for_held_obj(obj_mesh):
@@ -464,13 +489,16 @@ class PlaceAction(ActivityBase):
                             continue
                         if not (min_y + 0.1 <= center_point[1] <= max_y - 0.1):
                             continue
-                if bench_num == 3 or bench_num ==4 :
+                if bench_num == 3:
                     if "table" in support_obj_name:
                         if not (min_x + 0.05 <= center_point[0] <= max_x - 0.5):
                             continue
                         if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
                             continue
                 
+                if bench_num == 4:
+                    pass
+
                 if eef_pose is not None:
                     T_obj_pose_and_obj_pose_transformed = np.dot(held_obj_pose, np.linalg.inv(held_obj_pose_rotated))
                     eef_pose_transformed = self._get_eef_pose_transformed(

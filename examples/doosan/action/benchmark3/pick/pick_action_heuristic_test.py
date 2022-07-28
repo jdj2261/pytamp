@@ -3,7 +3,7 @@ from pytamp.action.pick import PickAction
 from pytamp.benchmark import Benchmark3
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="collision", is_pyplot=False)
-pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1)
+pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=10, retreat_distance=0.1)
 
 
 #! arch_box, rect_box, half_cylinder_box

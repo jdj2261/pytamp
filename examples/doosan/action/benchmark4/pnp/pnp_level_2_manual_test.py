@@ -3,11 +3,11 @@ from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 from pytamp.benchmark import Benchmark4
 
-benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True)
-pick = PickAction(benchmark4.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1)
-place = PlaceAction(benchmark4.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
+benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True, disk_num=3)
+pick = PickAction(benchmark4.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.2)
+place = PlaceAction(benchmark4.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.5, release_distance=0.01)
 
-pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.scene, "hanoi_disk_5")
+pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.scene, "hanoi_disk_2")
 
 pnp_all_joint_path = []
 pick_all_objects = []
@@ -21,7 +21,7 @@ success_joint_path = False
 for pick_scene in pick.get_possible_transitions(pick.scene_mngr.scene, pick_action):
     pick_joint_path = pick.get_possible_joint_path_level_2(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
     if pick_joint_path:
-        place_action = place.get_action_level_1_for_single_object("table", "hanoi_disk_5", pick_scene.robot.gripper.grasp_pose, scene=pick_scene)
+        place_action = place.get_action_level_1_for_single_object("table", "hanoi_disk_2", pick_scene.robot.gripper.grasp_pose, scene=pick_scene)
         for place_scene in place.get_possible_transitions(scene=pick_scene, action=place_action):
             place_joint_path = place.get_possible_joint_path_level_2(
                 scene=place_scene, release_poses=place_scene.release_poses, init_thetas=pick_joint_path[-1][place.move_data.MOVE_default_grasp][-1])

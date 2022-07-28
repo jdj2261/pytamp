@@ -30,13 +30,14 @@ class MCTS:
         self.scene_mngr = scene_mngr
         self.scene_mngr.is_debug_mode = False
         self.state = scene_mngr.scene
+        bench_num =self.scene_mngr.scene.bench_num
         
-        if self.scene_mngr.scene.bench_num == 2:
+        if bench_num == 2:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
-        elif self.scene_mngr.scene.bench_num == 3:
+        elif bench_num == 3:
             self.pick_action = PickAction(scene_mngr, n_contacts=3, n_directions=5, retreat_distance=0.15)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10, n_directions=10)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10, retreat_distance=0.2, n_directions=5)
         else:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=5)

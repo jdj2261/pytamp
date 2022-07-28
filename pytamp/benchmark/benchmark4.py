@@ -46,9 +46,9 @@ class Benchmark4(Benchmark):
         self.table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
 
         self.table_pose = Transform(pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]]))
-        self.peg1_pose = Transform(pos=np.array([0.7, 0.20, self.table_height + self.peg_mesh_bound[1][2]]))
+        self.peg1_pose = Transform(pos=np.array([0.7, 0.30, self.table_height + self.peg_mesh_bound[1][2]]))
         self.peg2_pose = Transform(pos=np.array([0.7, 0, self.table_height + self.peg_mesh_bound[1][2]]))
-        self.peg3_pose = Transform(pos=np.array([0.7, -0.20, self.table_height + self.peg_mesh_bound[1][2]]))
+        self.peg3_pose = Transform(pos=np.array([0.7, -0.30, self.table_height + self.peg_mesh_bound[1][2]]))
 
         self.disk_pose = [ Transform() for _ in range(self.disk_num)]
         self.disk_object = [ 0 for _ in range(self.disk_num)]
@@ -61,16 +61,16 @@ class Benchmark4(Benchmark):
         self.scene_mngr.add_robot(self.robot)
 
         self.scene_mngr.set_logical_state("peg_1", ("on", "table"), ("static", True)) 
-        self.scene_mngr.set_logical_state("peg_2", ("on", "table"), ("static", True)) 
+        self.scene_mngr.set_logical_state("peg_2", ("on",  "table"), ("static", True)) 
         self.scene_mngr.set_logical_state("peg_3", ("on", "table"), ("static", True)) 
     
         # theta = np.linspace(-np.pi, np.pi, disk_num)
         for i in range(self.disk_num):
-            disk_pos = np.array([0.69, 0.2, self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])
+            disk_pos = np.array([0.69, 0.3, self.table_height + self.disk_mesh_bound[1][2] + self.disk_heigh *i ])
             self.disk_pose[i] = Transform(pos=self.disk_mesh.center_mass + disk_pos)
             disk_name = "hanoi_disk_" + str(i)
             print(disk_name)
-            hanoi_mesh = get_object_mesh(f'hanoi_disk.stl', scale=[1.5-0.1*i, 1.5-0.1*i, 2.0])
+            hanoi_mesh = get_object_mesh(f'hanoi_disk.stl', scale=[2.0-0.2*i, 2.0-0.2*i, 2.0])
             self.scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=self.disk_pose[i].h_mat, color=[0., 1., 0.])
         
         for i in range(self.disk_num):

@@ -5,7 +5,7 @@ from pytamp.action.place import PlaceAction
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="visual", is_pyplot=True)
 pick = PickAction(benchmark1.scene_mngr, n_contacts=0, n_directions=0)
-place = PlaceAction(benchmark1.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
+place = PlaceAction(benchmark1.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=10)
 
 ################# Action Test ##################
 fig, ax = p_utils.init_3d_figure(name="Level wise 1")
@@ -19,7 +19,7 @@ for pick_scene in pick.get_possible_transitions(pick.scene_mngr.init_scene, pick
     for release_pose, obj_pose in place_action[place.info.RELEASE_POSES]:
         place.scene_mngr.render.render_axis(ax, release_pose[place.move_data.MOVE_release])
         place.scene_mngr.render.render_object(ax, place.scene_mngr.scene.objs["A_box"], obj_pose)
-        place.scene_mngr.render.render_gripper(ax, benchmark1.robot, pose=release_pose[place.move_data.MOVE_release])
+        # place.scene_mngr.render.render_gripper(ax, benchmark1.robot, pose=release_pose[place.move_data.MOVE_release])
 place.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)
 place.show()

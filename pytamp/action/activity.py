@@ -40,17 +40,13 @@ class ActivityBase(metaclass=ABCMeta):
     Activity Base class
 
     Args:
-        robot (SingleArm or Bimanual): manipulator type
-        robot_col_mngr (CollisionManager): robot's CollisionManager
-        object_mngr (ObjectManager): object's Manager
+
     """
     def __init__(
         self,
-        scene_mngr:SceneManager,
-        retreat_distance=0.1
+        scene_mngr:SceneManager
     ):
         self.scene_mngr = scene_mngr.deepcopy_scene(scene_mngr)
-        self.retreat_distance = retreat_distance
         self.info = ActionInfo
         self.move_data = MoveData
 

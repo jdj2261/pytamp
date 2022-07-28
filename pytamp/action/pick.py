@@ -16,10 +16,15 @@ class PickAction(ActivityBase):
         limit_angle_for_force_closure=0.2,
         retreat_distance=0.1
     ):
-        super().__init__(scene_mngr, retreat_distance)
+        super().__init__(scene_mngr)
         self.n_contacts = n_contacts
+        
+        if n_directions < 1:
+            n_directions = 1
         self.n_directions = n_directions
+        
         self.limit_angle = limit_angle_for_force_closure
+        self.retreat_distance = retreat_distance
         self.filter_logical_states = [ scene_mngr.scene.logical_state.support, 
                                        scene_mngr.scene.logical_state.static]
 
@@ -56,10 +61,12 @@ class PickAction(ActivityBase):
 
     def get_grasp_pose_from_heuristic(self, obj_name):
         copied_mesh = deepcopy(self.scene_mngr.scene.objs[obj_name].gparam)
+        copied_mesh.apply_translation(-copied_mesh.center_mass)
         copied_mesh.apply_transform(self.scene_mngr.scene.objs[obj_name].h_mat)
         tcp_poses = h_utils.get_heuristic_tcp_pose(scene_mngr=self.scene_mngr, 
                                                    object_name=obj_name,
-                                                   object_mesh=copied_mesh)
+                                                   object_mesh=copied_mesh,
+                                                   n_directions=self.n_directions)
         
         for tcp_pose in tcp_poses:
             grasp_pose = {}
