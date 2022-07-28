@@ -173,7 +173,6 @@ class Scene:
             is_success = True     
         return is_success
     
-    # TODO
     def check_terminal_state_bench_4(self):
         is_success = False
 

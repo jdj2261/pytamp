@@ -72,7 +72,6 @@ class PlaceAction(ActivityBase):
                         continue
 
             if sup_obj == self.scene_mngr.scene.place_obj_name:
-                # TODO
                 if sup_obj not in ["table", "shelf_9"]:
                     continue
 
@@ -444,7 +443,6 @@ class PlaceAction(ActivityBase):
 
                 for point, normal_vector in zip(sample_points, normals):
                     yield point, normal_vector
-        # TODO
         elif self.scene_mngr.scene.bench_num == 4:
             if "hanoi_disk" in obj_name:
                 sample_points = np.array([center_lower_point])

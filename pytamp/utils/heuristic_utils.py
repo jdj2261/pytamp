@@ -58,7 +58,6 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
                     
                 yield tcp_pose
 
-    # TODO
     if bench_num == 4:
         if "hanoi_disk" in object_name:
             split_num = float(object_name.split('_')[-1])

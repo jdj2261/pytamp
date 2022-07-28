@@ -384,9 +384,9 @@ class MCTS:
 
         self.show_logical_actions(sub_optimal_nodes)
 
-        # if self.debug_mode:
-        # subtree = self.get_success_subtree(optimizer_level=1)
-        # self.visualize_tree("Success nodes", subtree)
+        if self.debug_mode:
+            subtree = self.get_success_subtree(optimizer_level=1)
+            self.visualize_tree("Success nodes", subtree)
         
         init_thetas = []
         success_pick = False

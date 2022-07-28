@@ -41,7 +41,6 @@ def find_idx_from_uct(tree, children, c):
 
     return best_node_idx
 
-# TODO
 def find_idx_from_bai_ucb(tree:nx.DiGraph, children, c):
     selected_values = [tree.nodes[child][NodeData.VALUE] for child in children]
     selected_visits = [tree.nodes[child][NodeData.VISIT] for child in children]
@@ -66,7 +65,6 @@ def find_idx_from_bai_ucb(tree:nx.DiGraph, children, c):
 
     return best_node_idx
 
-# TODO
 def find_idx_from_bai_perturb(tree, children, c):
     selected_values = [tree.nodes[child][NodeData.VALUE] for child in children]
     selected_visits = [tree.nodes[child][NodeData.VISIT] for child in children]
