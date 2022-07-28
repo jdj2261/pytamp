@@ -193,7 +193,14 @@ class PickAction(ActivityBase):
             ## Change Logical State
             # Remove pick obj in logical state of support obj
             supporting_obj = next_scene.logical_states[pick_obj].get(next_scene.logical_state.on)
+            next_scene.place_obj_name = supporting_obj.name
+            
             next_scene.logical_states.get(supporting_obj.name).get(next_scene.logical_state.support).remove(next_scene.objs[pick_obj])
+            
+            if self.scene_mngr.scene.bench_num == 4:
+                peg_obj = next_scene.logical_states[pick_obj].get(next_scene.logical_state.hang)
+                next_scene.hang_obj_name = peg_obj.name
+                next_scene.logical_states.get(peg_obj.name).get(next_scene.logical_state.hung).remove(next_scene.objs[pick_obj])
             
             # Clear logical_state of pick obj
             next_scene.logical_states[pick_obj].clear()

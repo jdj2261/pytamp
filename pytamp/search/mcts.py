@@ -36,8 +36,11 @@ class MCTS:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
         elif bench_num == 3:
-            self.pick_action = PickAction(scene_mngr, n_contacts=3, n_directions=5, retreat_distance=0.15)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10, retreat_distance=0.2, n_directions=5)
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=3, retreat_distance=0.2, n_directions=10)
+        elif bench_num == 4:
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=1)
         else:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=5)
@@ -54,7 +57,7 @@ class MCTS:
         self.nodes = None
         
         self.infeasible_reward = -3
-        self.goal_reward = 3
+        self.goal_reward = 10
 
         self.values_for_level_1 = []
         self.values_for_level_2 = []
@@ -124,10 +127,10 @@ class MCTS:
             return reward
         
         if depth == self.max_depth:
-            reward = self.infeasible_reward
-            self._update_value(cur_state_node, reward)
+            # reward = self.infeasible_reward
+            # self._update_value(cur_state_node, reward)
             print(f"{sc.WARNING}Exceeded the maximum depth!!{sc.ENDC}")
-            return reward
+            return 0
         
         #? Select Logical Action
         #*======================================================================================================================== #
@@ -169,7 +172,7 @@ class MCTS:
         if cur_logical_action_node is None or next_state_node is None:
             value = reward
         else:
-            discount_value = -0.1
+            discount_value = -0.5
             value = reward + discount_value + self.gamma * self._level_wise_1_optimize(next_state_node, depth+1)
 
         self._update_value(cur_state_node, value)
@@ -323,7 +326,7 @@ class MCTS:
         return False
 
     def _get_reward(self, cur_state:Scene=None, cur_logical_action:dict={}, next_state:Scene=None, depth=None, is_terminal:bool=False) -> float:
-        reward = -0.05
+        reward = -1
         if is_terminal:
             print(f"Terminal State! Reward is {self.goal_reward}")
             return self.goal_reward
@@ -358,12 +361,7 @@ class MCTS:
                     print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
                     return reward
         
-        if self.scene_mngr.scene.bench_num == 2:
-            return 0
-
-        if self.scene_mngr.scene.bench_num == 3:
-            return 0
-
+        # TODO
         if self.scene_mngr.scene.bench_num == 4:
             return 0
 
@@ -415,7 +413,7 @@ class MCTS:
                         success_pick = True                    
                         init_theta = pick_joint_path[-1][self.pick_action.move_data.MOVE_default_grasp][-1]
                         
-                        current_cost = round(self.weird_division(1, self.pick_action.cost), 6)
+                        current_cost = round(self.weird_division(1, self.pick_action.cost)/10, 6)
                         if current_cost > self.tree.nodes[sub_optimal_node][NodeData.COST]:
                             self.tree.nodes[sub_optimal_node][NodeData.COST] = current_cost
                             self.tree.nodes[sub_optimal_node][NodeData.JOINTS] = pick_joint_path
@@ -439,7 +437,7 @@ class MCTS:
                         success_place = True
                         init_theta = place_joint_path[-1][self.place_action.move_data.MOVE_default_release][-1]
 
-                        current_cost = round(self.weird_division(1, self.place_action.cost), 6)
+                        current_cost = round(self.weird_division(1, self.place_action.cost)/10, 6)
                         if current_cost > self.tree.nodes[sub_optimal_node][NodeData.COST]:
                             self.tree.nodes[sub_optimal_node][NodeData.COST] = current_cost
                             self.tree.nodes[sub_optimal_node][NodeData.JOINTS] = place_joint_path

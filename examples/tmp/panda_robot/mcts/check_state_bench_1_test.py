@@ -31,7 +31,7 @@ green_cube_mesh = get_object_mesh('ben_cube.stl', 0.06)
 goal_box_mesh = get_object_mesh('goal_box.stl', 0.001)
 table_mesh = get_object_mesh('custom_table.stl', 0.01)
 
-param = {'stack_num' : 3}
+param = {'stack_num' : 2}
 benchmark_config={1 : param}
 
 red_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77+0.06]))

@@ -23,14 +23,14 @@ algo = args.algo
 seed = args.seed
 np.random.seed(seed)
 
-benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=3)
+benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=4)
 mcts = MCTS(benchmark1.scene_mngr)
 mcts.debug_mode = False
 
 # 최대부터
-mcts.budgets = 30
+mcts.budgets = 1000
 mcts.max_depth = 20
-mcts.c = 30
+mcts.c = 3
 # mcts.sampling_method = 'bai_ucb' # 405
 mcts.sampling_method = 'bai_perturb' # 58
 # mcts.sampling_method = 'uct' # 369

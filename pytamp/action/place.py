@@ -64,8 +64,15 @@ class PlaceAction(ActivityBase):
                 support_objects = self.scene_mngr.scene.goal_objects + ["table"]
                 if sup_obj not in support_objects:
                     continue
+                
+                if "hanoi_disk" in sup_obj and "hanoi_disk" in held_obj:
+                    sup_obj_num = float(sup_obj.split('_')[-1])
+                    held_obj_num = float(held_obj.split('_')[-1])
+                    if held_obj_num < sup_obj_num:
+                        continue
 
             if sup_obj == self.scene_mngr.scene.place_obj_name:
+                # TODO
                 if sup_obj not in ["table", "shelf_9"]:
                     continue
 
@@ -199,6 +206,16 @@ class PlaceAction(ActivityBase):
 
             # Add logical_state of held obj : {'on' : place_obj}
             next_scene.logical_states[held_obj_name][next_scene.logical_state.on] = next_scene.objs[place_obj_name]
+            
+            if self.scene_mngr.scene.bench_num == 4:
+                y_pose = obj_pose_transformed[1, 3]
+                if y_pose < 0.:
+                    peg = self.scene_mngr.scene.pegs[2]
+                elif y_pose > 0.:
+                    peg = self.scene_mngr.scene.pegs[0]
+                else:
+                    peg = self.scene_mngr.scene.pegs[1]
+                next_scene.logical_states[held_obj_name][next_scene.logical_state.hang] = next_scene.objs[peg]
             next_scene.update_logical_states()
 
             if self.scene_mngr.scene.bench_num == 1:
@@ -364,25 +381,41 @@ class PlaceAction(ActivityBase):
                 center_upper_point[2] = copied_mesh.bounds[1, 2]
                 sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
                 normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)
+            for point, normal_vector in zip(sample_points, normals):
+                yield point, normal_vector, margin
         else:
-            pegs = self.scene_mngr.scene.pegs
-            normals = np.tile(np.array([0, 0, 1]), reps=(3, 1))
             margin = (0, 0, 0, 0)
-            
-            if "table" in obj_name:    
-                sample_points = np.array([np.array(self.scene_mngr.get_object_pose(peg)[:3, 3]) for peg in pegs])
+            if "table" in obj_name:   
+                # not_hang_pegs = []
+                # for peg in self.scene_mngr.scene.pegs:
+                #     if peg == self.scene_mngr.scene.hang_obj_name:
+                #         continue
+                #     hang_pegs = self.scene_mngr.scene.logical_states[peg].get(self.scene_mngr.scene.logical_state.hung)
+                #     if hang_pegs is not None:
+                #         if len(hang_pegs) == 0:
+                #             not_hang_pegs.append(peg)
+                #     else:
+                #         not_hang_pegs.append(peg)
+                
+                # if not not_hang_pegs:
+                #     return
+                normals = np.tile(np.array([0, 0, 1]), reps=(3, 1))
+                sample_points = np.array([np.array(self.scene_mngr.get_object_pose(peg)[:3, 3]) for peg in self.scene_mngr.scene.pegs])
                 table_height = self.scene_mngr.scene.objs["table"].gparam.bounds[1][2] - self.scene_mngr.scene.objs["table"].gparam.bounds[0][2]
                 sample_points[:3, 2] = table_height
+                for point, normal_vector in zip(sample_points, normals):
+                    yield point, normal_vector, margin
+                    
             if "hanoi_disk" in obj_name:
                 sample_points = np.array([np.array(support_obj.h_mat[:3, 3])])
                 hanoi_disk_height = support_obj.h_mat[2, 3] + (support_obj.gparam.bounds[1][2] - support_obj.gparam.bounds[0][2])/2
                 sample_points[:3, 2] = hanoi_disk_height
+                normals = np.array([[0, 0, 1]])
             
                 for point, normal_vector in zip(sample_points, normals):
                     yield point, normal_vector, margin
             
-        for point, normal_vector in zip(sample_points, normals):
-            yield point, normal_vector, margin
+
 
     @staticmethod
     def _get_weights_for_support_obj(obj_mesh):
@@ -452,7 +485,7 @@ class PlaceAction(ActivityBase):
         held_obj_pose = deepcopy(self.scene_mngr.scene.objs[held_obj_name].h_mat)
         surface_points_for_sup_obj = list(self.get_surface_points_for_support_obj(support_obj_name, alpha=alpha))
         surface_points_for_held_obj = list(self.get_surface_points_for_held_obj(held_obj_name))
-    
+
         for support_obj_point, support_obj_normal, (min_x, max_x, min_y, max_y) in surface_points_for_sup_obj:
             for held_obj_point, held_obj_normal in surface_points_for_held_obj:
                 rot_mat = m_utils.get_rotation_from_vectors(held_obj_normal, -support_obj_normal)

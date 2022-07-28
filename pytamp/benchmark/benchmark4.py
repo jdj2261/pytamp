@@ -76,10 +76,10 @@ class Benchmark4(Benchmark):
         for i in range(self.disk_num):
             disk_name = "hanoi_disk_" + str(i)
             if disk_name == "hanoi_disk_0":
-                self.scene_mngr.set_logical_state(disk_name, ("on", "table"))
+                self.scene_mngr.set_logical_state(disk_name, ("on", "table"), ("hang", "peg_1"))
             else:
                 prev_disk_name = "hanoi_disk_" + str(i-1)
-                self.scene_mngr.set_logical_state(disk_name, ("on", prev_disk_name))
+                self.scene_mngr.set_logical_state(disk_name, ("on", prev_disk_name), ("hang", "peg_1"))
 
         self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True), (self.scene_mngr.scene.logical_state.holding, None))
         self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))

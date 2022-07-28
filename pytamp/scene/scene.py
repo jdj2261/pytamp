@@ -13,6 +13,8 @@ class State:
     static = 'static'
     held = 'held'
     holding = 'holding'
+    hang = 'hang'
+    hung = 'hung'
 
 class Scene:
     def __init__(self, benchmark:dict):
@@ -68,7 +70,12 @@ class Scene:
         if self.benchmark_config[self.bench_num].get("disk_num"):
             self.disk_num = self.benchmark_config[self.bench_num].get("disk_num")
         self.goal_objects = ["hanoi_disk_" + str(i) for i in range(self.disk_num)]
-        self.pegs = ["peg_1", "peg_2", "peg_3"]
+        self.goal_object = self.goal_objects[0]
+        self.peg_poses = {"peg_1" : 0.3, 
+                          "peg_2" : 0, 
+                          "peg_3" : -0.3}
+        self.pegs = list(self.peg_poses.keys())
+        self.hang_obj_name = None
 
     def show_scene_info(self):
         print(f"*"*23 + f" {sc.OKGREEN}Scene{sc.ENDC} "+ f"*"*23)
@@ -95,6 +102,17 @@ class Scene:
 
             if logical_state.get(State.support) is not None and not logical_state.get(State.support):
                 self.logical_states[object_name].pop(State.support)
+
+            if self.bench_num == 4:
+                if logical_state.get(State.hang):
+                    if not self.logical_states[logical_state[State.hang].name].get(State.hung):
+                        self.logical_states[logical_state[State.hang].name][State.hung] = []
+                                    
+                    if self.objs[object_name] not in list(self.logical_states[logical_state[State.hang].name].get(State.hung)):
+                        self.logical_states[logical_state[State.hang].name][State.hung].append(self.objs[object_name])
+
+                if logical_state.get(State.hung) is not None and not logical_state.get(State.hung):
+                    self.logical_states[object_name].pop(State.hung)
 
             if logical_state.get(State.holding):
                 self.logical_states[logical_state[State.holding].name][State.held] = True
@@ -157,4 +175,12 @@ class Scene:
     
     # TODO
     def check_terminal_state_bench_4(self):
-        pass
+        is_success = False
+
+        stacked_disks = self.get_objs_chain_list_from_bottom(self.goal_object)
+        stacked_box_num = len(stacked_disks)
+        peg = self.logical_states[self.goal_object].get(self.logical_state.hang)
+        if peg is not None:
+            if peg.name == self.pegs[2] and stacked_box_num == self.disk_num:
+                is_success = True
+        return is_success
