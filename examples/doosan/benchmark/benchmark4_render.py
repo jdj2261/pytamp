@@ -5,5 +5,5 @@ benchmark4 = Benchmark4(robot_name="doosan", geom="visual", is_pyplot=False, dis
 fig, ax = p_utils.init_3d_figure(name="Benchmark 4")
 
 print(len(benchmark4.scene_mngr.scene.logical_states["peg_1"]['hung']))
-# benchmark4.scene_mngr.render_scene(ax)
-# benchmark4.scene_mngr.show()
+benchmark4.scene_mngr.render_scene(ax)
+benchmark4.scene_mngr.show()

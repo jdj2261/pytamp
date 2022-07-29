@@ -38,7 +38,7 @@ class Benchmark3(Benchmark):
         self.table_pose = Transform(pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]]))
         
         #! clearbox 8, 16 is placing spot
-        clearbox_8_mesh = get_object_mesh(f'clearbox_8.stl', scale=[1.5, 1.4, 1.5])
+        clearbox_8_mesh = get_object_mesh(f'clearbox_8.stl', scale=[1.4, 1.3, 1.5])
         self.clearbox1_pose = Transform(pos=np.array([0.7, 0.4, self.table_height + abs(clearbox_8_mesh.bounds[0][2])]), rot=[0, 0, np.pi/2])
 
         self.arch_box = get_object_mesh('arch_box.stl', [0.002, 0.002, 0.002])
@@ -66,7 +66,7 @@ class Benchmark3(Benchmark):
         
         for i in range(20):
             clearbox_1_name = 'clearbox_1_' + str(i)
-            clearbox_1_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=[1.5, 1.4, 1.5])
+            clearbox_1_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=[1.4, 1.3, 1.5])
             self.scene_mngr.add_object(name=clearbox_1_name, gtype="mesh", h_mat=self.clearbox1_pose.h_mat, gparam=clearbox_1_mesh, color=[0.8 + i*0.01, 0.8 + i*0.01, 0.8 + i*0.01])
             self.scene_mngr.set_logical_state(clearbox_1_name, (self.scene_mngr.scene.logical_state.static, True), ("on", "table"))
             

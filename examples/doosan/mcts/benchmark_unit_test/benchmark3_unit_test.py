@@ -27,7 +27,7 @@ benchmark3 = Benchmark3(robot_name="doosan", geom="collision")
 mcts = MCTS(benchmark3.scene_mngr)
 
 mcts.debug_mode = False
-mcts.budgets = 100
+mcts.budgets = 300
 mcts.max_depth = 20
 mcts.c = 300
 
@@ -45,8 +45,9 @@ best_nodes = mcts.get_best_node(subtree)
 level_1_max_values = mcts.values_for_level_1
 level_2_max_values = mcts.values_for_level_2
 
-fig = p_utils.init_2d_figure("test")
+fig, ax = p_utils.init_2d_figure("test")
 p_utils.plot_values(
+    ax,
     level_1_max_values, 
     label="Sum of Values", 
     title="Benchamrk3_Level_1", 
@@ -54,6 +55,7 @@ p_utils.plot_values(
     is_save=False)
     
 p_utils.plot_values(
+    ax,
     level_2_max_values, 
     label="Optiaml Values", 
     title="Benchamrk3_Level_2", 
