@@ -38,8 +38,10 @@ class PickAction(ActivityBase):
             
             if self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on):
                 placed_obj_name = self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on).name
-                if placed_obj_name in ["shelf_8", "shelf_15"]:
-                    continue
+                
+                if self.scene_mngr.scene.bench_num == 2:
+                    if placed_obj_name in ["shelf_8", "shelf_15"]:
+                        continue
                 
             if not any(logical_state in self.scene_mngr.scene.logical_states[obj_name] for logical_state in self.filter_logical_states):
                 action_level_1 = self.get_action_level_1_for_single_object(obj_name=obj_name)
@@ -193,7 +195,7 @@ class PickAction(ActivityBase):
             ## Change Logical State
             # Remove pick obj in logical state of support obj
             supporting_obj = next_scene.logical_states[pick_obj].get(next_scene.logical_state.on)
-            next_scene.place_obj_name = supporting_obj.name
+            next_scene.prev_place_obj_name = supporting_obj.name
             
             next_scene.logical_states.get(supporting_obj.name).get(next_scene.logical_state.support).remove(next_scene.objs[pick_obj])
             

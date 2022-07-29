@@ -71,7 +71,7 @@ class PlaceAction(ActivityBase):
                     if held_obj_num < sup_obj_num:
                         continue
 
-            if sup_obj == self.scene_mngr.scene.place_obj_name:
+            if sup_obj == self.scene_mngr.scene.prev_place_obj_name:
                 if sup_obj not in ["table", "shelf_9"]:
                     continue
 
@@ -194,7 +194,7 @@ class PlaceAction(ActivityBase):
             # Move pick object on support obj
             next_scene.objs[held_obj_name].h_mat = obj_pose_transformed
             self.scene_mngr.obj_collision_mngr.set_transform(held_obj_name, obj_pose_transformed)
-            next_scene.place_obj_name = place_obj_name
+            next_scene.cur_place_obj_name = place_obj_name
             
             ## Change Logical State
             # Clear logical_state of held obj

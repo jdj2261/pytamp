@@ -19,7 +19,7 @@ for pick_action in pick_actions:
         place_actions = list(place.get_possible_actions_level_1(pick_scene)) 
         for place_action in place_actions:
             for all_release_pose, obj_pose in place_action[place.info.RELEASE_POSES]:
-                print(place.scene_mngr.scene.robot.gripper.attached_obj_name, pick_scene.place_obj_name)
+                print(place.scene_mngr.scene.robot.gripper.attached_obj_name, pick_scene.cur_place_obj_name)
                 place.scene_mngr.set_gripper_pose(all_release_pose[place.move_data.MOVE_release])
                 place.scene_mngr.set_object_pose(place.scene_mngr.scene.robot.gripper.attached_obj_name, obj_pose)
                 place.scene_mngr.render_axis(ax, all_release_pose[place.move_data.MOVE_release])

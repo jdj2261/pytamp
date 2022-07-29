@@ -34,7 +34,7 @@ for pick_action in pick_actions:
                                                 fig, ax = p_utils.init_3d_figure( name="first place")
                                                 place.scene_mngr.render_gripper(ax, place_scene, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, place_scene)
-                                                print(f"Place1 {place_scene.pick_obj_name} on {place_scene.place_obj_name}")
+                                                print(f"Place1 {place_scene.pick_obj_name} on {place_scene.cur_place_obj_name}")
                                                 place.scene_mngr.show()
 
                                                 fig, ax = p_utils.init_3d_figure( name="second pick")
@@ -46,7 +46,7 @@ for pick_action in pick_actions:
                                                 fig, ax = p_utils.init_3d_figure( name="second place")
                                                 place.scene_mngr.render_gripper(ax, place_scene2, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, place_scene2)
-                                                print(f"Place2 {place_scene2.pick_obj_name} on {place_scene2.place_obj_name}")
+                                                print(f"Place2 {place_scene2.pick_obj_name} on {place_scene2.cur_place_obj_name}")
                                                 place.scene_mngr.show()
                                                 
                                                 fig, ax = p_utils.init_3d_figure( name="third pick")
@@ -58,5 +58,5 @@ for pick_action in pick_actions:
                                                 fig, ax = p_utils.init_3d_figure( name="third place")
                                                 place.scene_mngr.render_gripper(ax, place_scene3, alpha=0.9, only_visible_axis=False)
                                                 place.scene_mngr.render_objects(ax, place_scene3)
-                                                print(f"Place3 {place_scene3.pick_obj_name} on {place_scene3.place_obj_name}")
+                                                print(f"Place3 {place_scene3.pick_obj_name} on {place_scene3.cur_place_obj_name}")
                                                 place.scene_mngr.show()

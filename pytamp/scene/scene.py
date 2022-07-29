@@ -44,7 +44,8 @@ class Scene:
         self.release_poses = None
         
         self.pick_obj_name = None
-        self.place_obj_name = None
+        self.cur_place_obj_name = None
+        self.prev_place_obj_name = None
         self.pick_obj_default_pose = None
         
     def _init_bench_1(self):
@@ -71,10 +72,11 @@ class Scene:
             self.disk_num = self.benchmark_config[self.bench_num].get("disk_num")
         self.goal_objects = ["hanoi_disk_" + str(i) for i in range(self.disk_num)]
         self.goal_object = self.goal_objects[0]
-        self.peg_poses = {"peg_1" : 0.3, 
-                          "peg_2" : 0, 
-                          "peg_3" : -0.3}
-        self.pegs = list(self.peg_poses.keys())
+        self.pegs = ["peg_1", "peg_2", "peg_3"]
+        # self.peg_poses = {"peg_1" : 0.3, 
+        #                   "peg_2" : 0, 
+        #                   "peg_3" : -0.3}
+        # self.pegs = list(self.peg_poses.keys())
         self.hang_obj_name = None
 
     def show_scene_info(self):

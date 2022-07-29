@@ -6,7 +6,7 @@ from pytamp.benchmark import Benchmark2
 from pytamp.search.mcts import MCTS
 
 
-# #? python3 benchmark2_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
+# #? python3 benchmark2_test.py --budgets 1000 --max_depth 20 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 2.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
@@ -24,44 +24,54 @@ seed = args.seed
 np.random.seed(seed)
 
 benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=6)
-mcts = MCTS(benchmark2.scene_mngr)
 
-mcts.debug_mode = False
-mcts.budgets = 100
-mcts.max_depth = 20
-mcts.c = 300
+c_list = 10**np.linspace(0., 4., 3)
+for idx, c in enumerate(c_list):
+    mcts = MCTS(
+        scene_mngr=benchmark2.scene_mngr, 
+        sampling_method=algo, 
+        budgets=5, 
+        max_depth=20, 
+        c=c,
+        debug_mode=debug_mode)
+    for i in range(mcts.budgets):
+        print(f"\nBenchmark: {benchmark2.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}")
+        mcts.do_planning(i)
 
-# mcts.sampling_method = 'bai_ucb' # 405
-mcts.sampling_method = 'bai_perturb' # 58
-# mcts.sampling_method = 'uct' # 369
+    subtree = mcts.get_success_subtree(optimizer_level=2)
+    # mcts.visualize_tree("MCTS", subtree)
+    best_nodes = mcts.get_best_node(subtree)
 
-for i in range(mcts.budgets):
-    mcts.do_planning(i)
+    level_1_max_values = mcts.values_for_level_1
+    level_2_max_values = mcts.values_for_level_2
 
-subtree = mcts.get_success_subtree(optimizer_level=2)
-mcts.visualize_tree("MCTS", subtree)
-best_nodes = mcts.get_best_node(subtree)
-
-level_1_max_values = mcts.values_for_level_1
-level_2_max_values = mcts.values_for_level_2
-
-fig = p_utils.init_2d_figure("test")
-p_utils.plot_values(
-    level_1_max_values, 
-    label="Sum of Values", 
-    title="Benchamrk2_Level_1", 
-    save_dir_name='benchmark2_result', 
-    is_save=False)
+    fig, ax = p_utils.init_2d_figure(f"test_{idx}")
     
-p_utils.plot_values(
-    level_2_max_values, 
-    label="Optiaml Values", 
-    title="Benchamrk2_Level_2", 
-    save_dir_name='benchmark2_result', 
-    is_save=True)
-p_utils.show_figure()
+    configs = {}
+    configs["num"] = benchmark2.scene_mngr.scene.bench_num
+    configs["algo"] = args.algo
+    configs["c"] = c
+    
+    p_utils.plot_values(
+        ax,
+        level_1_max_values, 
+        label="Sum of Values", 
+        title=f"Benchmark2_Level_1_c_{idx}", 
+        save_dir_name='benchmark2_result', 
+        is_save=False,
+        **configs)
+        
+    p_utils.plot_values(
+        ax,
+        level_2_max_values, 
+        label="Optiaml Values", 
+        title=f"Benchmark2_Level_2_{idx}", 
+        save_dir_name='benchmark2_result', 
+        is_save=True,
+        **configs)
+    # p_utils.show_figure()
 
-# Do planning
-pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
-mcts.show_logical_actions(mcts.optimal_nodes)
-mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+    # Do planning
+    pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+    mcts.show_logical_actions(mcts.optimal_nodes)
+    # mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

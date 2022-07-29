@@ -18,7 +18,7 @@ for pick_action in pick_actions:
         place_actions = list(place.get_possible_actions_level_1(pick_scene)) 
         for place_action in place_actions:
             for place_scene in list(place.get_possible_transitions(scene=pick_scene, action=place_action)):
-                print(place_scene.robot.gripper.attached_obj_name, place_scene.place_obj_name)
+                print(place_scene.robot.gripper.attached_obj_name, place_scene.cur_place_obj_name)
                 fig, ax = p_utils.init_3d_figure( name="all possible transitions")
                 place.scene_mngr.render_gripper(ax, place_scene, alpha=0.9, only_visible_axis=False)                            
                 place.scene_mngr.render_objects(ax, place_scene)

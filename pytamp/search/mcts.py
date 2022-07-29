@@ -428,7 +428,7 @@ class MCTS:
                         break
                 else:
                     place_scene:Scene = self.tree.nodes[sub_optimal_node]['state']
-                    print(f"{sc.COLOR_YELLOW}place {place_scene.pick_obj_name} on {place_scene.place_obj_name}{sc.ENDC}")
+                    print(f"{sc.COLOR_YELLOW}place {place_scene.pick_obj_name} on {place_scene.cur_place_obj_name}{sc.ENDC}")
                     
                     place_joint_path = self.place_action.get_possible_joint_path_level_2(scene=place_scene, 
                                                                                          release_poses=place_scene.release_poses, 
