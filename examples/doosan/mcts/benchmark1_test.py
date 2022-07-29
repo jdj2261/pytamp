@@ -14,64 +14,88 @@ parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random s
 parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Sampler Name')
 parser.add_argument('--debug_mode', metavar='debug', type=bool, default=False, help='Debug mode')
 parser.add_argument('--benchmark', metavar='N', type=int, default=1, help='Benchmark Number')
+parser.add_argument('--box_number', metavar='N', type=int, default=6, help='Box Number')
 args = parser.parse_args()
 
+print
 debug_mode = args.debug_mode
 budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
+number = args.box_number
 np.random.seed(seed)
 
-benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=4)
+benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=number)
 
-c_list = 10**np.linspace(0., 4., 3)
+final_level_1_values = []
+final_level_2_values = []
+c_list = 10**np.linspace(0., 4., 1000)
 for idx, c in enumerate(c_list):
     mcts = MCTS(
         scene_mngr=benchmark1.scene_mngr, 
         sampling_method=algo, 
-        budgets=5, 
-        max_depth=20, 
+        budgets=budgets, 
+        max_depth=max_depth, 
         c=c,
         debug_mode=debug_mode)
-    for i in range(mcts.budgets):
+    for i in range(budgets):
         print(f"\nBenchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}")
         mcts.do_planning(i)
 
-    subtree = mcts.get_success_subtree(optimizer_level=2)
+    # subtree = mcts.get_success_subtree(optimizer_level=2)
     # mcts.visualize_tree("MCTS", subtree)
-    best_nodes = mcts.get_best_node(subtree)
+    # best_nodes = mcts.get_best_node(subtree)
 
     level_1_max_values = mcts.values_for_level_1
     level_2_max_values = mcts.values_for_level_2
+    final_level_1_values.append(mcts.values_for_level_1)
+    final_level_2_values.append(mcts.values_for_level_2)
 
-    fig, ax = p_utils.init_2d_figure(f"test_{idx}")
+    # fig, ax = p_utils.init_2d_figure(f"test_{idx}")
     
-    configs = {}
-    configs["num"] = benchmark1.scene_mngr.scene.bench_num
-    configs["algo"] = args.algo
-    configs["c"] = c
-    
-    p_utils.plot_values(
-        ax,
-        level_1_max_values, 
-        label="Sum of Values", 
-        title=f"Benchmark1_Level_1_c_{idx}", 
-        save_dir_name='benchmark1_result', 
-        is_save=False,
-        **configs)
+    # configs = {}
+    # configs["num"] = benchmark1.scene_mngr.scene.bench_num
+    # configs["algo"] = args.algo
+    # configs["c"] = c
+
+
+directory_name='benchmark1_result'
+filename = directory_name + '/benchmark1_test_{:}-{:}-{:}.npy'.format(algo, budgets)
+p_utils.createDirectory(directory_name)
+
+with open(filename, 'wb') as f:
+    np.savez(f,
+                benchmark_number=benchmark1.scene_mngr.scene.bench_num,
+                budgets=budgets,
+                max_depth=max_depth,
+                algo=algo,
+                c=c,
+                seed=seed,
+                level_1_values = final_level_1_values,
+                level_2_values = final_level_2_values
+                )
+print('Data saved at {}'.format(filename))
+    # p_utils.plot_values(
+    #     ax,
+    #     level_1_max_values, 
+    #     label="Sum of Values", 
+    #     title=f"Benchmark1_Level_1_c_{idx}", 
+    #     save_dir_name='benchmark1_result', 
+    #     is_save=False,
+    #     **configs)
         
-    p_utils.plot_values(
-        ax,
-        level_2_max_values, 
-        label="Optiaml Values", 
-        title=f"Benchmark1_Level_2_{idx}", 
-        save_dir_name='benchmark1_result', 
-        is_save=True,
-        **configs)
+    # p_utils.plot_values(
+    #     ax,
+    #     level_2_max_values, 
+    #     label="Optiaml Values", 
+    #     title=f"Benchmark1_Level_2_{idx}", 
+    #     save_dir_name='benchmark1_result', 
+    #     is_save=True,
+    #     **configs)
     # p_utils.show_figure()
 
     # Do planning
-    pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
-    mcts.show_logical_actions(mcts.optimal_nodes)
+    # pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+    # mcts.show_logical_actions(mcts.optimal_nodes)
     # mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
