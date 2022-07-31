@@ -137,6 +137,8 @@ class RRTStarPlanner(Planner):
             if not success_check_limit:
                 self.tree = None
                 logger.error("Not found IK solution")
+
+                # ![DEBUG]
                 if self._scene_mngr.is_debug_mode:
                     self._scene_mngr.render_debug(title="IK Fail")
                 break
@@ -202,6 +204,8 @@ class RRTStarPlanner(Planner):
             if cnt > total_cnt:
                 logger.error(f"Failed Generate Path.. The number of retries of {cnt} exceeded")    
                 self.tree = None
+
+                # ![DEBUG]
                 if self._scene_mngr.is_debug_mode:
                     self._scene_mngr.render_debug(title="Excess")
                 break

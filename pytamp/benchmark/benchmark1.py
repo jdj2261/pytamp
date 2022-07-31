@@ -24,7 +24,10 @@ class Benchmark1(Benchmark):
         self._load_scene()
 
     def _load_robot(self):
-        self.robot = SingleArm(f_name=self.urdf_file, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True, gripper_name=self.gripper_name)
+        self.robot = SingleArm(f_name=self.urdf_file, 
+                               offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
+                               has_gripper=True, 
+                               gripper_name=self.gripper_name)
         
         if self.robot_name == "panda":
             self.robot.setup_link_name("panda_link_0", "right_hand")
@@ -38,7 +41,6 @@ class Benchmark1(Benchmark):
         self.table_mesh = get_object_mesh('ben_table.stl')
         self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
         self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
-        # self.tray_blue_mesh = get_object_mesh('ben_tray_blue.stl')
 
         self.box_poses = []
         A_box_pose = Transform(pos=np.array([0.5, -0.2, self.table_mesh.bounds[1][2]]))
@@ -71,7 +73,6 @@ class Benchmark1(Benchmark):
         self.table_pose = Transform(pos=np.array([1.0, -0.4, -0.03]))
         self.ceiling_pose = Transform(pos=np.array([1.0, -0.4, 1.5]))
         self.tray_red_pose = Transform(pos=np.array([0.6, -0.5-0.3, 0.8]))
-        # self.tray_blue_pose = Transform(pos=np.array([0.6, 0.5, 0.8]))
 
     def _load_scene(self):
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
@@ -81,14 +82,10 @@ class Benchmark1(Benchmark):
             self.scene_mngr.add_object(name=box_name, gtype="mesh", gparam=box_mesh, h_mat=self.box_poses[i].h_mat, color=self.box_colors[i])
             self.scene_mngr.set_logical_state(box_name, ("on", "table"))
 
-        # self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
         self.scene_mngr.add_object(name="tray_red", gtype="mesh", gparam=self.tray_red_mesh, h_mat=self.tray_red_pose.h_mat, color=[1.0, 0, 0])
-        # self.scene_mngr.add_object(name="tray_blue", gtype="mesh", gparam=self.tray_blue_mesh, h_mat=self.tray_blue_pose.h_mat, color=[0, 0, 1.0])
         self.scene_mngr.add_robot(self.robot, self.robot.init_qpos)
         
-        # self.scene_mngr.set_logical_state("ceiling", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state("tray_red", (self.scene_mngr.scene.logical_state.static, True))
-        # self.scene_mngr.set_logical_state("tray_blue", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))
         self.scene_mngr.update_logical_states(is_init=True)

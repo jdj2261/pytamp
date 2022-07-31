@@ -1,6 +1,5 @@
 import numpy as np
 import argparse
-import os
 
 from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark1
@@ -12,9 +11,10 @@ parser = argparse.ArgumentParser(description='Test Benchmark 1.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
 parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
-parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Choose one (bai_perturb, bai_ucb, uct)')
-parser.add_argument('--debug_mode', default=False, type=lambda x: (str(x).lower() == 'true'), help='Debug mode')
-parser.add_argument('--box_number', metavar='N', type=int, default=6, help='Box Number(6 or less)')
+parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Sampler Name')
+parser.add_argument('--debug_mode', metavar='debug', type=bool, default=False, help='Debug mode')
+parser.add_argument('--benchmark', metavar='N', type=int, default=1, help='Benchmark Number')
+parser.add_argument('--box_number', metavar='N', type=int, default=6, help='Box Number')
 args = parser.parse_args()
 
 debug_mode = args.debug_mode
@@ -26,6 +26,7 @@ number = args.box_number
 np.random.seed(seed)
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=number)
+
 final_level_1_values = []
 final_level_2_values = []
 c_list = 10**np.linspace(0., 4., 1000)
@@ -43,30 +44,33 @@ for idx, c in enumerate(c_list):
 
     level_1_max_values = mcts.values_for_level_1
     level_2_max_values = mcts.values_for_level_2
-    final_level_1_values.append(mcts.values_for_level_1)
-    final_level_2_values.append(mcts.values_for_level_2)
 
-#### File Save ####
-pytamp_path = os.path.abspath(os.path.dirname(__file__) + "/../../../")
-directory_name = pytamp_path + '/results' + '/benchmark1_result'
-p_utils.createDirectory(directory_name)
+    fig, ax = p_utils.init_2d_figure(f"test_{idx}")
+    
+    configs = {}
+    configs["num"] = benchmark1.scene_mngr.scene.bench_num
+    configs["algo"] = args.algo
+    configs["c"] = c
 
-num = 0
-filename = directory_name + '/benchmark1_test_algo({:})_budget({:})_seed({:})_{}.npy'.format(algo, budgets, seed, num)
+    p_utils.plot_values(
+        ax,
+        level_1_max_values, 
+        label="Sum of Values", 
+        title=f"Benchmark1_Level_1_{idx}", 
+        save_dir_name='benchmark1_result', 
+        is_save=False,
+        **configs)
+        
+    p_utils.plot_values(
+        ax,
+        level_2_max_values, 
+        label="Optiaml Values", 
+        title=f"Benchmark1_Level_2_{idx}", 
+        save_dir_name='benchmark1_result', 
+        is_save=True,
+        **configs)
+    p_utils.show_figure()
 
-while os.path.exists(filename):
-    filename = directory_name + '/benchmark1_test_algo({:})_budget({:})_seed({:})_{}.npy'.format(algo, budgets, seed, num)
-    num += 1
-
-with open(filename, 'wb') as f:
-    np.savez(f,
-             benchmark_number=benchmark1.scene_mngr.scene.bench_num,
-             budgets=budgets,
-             max_depth=max_depth,
-             algo=algo,
-             c=c,
-             seed=seed,
-             level_1_values=final_level_1_values,
-             level_2_values=final_level_2_values
-             )
-print('Data saved at {}'.format(filename))
+    pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+    mcts.show_logical_actions(mcts.optimal_nodes)
+    mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
