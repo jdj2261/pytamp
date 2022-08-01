@@ -21,13 +21,13 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-np.random.seed(seed)
+# np.random.seed(3)
 
 benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=6)
 mcts = MCTS(benchmark2.scene_mngr)
 
 mcts.debug_mode = False
-mcts.budgets = 100
+mcts.budgets = 2000
 mcts.max_depth = 20
 mcts.c = 300
 

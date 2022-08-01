@@ -492,7 +492,7 @@ class SceneManager:
         else:
             if not self.render.trimesh_scene:
                 self.render = RenderTriMesh()
-            self.render.render_axis(pose, scale)
+            self.render.render_axis(pose)
 
     def animation(
         self,

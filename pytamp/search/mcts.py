@@ -361,10 +361,6 @@ class MCTS:
                     print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
                     return reward
         
-        # TODO
-        if self.scene_mngr.scene.bench_num == 4:
-            return 0
-
         return 0
 
     def _level_wise_2_optimize(self, sub_optimal_nodes):

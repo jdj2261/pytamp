@@ -511,9 +511,9 @@ class PlaceAction(ActivityBase):
                         if not (min_y + 0.1 <= center_point[1] <= max_y - 0.05):
                             continue
                     if "shelf_9" in support_obj_name:
-                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.05):
+                        if not (min_x + 0.02 <= center_point[0] <= max_x - 0.02):
                             continue
-                        if not (min_y - 0.5 <= center_point[1] <= max_y - 0.5):
+                        if not (min_y  <= center_point[1] <= max_y - 0.5):
                             continue
                     if "shelf_15" in support_obj_name:
                         if not (min_x + 0.05 <= center_point[0] <= max_x - 0.1):

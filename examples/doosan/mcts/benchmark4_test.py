@@ -28,6 +28,9 @@ np.random.seed(seed)
 benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True, disk_num=number)
 final_level_1_values = []
 final_level_2_values = []
+final_pnp_all_joint_paths = []
+final_pick_all_objects = []
+final_place_all_object_poses = []
 c_list = 10**np.linspace(0., 4., 1000)
 c_list = [300]
 for idx, c in enumerate(c_list):
@@ -68,6 +71,9 @@ with open(filename, 'wb') as f:
              c=c,
              seed=seed,
              level_1_values=final_level_1_values,
-             level_2_values=final_level_2_values
+             level_2_values=final_level_2_values,
+             pnp_all_joint_paths=final_pnp_all_joint_paths,
+             pick_all_objects=final_pick_all_objects,
+             place_all_object_poses=final_place_all_object_poses
              )
 print('Data saved at {}'.format(filename))

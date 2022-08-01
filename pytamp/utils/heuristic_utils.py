@@ -17,29 +17,37 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
         if "box" in object_name:
             obj_pose = np.eye(4)
             obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
-            
-            obj_pose[1,:3] = abs(obj_pose[1,:3])
-            obj_pose[0,:3] = np.cross(obj_pose[1,:3], obj_pose[2,:3])
-            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.01]
-        
+            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, -0.005]
             for theta in np.linspace(np.pi+np.pi/24, np.pi-np.pi/24, n_directions):
+                r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
                 tcp_pose = np.eye(4)
-                tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
-                tcp_pose[:3,1] = [0, 1, 0]
-                tcp_pose[:3,2] = [-np.sin(theta), 0, np.cos(theta)]
+                tcp_pose[:3, :3] = r_mat_y
                 tcp_pose = np.dot(obj_pose, tcp_pose)
                 yield tcp_pose
 
     if bench_num == 2:
         if "bottle" in object_name:
             center_point = object_mesh.bounds[0] + (object_mesh.bounds[1] - object_mesh.bounds[0])/2
-            for theta in np.linspace(-np.pi+np.pi/(2.2), -np.pi/(2.2), n_directions):
-                tcp_pose = np.eye(4)
-                tcp_pose[:3,0] = [np.cos(theta), 0, np.sin(theta)]
-                tcp_pose[:3,1] = [0, 1, 0]
-                tcp_pose[:3,2] = [-np.sin(theta), 0, np.cos(theta)]
-                tcp_pose[:3,3] = center_point + [0, 0, 0.005]
-                yield tcp_pose
+            obj_pose = np.eye(4)
+            obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
+            obj_pose[:3, 3] = center_point + [0, 0, 0.005]
+
+            if "goal_bottle" not in object_name:
+                for theta in np.linspace(-np.pi+np.pi/(2.2), -np.pi/(2.2), n_directions):
+                    r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
+                    for theta2 in np.linspace(-np.pi/3, np.pi/3, 5):
+                        r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta2])
+                        tcp_pose = np.eye(4)
+                        tcp_pose[:3, :3] = np.dot(r_mat_z, r_mat_y)
+                        tcp_pose = np.dot(obj_pose, tcp_pose)
+                        yield tcp_pose
+            else:
+                for theta in np.linspace(-np.pi+np.pi/(2.2), -np.pi/(2.2), n_directions):
+                    r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
+                    tcp_pose = np.eye(4)
+                    tcp_pose[:3, :3] = r_mat_y
+                    tcp_pose = np.dot(obj_pose, tcp_pose)
+                    yield tcp_pose
 
     if bench_num == 3:
         if object_name in ["arch_box", "rect_box", "half_cylinder_box"]:

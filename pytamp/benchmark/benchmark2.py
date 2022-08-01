@@ -49,8 +49,8 @@ class Benchmark2(Benchmark):
         self.goal_bottle_pose = Transform(pos=np.array([1.0, 0, 1.29]))
 
         self.bottle_poses = []
-        bottle_pose1 = Transform(pos=np.array([0.95, 0.15, 1.29]))
-        bottle_pose2 = Transform(pos=np.array([0.95, -0.15,1.29]))
+        bottle_pose1 = Transform(pos=np.array([0.95, 0.10, 1.29]))
+        bottle_pose2 = Transform(pos=np.array([0.95, -0.10,1.29]))
         bottle_pose3 = Transform(pos=np.array([0.85, 0.15, 1.29]))
         bottle_pose4 = Transform(pos=np.array([0.85, 0, 1.29]))
         bottle_pose5 = Transform(pos=np.array([0.85, -0.15, 1.29]))

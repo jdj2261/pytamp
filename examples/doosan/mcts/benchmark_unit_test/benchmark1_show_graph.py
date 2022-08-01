@@ -29,6 +29,9 @@ benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, b
 
 final_level_1_values = []
 final_level_2_values = []
+final_pnp_all_joint_paths = []
+final_pick_all_objects = []
+final_place_all_object_poses = []
 c_list = 10**np.linspace(0., 4., 1000)
 for idx, c in enumerate(c_list):
     mcts = MCTS(
