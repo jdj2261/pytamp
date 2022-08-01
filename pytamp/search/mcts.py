@@ -42,8 +42,8 @@ class MCTS:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=1)
         else:
-            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=3, n_directions=1)
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=2, n_directions=1)
 
         self._sampling_method = sampling_method
         self._budgets = budgets
@@ -355,13 +355,13 @@ class MCTS:
                 if next_state_is_success:
                     if next_state.stacked_box_num - prev_succes_stacked_box_num == 1:
                         print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
-                        return abs(reward) * 1/depth * 5
+                        return abs(reward) * 1/(depth+1) * 10
                     if next_state.stacked_box_num - prev_succes_stacked_box_num == -1:
                         print(f"{sc.FAIL}Bad Action{sc.ENDC}")
-                        return reward * 2/depth * 5
-                else:
-                    print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
-                    return reward * 2/depth * 5
+                        return reward * 2/(depth+1) * 10
+                # else:
+                #     print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
+                #     return reward * 2/(depth+1)
         
         return 0
 

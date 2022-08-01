@@ -377,7 +377,7 @@ class PlaceAction(ActivityBase):
         
         n_sample_sup_obj = self.n_samples_sup_obj
         if obj_name == "table":
-            n_sample_sup_obj = 5
+            n_sample_sup_obj = 3
         sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, n_sample_sup_obj, weights)
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 
@@ -486,7 +486,10 @@ class PlaceAction(ActivityBase):
         alpha = 1
         
         if bench_num == 1:
-            alpha = 0.6
+            if "tray" in support_obj_name:
+                alpha = 0.8
+            else:
+                alpha = 0.2
         elif bench_num == 2:
             alpha = 0.8
         
@@ -512,6 +515,11 @@ class PlaceAction(ActivityBase):
                         if not (min_x - 0.05 <= center_point[0] <= min_x):
                             continue
                         if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
+                            continue
+                    if "tray" in support_obj_name:
+                        if not (min_x <= center_point[0] <= max_x):
+                            continue
+                        if not (min_y <= center_point[1] <= max_y):
                             continue
                 if bench_num == 2:
                     center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2
