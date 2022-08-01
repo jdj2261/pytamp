@@ -21,16 +21,17 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-np.random.seed(seed)
+# np.random.seed(seed)
 
-benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=4)
+benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=3)
 mcts = MCTS(benchmark1.scene_mngr)
 mcts.debug_mode = False
+# mcts.only_optimize_1 = True
 
 # 최대부터
-mcts.budgets = 1000
+mcts.budgets = 10
 mcts.max_depth = 20
-mcts.c = 3
+mcts.c = 10
 # mcts.sampling_method = 'bai_ucb' # 405
 mcts.sampling_method = 'bai_perturb' # 58
 # mcts.sampling_method = 'uct' # 369

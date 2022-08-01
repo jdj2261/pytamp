@@ -41,14 +41,15 @@ class Benchmark1(Benchmark):
         self.table_mesh = get_object_mesh('ben_table.stl')
         self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
         self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
+        self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
 
         self.box_poses = []
-        A_box_pose = Transform(pos=np.array([0.5, -0.2, self.table_mesh.bounds[1][2]]))
-        B_box_pose = Transform(pos=np.array([0.5, 0., self.table_mesh.bounds[1][2]]))
-        C_box_pose = Transform(pos=np.array([0.5, 0.2, self.table_mesh.bounds[1][2]]))
-        D_box_pose = Transform(pos=np.array([0.7, -0.2, self.table_mesh.bounds[1][2]]))
-        E_box_pose = Transform(pos=np.array([0.7, 0., self.table_mesh.bounds[1][2]]))
-        F_box_pose = Transform(pos=np.array([0.7, 0.2, self.table_mesh.bounds[1][2]]))
+        A_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2]]))
+        B_box_pose = Transform(pos=np.array([0.6, 0., self.table_mesh.bounds[1][2]]))
+        C_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
+        D_box_pose = Transform(pos=np.array([0.8, -0.2, self.table_mesh.bounds[1][2]]))
+        E_box_pose = Transform(pos=np.array([0.8, 0., self.table_mesh.bounds[1][2]]))
+        F_box_pose = Transform(pos=np.array([0.8, 0.2, self.table_mesh.bounds[1][2]]))
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 
                               C_box_pose, 
@@ -70,8 +71,8 @@ class Benchmark1(Benchmark):
                               E_box_color,
                               F_box_color])
 
-        self.table_pose = Transform(pos=np.array([1.0, -0.4, -0.03]))
-        self.ceiling_pose = Transform(pos=np.array([1.0, -0.4, 1.5]))
+        self.table_pose = Transform(pos=np.array([1.1, -0.4, -0.03]))
+        self.ceiling_pose = Transform(pos=np.array([1.1, -0.4, 1.7]))
         self.tray_red_pose = Transform(pos=np.array([0.6, -0.5-0.3, 0.8]))
 
     def _load_scene(self):
@@ -82,9 +83,11 @@ class Benchmark1(Benchmark):
             self.scene_mngr.add_object(name=box_name, gtype="mesh", gparam=box_mesh, h_mat=self.box_poses[i].h_mat, color=self.box_colors[i])
             self.scene_mngr.set_logical_state(box_name, ("on", "table"))
 
+        self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
         self.scene_mngr.add_object(name="tray_red", gtype="mesh", gparam=self.tray_red_mesh, h_mat=self.tray_red_pose.h_mat, color=[1.0, 0, 0])
         self.scene_mngr.add_robot(self.robot, self.robot.init_qpos)
         
+        self.scene_mngr.set_logical_state("ceiling", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state("tray_red", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))

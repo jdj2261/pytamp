@@ -34,7 +34,7 @@ class MCTS:
         
         if bench_num == 2:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=5)
         elif bench_num == 3:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=5, retreat_distance=0.2, n_directions=10)
@@ -43,7 +43,7 @@ class MCTS:
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=1)
         else:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=5)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=3, n_directions=1)
 
         self._sampling_method = sampling_method
         self._budgets = budgets
@@ -57,7 +57,7 @@ class MCTS:
         self.nodes = None
         
         self.infeasible_reward = -3
-        self.goal_reward = 10
+        self.goal_reward = 3
 
         self.values_for_level_1 = []
         self.values_for_level_2 = []
@@ -66,6 +66,7 @@ class MCTS:
         self.level_wise_1_success = False
         self.infeasible_sub_nodes = []
         self.optimal_nodes = []
+        self.only_optimize_1 = False
 
     def _create_tree(self, state:Scene):
         tree = nx.DiGraph()
@@ -97,15 +98,16 @@ class MCTS:
         max_level_1_value = self.get_max_value_level_1()
         self.values_for_level_1.append(max_level_1_value) 
         
-        success_level_1_sub_nodes = None
-        if self.level_wise_1_success:
-            success_level_1_sub_nodes = self.get_nodes_from_leaf_node(self.success_level_1_leaf_node)[::-1]
-            self._level_wise_2_optimize(success_level_1_sub_nodes)
-            self._update_success_level_1_and_2(success_level_1_sub_nodes)
-            self.values_for_level_2.append(self.get_max_value_level_2(success_level_1_sub_nodes))
-            self.level_wise_1_success = False
-        else:
-            self.values_for_level_2.append(self.level2_max_value)
+        if not self.only_optimize_1:
+            success_level_1_sub_nodes = None
+            if self.level_wise_1_success:
+                success_level_1_sub_nodes = self.get_nodes_from_leaf_node(self.success_level_1_leaf_node)[::-1]
+                self._level_wise_2_optimize(success_level_1_sub_nodes)
+                self._update_success_level_1_and_2(success_level_1_sub_nodes)
+                self.values_for_level_2.append(self.get_max_value_level_2(success_level_1_sub_nodes))
+                self.level_wise_1_success = False
+            else:
+                self.values_for_level_2.append(self.level2_max_value)
 
         # if (iter+1) % 40 == 0:
         #     subtree = self.get_success_subtree()
@@ -353,13 +355,13 @@ class MCTS:
                 if next_state_is_success:
                     if next_state.stacked_box_num - prev_succes_stacked_box_num == 1:
                         print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
-                        return abs(reward)
+                        return abs(reward) * 1/depth * 5
                     if next_state.stacked_box_num - prev_succes_stacked_box_num == -1:
                         print(f"{sc.FAIL}Bad Action{sc.ENDC}")
-                        return reward * 2
+                        return reward * 2/depth * 5
                 else:
                     print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
-                    return reward
+                    return reward * 2/depth * 5
         
         return 0
 
@@ -454,15 +456,16 @@ class MCTS:
                         success_pick = False
                         break
 
-        if self.scene_mngr.scene.bench_num == 2:      
-            if success_pick:
+        
+        if success_pick:
+            if self.scene_mngr.scene.bench_num == 2:      
                 print(f"{sc.COLOR_YELLOW}move {pick_scene.pick_obj_name} to bin{sc.ENDC}")
                 if not self.scene_mngr.scene.has_already_final_path:
                     self.scene_mngr.scene.ben_2_final_path = self.place_action.get_rrt_star_path(self.scene_mngr.scene.robot.init_qpos, goal_q=self.scene_mngr.scene.goal_q)
                     self.scene_mngr.scene.has_already_final_path = True
-            else:
-                self.infeasible_sub_nodes.append(sub_optimal_nodes)
-                print(self.infeasible_sub_nodes)
+        else:
+            self.infeasible_sub_nodes.append(sub_optimal_nodes)
+            print(self.infeasible_sub_nodes)
 
     def _update_success_level_1_and_2(self, sub_optimal_nodes):
         sub_optimal_leaf_node = sub_optimal_nodes[-1]

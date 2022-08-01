@@ -48,6 +48,11 @@ class PlaceAction(ActivityBase):
             if self.scene_mngr.scene.bench_num == 1:
                 if "ceiling" in sup_obj:
                     continue
+                if "box" in sup_obj and "box" in held_obj:
+                    sup_obj_num = ord(sup_obj.split('_')[0])
+                    held_obj_num = ord(held_obj.split('_')[0])
+                    if held_obj_num <= sup_obj_num:
+                        continue
 
             #? for benchmark 2
             if self.scene_mngr.scene.bench_num == 2:
@@ -367,8 +372,13 @@ class PlaceAction(ActivityBase):
         max_y = center_point[1] + len_y * alpha
         margin = (min_x, max_x, min_y, max_y)
 
+
         weights = self._get_weights_for_support_obj(copied_mesh)
-        sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, self.n_samples_sup_obj, weights)
+        
+        n_sample_sup_obj = self.n_samples_sup_obj
+        if obj_name == "table":
+            n_sample_sup_obj = 5
+        sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, n_sample_sup_obj, weights)
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 
         # TODO heuristic
@@ -476,7 +486,7 @@ class PlaceAction(ActivityBase):
         alpha = 1
         
         if bench_num == 1:
-            alpha = 0.2
+            alpha = 0.6
         elif bench_num == 2:
             alpha = 0.8
         
@@ -499,9 +509,9 @@ class PlaceAction(ActivityBase):
 
                 if bench_num == 1:
                     if "table" in support_obj_name:
-                        if not (min_x - 0.2 <= center_point[0] <= min_x):
+                        if not (min_x - 0.05 <= center_point[0] <= min_x):
                             continue
-                        if not (min_y - 0.1 <= center_point[1] <= max_y + 0.1):
+                        if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
                             continue
                 if bench_num == 2:
                     center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2
@@ -511,9 +521,9 @@ class PlaceAction(ActivityBase):
                         if not (min_y + 0.1 <= center_point[1] <= max_y - 0.05):
                             continue
                     if "shelf_9" in support_obj_name:
-                        if not (min_x + 0.02 <= center_point[0] <= max_x - 0.02):
+                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.05):
                             continue
-                        if not (min_y  <= center_point[1] <= max_y - 0.5):
+                        if not (min_y - 0.5 <= center_point[1] <= max_y - 0.5):
                             continue
                     if "shelf_15" in support_obj_name:
                         if not (min_x + 0.05 <= center_point[0] <= max_x - 0.1):
