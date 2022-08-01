@@ -39,7 +39,7 @@ for idx, c in enumerate(c_list):
         c=c,
         debug_mode=debug_mode)
     for i in range(budgets):
-        print(f"\nBenchmark: {benchmark3.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}")
+        print(f"\nBenchmark: {benchmark3.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
         mcts.do_planning(i)
 
     level_1_max_values = mcts.values_for_level_1
