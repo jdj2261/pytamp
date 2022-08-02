@@ -32,9 +32,9 @@ mcts.only_optimize_1 = True
 mcts.budgets = 300
 mcts.max_depth = 20
 mcts.c = 10
-# mcts.sampling_method = 'bai_ucb' # 405
-mcts.sampling_method = 'bai_perturb' # 58
-# mcts.sampling_method = 'uct' # 369
+# mcts.sampling_method = 'bai_ucb' 
+mcts.sampling_method = 'bai_perturb' 
+# mcts.sampling_method = 'uct' 
 
 for i in range(mcts.budgets):
     mcts.do_planning(i)

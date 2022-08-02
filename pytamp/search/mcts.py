@@ -32,18 +32,19 @@ class MCTS:
         self.state = scene_mngr.scene
         bench_num =self.scene_mngr.scene.bench_num
         
-        if bench_num == 2:
+        if bench_num == 1:
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=2, n_directions=1)
+        elif bench_num == 2:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=5)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=4)
         elif bench_num == 3:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=5, retreat_distance=0.2, n_directions=10)
         elif bench_num == 4:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=1)
-        else:
-            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=2, n_directions=1)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=3)
+
 
         self._sampling_method = sampling_method
         self._budgets = budgets
@@ -56,8 +57,21 @@ class MCTS:
         self.tree = self._create_tree(self.state)
         self.nodes = None
         
-        self.infeasible_reward = -3
-        self.goal_reward = 3
+        if self.scene_mngr.scene.bench_num == 1:
+            self.infeasible_reward = -3
+            self.goal_reward = 3
+
+        if self.scene_mngr.scene.bench_num == 2:
+            self.infeasible_reward = -10
+            self.goal_reward = 10
+
+        if self.scene_mngr.scene.bench_num == 3:
+            self.infeasible_reward = -3
+            self.goal_reward = 3
+
+        if self.scene_mngr.scene.bench_num == 4:
+            self.infeasible_reward = -10
+            self.goal_reward = 10
 
         self.values_for_level_1 = []
         self.values_for_level_2 = []

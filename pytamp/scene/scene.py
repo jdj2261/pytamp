@@ -77,7 +77,7 @@ class Scene:
         #                   "peg_2" : 0, 
         #                   "peg_3" : -0.3}
         # self.pegs = list(self.peg_poses.keys())
-        self.hang_obj_name = None
+        self.prev_peg_name = None
 
     def show_scene_info(self):
         print(f"*"*23 + f" {sc.OKGREEN}Scene{sc.ENDC} "+ f"*"*23)

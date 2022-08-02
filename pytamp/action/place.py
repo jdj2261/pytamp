@@ -69,7 +69,7 @@ class PlaceAction(ActivityBase):
                 support_objects = self.scene_mngr.scene.goal_objects + ["table"]
                 if sup_obj not in support_objects:
                     continue
-                
+
                 if "hanoi_disk" in sup_obj and "hanoi_disk" in held_obj:
                     sup_obj_num = float(sup_obj.split('_')[-1])
                     held_obj_num = float(held_obj.split('_')[-1])
@@ -213,12 +213,7 @@ class PlaceAction(ActivityBase):
             
             if self.scene_mngr.scene.bench_num == 4:
                 y_pose = obj_pose_transformed[1, 3]
-                if y_pose < 0.:
-                    peg = self.scene_mngr.scene.pegs[2]
-                elif y_pose > 0.:
-                    peg = self.scene_mngr.scene.pegs[0]
-                else:
-                    peg = self.scene_mngr.scene.pegs[1]
+                peg = self._get_peg(y_pose)
                 next_scene.logical_states[held_obj_name][next_scene.logical_state.hang] = next_scene.objs[peg]
             next_scene.update_logical_states()
 
@@ -243,7 +238,13 @@ class PlaceAction(ActivityBase):
             if self.scene_mngr._scene.bench_num == 1:
                 if not self._check_support(support_obj_name, held_obj_name, obj_pose_transformed):
                     continue
-            
+            if self.scene_mngr._scene.bench_num == 4:
+                if support_obj_name == "table":
+                    y_pose = obj_pose_transformed[1, 3]
+                    peg = self._get_peg(y_pose)
+                    if peg == self.scene_mngr.scene.prev_peg_name:
+                        continue
+
             if self.scene_mngr.heuristic:
                 heuristic_poses = get_heuristic_release_eef_pose(obj_pose_transformed, eef_pose, self.n_directions)
                 for eef_pose, obj_pose_transformed in heuristic_poses:
@@ -395,19 +396,6 @@ class PlaceAction(ActivityBase):
         else:
             margin = (0, 0, 0, 0)
             if "table" in obj_name:   
-                # not_hang_pegs = []
-                # for peg in self.scene_mngr.scene.pegs:
-                #     if peg == self.scene_mngr.scene.hang_obj_name:
-                #         continue
-                #     hang_pegs = self.scene_mngr.scene.logical_states[peg].get(self.scene_mngr.scene.logical_state.hung)
-                #     if hang_pegs is not None:
-                #         if len(hang_pegs) == 0:
-                #             not_hang_pegs.append(peg)
-                #     else:
-                #         not_hang_pegs.append(peg)
-                
-                # if not not_hang_pegs:
-                #     return
                 normals = np.tile(np.array([0, 0, 1]), reps=(3, 1))
                 sample_points = np.array([np.array(self.scene_mngr.get_object_pose(peg)[:3, 3]) for peg in self.scene_mngr.scene.pegs])
                 table_height = self.scene_mngr.scene.objs["table"].gparam.bounds[1][2] - self.scene_mngr.scene.objs["table"].gparam.bounds[0][2]
@@ -424,8 +412,6 @@ class PlaceAction(ActivityBase):
                 for point, normal_vector in zip(sample_points, normals):
                     yield point, normal_vector, margin
             
-
-
     @staticmethod
     def _get_weights_for_support_obj(obj_mesh):
         # heuristic
@@ -544,9 +530,6 @@ class PlaceAction(ActivityBase):
                             continue
                         if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
                             continue
-                
-                if bench_num == 4:
-                    pass
 
                 if eef_pose is not None:
                     T_obj_pose_and_obj_pose_transformed = np.dot(held_obj_pose, np.linalg.inv(held_obj_pose_rotated))
@@ -618,3 +601,13 @@ class PlaceAction(ActivityBase):
         if len(locations) != 0:
             return True
         return False
+
+    def _get_peg(self, y_pose):
+        y_pose = np.round(y_pose,1)
+        if y_pose < 0.:
+            peg = self.scene_mngr.scene.pegs[2]
+        elif y_pose > 0.:
+            peg = self.scene_mngr.scene.pegs[0]
+        else:
+            peg = self.scene_mngr.scene.pegs[1]
+        return peg
