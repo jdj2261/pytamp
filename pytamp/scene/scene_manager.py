@@ -1,4 +1,3 @@
-from re import A
 import numpy as np
 import matplotlib.animation as animation
 from collections import OrderedDict
@@ -8,7 +7,6 @@ from pykin.utils import plot_utils as p_utils
 from pykin.robots.single_arm import SingleArm
 from pykin.collision.collision_manager import CollisionManager
 from pykin.utils.mesh_utils import get_relative_transform
-from torch import detach
 from pytamp.scene.scene import Scene
 from pytamp.scene.object import Object
 from pytamp.scene.render import RenderPyPlot, RenderTriMesh
@@ -148,11 +146,25 @@ class SceneManager:
         self.is_attached = False
         self._scene.robot.gripper.is_attached = False
   
+    @staticmethod
+    def set_key(dictionary, key, value):
+        if key not in dictionary:
+            dictionary[key] = value
+        elif type(dictionary[key]) == list:
+            dictionary[key].append(value)
+        else:
+            dictionary[key] = [dictionary[key], value]
+
     def set_logical_state(self, obj_name, *states:tuple):
         self._scene.logical_states[obj_name] = {}
         for state in states:
             if isinstance(state[1], str):
-                self._scene.logical_states[obj_name].update({state[0] : self._scene.objs[state[1]]})
+                if self._scene.logical_states[obj_name].get(state[0]) is not None:
+                    if state[0] == list(self._scene.logical_states[obj_name].keys())[0]:
+                        self.set_key(self._scene.logical_states[obj_name], state[0], self._scene.objs[state[1]])
+                else:
+                    self._scene.logical_states[obj_name].update({state[0] : self._scene.objs[state[1]]})
+
             else:
                 self._scene.logical_states[obj_name].update({state[0] : state[1]})
 

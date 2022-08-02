@@ -5,7 +5,7 @@ from pytamp.benchmark import Benchmark3
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="collision", is_pyplot=True)
 pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1)
-place = PlaceAction(benchmark3.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=5, n_directions=10)
+place = PlaceAction(benchmark3.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10, n_directions=3)
 
 pick_actions = list(pick.get_possible_actions_level_1())
 init_scene = pick.scene_mngr.init_scene

@@ -1,6 +1,7 @@
 import numpy as np
 from collections import OrderedDict
 from copy import deepcopy
+from pyrsistent import b
 from trimesh import Trimesh, proximity
 
 from pykin.utils import mesh_utils as m_utils
@@ -43,11 +44,12 @@ class PlaceAction(ActivityBase):
             # print(f"place : {sup_obj}")
             if sup_obj == held_obj:
                 continue
-
+            
+            if "ceiling" in sup_obj:
+                continue
+            
             #? for benchmark 1
             if self.scene_mngr.scene.bench_num == 1:
-                if "ceiling" in sup_obj:
-                    continue
                 if "box" in sup_obj and "box" in held_obj:
                     sup_obj_num = ord(sup_obj.split('_')[0])
                     held_obj_num = ord(held_obj.split('_')[0])
@@ -61,7 +63,7 @@ class PlaceAction(ActivityBase):
             
             #? for benchmark 3
             if self.scene_mngr.scene.bench_num == 3:
-                if sup_obj not in ["clearbox_1_8", "clearbox_1_16"]:
+                if sup_obj not in ["table"]:
                     continue
             
             #? for benchmark 4
@@ -76,9 +78,10 @@ class PlaceAction(ActivityBase):
                     if held_obj_num < sup_obj_num:
                         continue
 
-            if sup_obj == self.scene_mngr.scene.prev_place_obj_name:
-                if sup_obj not in ["table", "shelf_9"]:
-                    continue
+            for prev_place_obj_name in self.scene_mngr.scene.prev_place_obj_name:
+                if sup_obj == prev_place_obj_name:
+                    if sup_obj not in ["table", "shelf_9"]:
+                        continue
 
             if not any(logical_state in self.scene_mngr.scene.logical_states[sup_obj] for logical_state in self.filter_logical_states):
                 action_level_1 = self.get_action_level_1_for_single_object(sup_obj, held_obj, eef_pose)
@@ -155,12 +158,15 @@ class PlaceAction(ActivityBase):
         if not success_joint_path:
             if self.scene_mngr.is_attached:
                 self.scene_mngr.detach_object_from_gripper()
-            self.scene_mngr.add_object(
-                self.scene_mngr.scene.robot.gripper.attached_obj_name,
-                self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].gtype,
-                self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].gparam,
-                scene.robot.gripper.place_obj_pose,
-                self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].color)
+            try:
+                self.scene_mngr.add_object(
+                    self.scene_mngr.scene.robot.gripper.attached_obj_name,
+                    self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].gtype,
+                    self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].gparam,
+                    scene.robot.gripper.place_obj_pose,
+                    self.scene_mngr.init_objects[self.scene_mngr.scene.robot.gripper.attached_obj_name].color)
+            except ValueError as e:
+                print(e)
             return result_all_joint_path
 
         if default_joint_path:
@@ -270,7 +276,10 @@ class PlaceAction(ActivityBase):
     def get_post_release_pose(self, release_pose):
         post_release_pose = np.eye(4)
         post_release_pose[:3, :3] = release_pose[:3, :3] 
-        post_release_pose[:3, 3] = release_pose[:3, 3] - self.retreat_distance * release_pose[:3,2]
+        if self.scene_mngr.scene.bench_num != 3:
+            post_release_pose[:3, 3] = release_pose[:3, 3] - self.retreat_distance * release_pose[:3,2]
+        else:
+            post_release_pose[:3, 3] = release_pose[:3, 3] + np.array([0, 0, self.retreat_distance])
         return post_release_pose
 
     # for level wise - 1 (Consider gripper collision)
@@ -377,8 +386,9 @@ class PlaceAction(ActivityBase):
         weights = self._get_weights_for_support_obj(copied_mesh)
         
         n_sample_sup_obj = self.n_samples_sup_obj
-        if obj_name == "table":
-            n_sample_sup_obj = 3
+        if self.scene_mngr.scene.bench_num == 1:
+            if obj_name == "table":
+                n_sample_sup_obj = 3
         sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, n_sample_sup_obj, weights)
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 
@@ -439,6 +449,7 @@ class PlaceAction(ActivityBase):
 
                 for point, normal_vector in zip(sample_points, normals):
                     yield point, normal_vector
+                    
         elif self.scene_mngr.scene.bench_num == 4:
             if "hanoi_disk" in obj_name:
                 sample_points = np.array([center_lower_point])
@@ -475,6 +486,8 @@ class PlaceAction(ActivityBase):
             alpha = 0.9
         elif bench_num == 2:
             alpha = 0.8
+        elif bench_num == 3:
+            alpha = 0.9
         
         held_obj_pose = deepcopy(self.scene_mngr.scene.objs[held_obj_name].h_mat)
         surface_points_for_sup_obj = list(self.get_surface_points_for_support_obj(support_obj_name, alpha=alpha))
@@ -518,9 +531,9 @@ class PlaceAction(ActivityBase):
                             continue
                 if bench_num == 3:
                     if "table" in support_obj_name:
-                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.5):
+                        if not (min_x <= center_point[0] <= max_x - 0.2):
                             continue
-                        if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
+                        if not (min_y <= center_point[1] <= max_y - 0.1):
                             continue
 
                 if eef_pose is not None:

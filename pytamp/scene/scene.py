@@ -45,7 +45,7 @@ class Scene:
         
         self.pick_obj_name = None
         self.cur_place_obj_name = None
-        self.prev_place_obj_name = None
+        self.prev_place_obj_name = []
         self.pick_obj_default_pose = None
         
     def _init_bench_1(self):
@@ -65,7 +65,19 @@ class Scene:
         self.has_already_final_path = False
 
     def _init_bench_3(self):
-        self.goal_objects = ["clearbox_1_8", "clearbox_1_16"]
+        if self.benchmark_config[self.bench_num].get("goal_object"):
+            self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
+        self.castle = [ "rect_bottom_box", 
+                        "rect_bottom_right_box", 
+                        "rect_bottom_center_box", 
+                        "rect_bottom_left_box", 
+                        "rect_top_box", 
+                        "rect_top_right_box", 
+                        "rect_top_left_box", 
+                        "half_cylinder_box"]
+        self.goal_q = [-1.2417, -1.415, 0.3991, 0.0, -2.05, 0]
+        self.ben_3_final_path = []
+        self.has_already_final_path = False
 
     def _init_bench_4(self):
         if self.benchmark_config[self.bench_num].get("disk_num"):
@@ -96,11 +108,18 @@ class Scene:
     def update_logical_states(self):
         for object_name, logical_state in self.logical_states.items():
             if logical_state.get(State.on):
-                if not self.logical_states[logical_state[State.on].name].get(State.support):
-                    self.logical_states[logical_state[State.on].name][State.support] = []
+                if isinstance(logical_state[State.on], list):
+                    for on_obj in logical_state[State.on]:
+                        if not self.logical_states[on_obj.name].get(State.support):
+                            self.logical_states[on_obj.name][State.support] = []
+                        if self.objs[object_name] not in list(self.logical_states[on_obj.name].get(State.support)):
+                            self.logical_states[on_obj.name][State.support].append(self.objs[object_name])
+                else:
+                    if not self.logical_states[logical_state[State.on].name].get(State.support):
+                        self.logical_states[logical_state[State.on].name][State.support] = []
                                 
-                if self.objs[object_name] not in list(self.logical_states[logical_state[State.on].name].get(State.support)):
-                    self.logical_states[logical_state[State.on].name][State.support].append(self.objs[object_name])
+                    if self.objs[object_name] not in list(self.logical_states[logical_state[State.on].name].get(State.support)):
+                        self.logical_states[logical_state[State.on].name][State.support].append(self.objs[object_name])
 
             if logical_state.get(State.support) is not None and not logical_state.get(State.support):
                 self.logical_states[object_name].pop(State.support)
@@ -168,11 +187,8 @@ class Scene:
 
     def check_terminal_state_bench_3(self):
         is_success = False
-        support_obj_num = 0
-        for goal_object in self.goal_objects:
-            support_obj_num += len(self.logical_states[goal_object].get(self.logical_state.support, []))
-        if support_obj_num == 3:
-            is_success = True     
+        if self.robot.gripper.attached_obj_name == self.goal_object:
+            is_success = True
         return is_success
     
     def check_terminal_state_bench_4(self):

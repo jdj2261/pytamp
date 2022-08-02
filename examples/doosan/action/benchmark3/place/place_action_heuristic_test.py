@@ -14,15 +14,16 @@ benchmark3.scene_mngr.show()
 pick.scene_mngr.is_pyplot = False
 ################# Action Test ##################
 
-for pick_obj in ["arch_box", "rect_box", "half_cylinder_box"]:
+for pick_obj in benchmark3.scene_mngr.scene.castle:
     fig, ax = p_utils.init_3d_figure(name="Level wise 1")
-    for place_obj in ["clearbox_1_8", "clearbox_1_16", "table"]:
+    for place_obj in ["table"]:
         pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.init_scene, pick_obj)
         for grasp_pose in pick_action[pick.info.GRASP_POSES]:
             pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
         for pick_scene in pick.get_possible_transitions(pick.scene_mngr.init_scene, pick_action):
             place_action = place.get_action_level_1_for_single_object(place_obj, pick_obj, pick_scene.robot.gripper.grasp_pose, scene=pick_scene)
             for release_pose, obj_pose in place_action[place.info.RELEASE_POSES]:
+                print(place.scene_mngr.scene.objs[pick_obj])
                 pick.scene_mngr.render_axis(ax, release_pose[place.move_data.MOVE_release])
                 pick.scene_mngr.render_object(ax, place.scene_mngr.scene.objs[pick_obj], obj_pose)
                 pick.scene_mngr.set_gripper_pose(release_pose[place.move_data.MOVE_release])

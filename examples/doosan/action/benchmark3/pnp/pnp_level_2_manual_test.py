@@ -15,14 +15,14 @@ pnp_path = []
 pick_objects = []
 place_object_poses = []
     
-for pick_obj in ["arch_box", "rect_box", "half_cylinder_box"]:
+for pick_obj in ["rect_top_left_box"]:
     pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.scene, pick_obj)
     success_joint_path = False
 
     for pick_scene in pick.get_possible_transitions(pick.scene_mngr.scene, pick_action):
         pick_joint_path = pick.get_possible_joint_path_level_2(scene=pick_scene, grasp_poses=pick_scene.grasp_poses)
         if pick_joint_path:
-            place_action = place.get_action_level_1_for_single_object("clearbox_1_8", pick_obj, pick_scene.robot.gripper.grasp_pose, scene=pick_scene)
+            place_action = place.get_action_level_1_for_single_object("table", pick_obj, pick_scene.robot.gripper.grasp_pose, scene=pick_scene)
             for place_scene in place.get_possible_transitions(scene=pick_scene, action=place_action):
                 place_joint_path = place.get_possible_joint_path_level_2(
                     scene=place_scene, release_poses=place_scene.release_poses, init_thetas=pick_joint_path[-1][place.move_data.MOVE_default_grasp][-1])
@@ -39,4 +39,5 @@ for pick_obj in ["arch_box", "rect_box", "half_cylinder_box"]:
     pick_all_objects.append(pick_objects)
     place_all_object_poses.append(place_object_poses)
 
-    place.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+    if pnp_path:
+        place.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

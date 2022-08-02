@@ -9,11 +9,11 @@ class Benchmark1(Benchmark):
     def __init__(
         self, 
         robot_name="panda", 
-        box_num=8,
+        box_num=6,
         geom="visual", 
         is_pyplot=True
     ):
-        assert box_num <= 8, f"The number of boxes must be 6 or less."
+        assert box_num <= 6, f"The number of boxes must be 6 or less."
         self.box_num = box_num
         self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
         self.benchmark_config = {1 : self.param}
@@ -41,7 +41,6 @@ class Benchmark1(Benchmark):
         self.table_mesh = get_object_mesh('ben_table.stl')
         self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
         self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
-        self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
         self.box_mesh = get_object_mesh('ben_cube.stl', 0.06)
         box_height = self.box_mesh.bounds[1][2] - self.box_mesh.bounds[0][2]
 
@@ -52,13 +51,6 @@ class Benchmark1(Benchmark):
         D_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2] + box_height]))
         E_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
         F_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2] + box_height]))
-
-        # A_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]]))
-        # B_box_pose = Transform(pos=np.array([0.6, 0., self.table_mesh.bounds[1][2]]))
-        # C_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
-        # D_box_pose = Transform(pos=np.array([0.8, -0.2, self.table_mesh.bounds[1][2]]))
-        # E_box_pose = Transform(pos=np.array([0.6, 0., self.table_mesh.bounds[1][2]]))
-        # F_box_pose = Transform(pos=np.array([0.8, 0.2, self.table_mesh.bounds[1][2]]))
 
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 

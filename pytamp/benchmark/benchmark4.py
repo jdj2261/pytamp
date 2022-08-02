@@ -10,7 +10,7 @@ class Benchmark4(Benchmark):
     def __init__(
         self, 
         robot_name="panda", 
-        disk_num=5,
+        disk_num=3,
         geom="visual", 
         is_pyplot=True
     ):
@@ -40,6 +40,9 @@ class Benchmark4(Benchmark):
         self.peg_mesh = get_object_mesh('hanoi_peg.stl', scale=[1.0, 1.0, 1.0])
         self.disk_mesh = get_object_mesh('hanoi_disk.stl', scale=[1, 1, 2.0])
 
+        self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl', [1.0, 1.5, 1.0])
+        self.ceiling_pose = Transform(pos=np.array([1.0, -0.6, 1.7]))
+
         self.peg_mesh_bound = get_mesh_bounds(mesh=self.peg_mesh)
         self.disk_mesh_bound = get_mesh_bounds(mesh=self.disk_mesh)
         self.disk_heigh = self.disk_mesh_bound[1][2] - self.disk_mesh_bound[0][2]
@@ -58,6 +61,7 @@ class Benchmark4(Benchmark):
         self.scene_mngr.add_object(name="peg_2", gtype="mesh", gparam=self.peg_mesh, h_mat=self.peg2_pose.h_mat, color=[0., 0., 1.])
         self.scene_mngr.add_object(name="peg_3", gtype="mesh", gparam=self.peg_mesh, h_mat=self.peg3_pose.h_mat, color=[0., 0., 1.])
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
+        self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
         self.scene_mngr.add_robot(self.robot)
 
         self.scene_mngr.set_logical_state("peg_1", ("on", "table"), ("static", True)) 
@@ -81,6 +85,7 @@ class Benchmark4(Benchmark):
                 prev_disk_name = "hanoi_disk_" + str(i-1)
                 self.scene_mngr.set_logical_state(disk_name, ("on", prev_disk_name), ("hang", "peg_1"))
 
+        self.scene_mngr.set_logical_state("ceiling", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True), (self.scene_mngr.scene.logical_state.holding, None))
         self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))
         self.scene_mngr.update_logical_states(is_init=True)
