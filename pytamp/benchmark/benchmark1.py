@@ -9,11 +9,11 @@ class Benchmark1(Benchmark):
     def __init__(
         self, 
         robot_name="panda", 
-        box_num=6,
+        box_num=8,
         geom="visual", 
         is_pyplot=True
     ):
-        assert box_num <= 6, f"The number of boxes must be 6 or less."
+        assert box_num <= 8, f"The number of boxes must be 6 or less."
         self.box_num = box_num
         self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
         self.benchmark_config = {1 : self.param}
@@ -42,14 +42,24 @@ class Benchmark1(Benchmark):
         self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
         self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
         self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
+        self.box_mesh = get_object_mesh('ben_cube.stl', 0.06)
+        box_height = self.box_mesh.bounds[1][2] - self.box_mesh.bounds[0][2]
 
         self.box_poses = []
-        A_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2]]))
-        B_box_pose = Transform(pos=np.array([0.6, 0., self.table_mesh.bounds[1][2]]))
-        C_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
-        D_box_pose = Transform(pos=np.array([0.8, -0.2, self.table_mesh.bounds[1][2]]))
-        E_box_pose = Transform(pos=np.array([0.8, 0., self.table_mesh.bounds[1][2]]))
-        F_box_pose = Transform(pos=np.array([0.8, 0.2, self.table_mesh.bounds[1][2]]))
+        A_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]]))
+        B_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2]]))
+        C_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2] + box_height]))
+        D_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2] + box_height]))
+        E_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
+        F_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2] + box_height]))
+
+        # A_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]]))
+        # B_box_pose = Transform(pos=np.array([0.6, 0., self.table_mesh.bounds[1][2]]))
+        # C_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
+        # D_box_pose = Transform(pos=np.array([0.8, -0.2, self.table_mesh.bounds[1][2]]))
+        # E_box_pose = Transform(pos=np.array([0.6, 0., self.table_mesh.bounds[1][2]]))
+        # F_box_pose = Transform(pos=np.array([0.8, 0.2, self.table_mesh.bounds[1][2]]))
+
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 
                               C_box_pose, 
@@ -64,6 +74,7 @@ class Benchmark1(Benchmark):
         D_box_color=np.array([1.0, 1.0, 0.0])
         E_box_color=np.array([0.0, 1.0, 1.0])
         F_box_color=np.array([1.0, 0.0, 1.0])
+
         self.box_colors.extend([A_box_color, 
                               B_box_color, 
                               C_box_color, 
@@ -77,11 +88,17 @@ class Benchmark1(Benchmark):
 
     def _load_scene(self):
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
+        logical_states = [("A_box", ("on", "table")),
+                          ("B_box", ("on", "table")),
+                          ("C_box", ("on", "B_box")),
+                          ("D_box", ("on", "A_box")),
+                          ("E_box", ("on", "table")),
+                          ("F_box", ("on", "E_box")),]
         for i in range(self.box_num):
             box_name = self.scene_mngr.scene.alphabet_list[i] + '_box'
             box_mesh = get_object_mesh('ben_cube.stl', 0.06)
             self.scene_mngr.add_object(name=box_name, gtype="mesh", gparam=box_mesh, h_mat=self.box_poses[i].h_mat, color=self.box_colors[i])
-            self.scene_mngr.set_logical_state(box_name, ("on", "table"))
+            self.scene_mngr.set_logical_state(logical_states[i][0], logical_states[i][1])
 
         self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
         self.scene_mngr.add_object(name="tray_red", gtype="mesh", gparam=self.tray_red_mesh, h_mat=self.tray_red_pose.h_mat, color=[1.0, 0, 0])

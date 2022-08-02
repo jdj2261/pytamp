@@ -472,10 +472,7 @@ class PlaceAction(ActivityBase):
         alpha = 1
         
         if bench_num == 1:
-            if "tray" in support_obj_name:
-                alpha = 0.8
-            else:
-                alpha = 0.2
+            alpha = 0.9
         elif bench_num == 2:
             alpha = 0.8
         
@@ -498,14 +495,9 @@ class PlaceAction(ActivityBase):
 
                 if bench_num == 1:
                     if "table" in support_obj_name:
-                        if not (min_x - 0.05 <= center_point[0] <= min_x):
+                        if not (min_x + 0.1 <= center_point[0] <= max_x - 0.2):
                             continue
-                        if not (min_y + 0.05 <= center_point[1] <= max_y - 0.05):
-                            continue
-                    if "tray" in support_obj_name:
-                        if not (min_x <= center_point[0] <= max_x):
-                            continue
-                        if not (min_y <= center_point[1] <= max_y):
+                        if not (min_y + 0.1 <= center_point[1] <= max_y - 0.1):
                             continue
                 if bench_num == 2:
                     center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2

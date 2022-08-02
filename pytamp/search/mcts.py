@@ -34,7 +34,7 @@ class MCTS:
         
         if bench_num == 1:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=2, n_directions=1)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=1)
         elif bench_num == 2:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=4)
@@ -369,10 +369,10 @@ class MCTS:
                 if next_state_is_success:
                     if next_state.stacked_box_num - prev_succes_stacked_box_num == 1:
                         print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
-                        return abs(reward) * 1/(depth+1) * 10
+                        return abs(reward) * 1/(depth+1) * 20
                     if next_state.stacked_box_num - prev_succes_stacked_box_num == -1:
                         print(f"{sc.FAIL}Bad Action{sc.ENDC}")
-                        return reward * 2/(depth+1) * 10
+                        return reward * 1/(depth+1) * 40
                 # else:
                 #     print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
                 #     return reward * 2/(depth+1)

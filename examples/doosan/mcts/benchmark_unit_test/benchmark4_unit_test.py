@@ -1,4 +1,3 @@
-import numpy as np
 import argparse
 
 from pykin.utils import plot_utils as p_utils
@@ -30,9 +29,9 @@ mcts = MCTS(benchmark4.scene_mngr)
 mcts.only_optimize_1 = True
 
 mcts.debug_mode = False
-mcts.budgets = 300
+mcts.budgets = 1000
 mcts.max_depth = 30
-mcts.c = 3
+mcts.c = 300
 
 # mcts.sampling_method = 'bai_ucb' 
 mcts.sampling_method = 'bai_perturb' 
