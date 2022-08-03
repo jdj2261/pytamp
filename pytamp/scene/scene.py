@@ -65,30 +65,22 @@ class Scene:
         self.has_already_final_path = False
 
     def _init_bench_3(self):
-        if self.benchmark_config[self.bench_num].get("goal_object"):
-            self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
-        self.castle = [ "rect_bottom_box", 
-                        "rect_bottom_right_box", 
-                        "rect_bottom_center_box", 
-                        "rect_bottom_left_box", 
-                        "rect_top_box", 
-                        "rect_top_right_box", 
-                        "rect_top_left_box", 
+        self.goal_objects = ["clearbox_1_8", "clearbox_1_16"]
+        self.castle = [ "rect_bottom_box",
+                        "rect_bottom_right_box",
+                        "rect_bottom_center_box",
+                        "rect_bottom_left_box",
+                        # "rect_top_right_box",
+                        # "rect_top_center_box",
+                        # "rect_top_left_box", 
                         "half_cylinder_box"]
-        self.goal_q = [-1.2417, -1.415, 0.3991, 0.0, -2.05, 0]
-        self.ben_3_final_path = []
-        self.has_already_final_path = False
-
+        
     def _init_bench_4(self):
         if self.benchmark_config[self.bench_num].get("disk_num"):
             self.disk_num = self.benchmark_config[self.bench_num].get("disk_num")
         self.goal_objects = ["hanoi_disk_" + str(i) for i in range(self.disk_num)]
         self.goal_object = self.goal_objects[0]
         self.pegs = ["peg_1", "peg_2", "peg_3"]
-        # self.peg_poses = {"peg_1" : 0.3, 
-        #                   "peg_2" : 0, 
-        #                   "peg_3" : -0.3}
-        # self.pegs = list(self.peg_poses.keys())
         self.prev_peg_name = None
 
     def show_scene_info(self):
@@ -187,9 +179,16 @@ class Scene:
 
     def check_terminal_state_bench_3(self):
         is_success = False
-        if self.robot.gripper.attached_obj_name == self.goal_object:
-            is_success = True
+        support_obj_num = 0
+        for goal_object in self.goal_objects:
+            support_obj_num += len(self.logical_states[goal_object].get(self.logical_state.support, []))
+        if support_obj_num == len(self.castle):
+            is_success = True     
         return is_success
+        # is_success = False
+        # if self.robot.gripper.attached_obj_name == self.goal_object:
+        #     is_success = True
+        # return is_success
     
     def check_terminal_state_bench_4(self):
         is_success = False

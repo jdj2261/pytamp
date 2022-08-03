@@ -1,7 +1,6 @@
 import numpy as np
 from collections import OrderedDict
 from copy import deepcopy
-from pyrsistent import b
 from trimesh import Trimesh, proximity
 
 from pykin.utils import mesh_utils as m_utils
@@ -63,7 +62,7 @@ class PlaceAction(ActivityBase):
             
             #? for benchmark 3
             if self.scene_mngr.scene.bench_num == 3:
-                if sup_obj not in ["table"]:
+                if sup_obj not in ["clearbox_1_8", "clearbox_1_16"]:
                     continue
             
             #? for benchmark 4

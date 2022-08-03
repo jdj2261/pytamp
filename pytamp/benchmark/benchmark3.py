@@ -45,7 +45,7 @@ class Benchmark3(Benchmark):
         clearbox_8_mesh = get_object_mesh(f'clearbox_8.stl', scale=[1.4, 1.3, 1.5])
         self.clearbox1_pose = Transform(pos=np.array([0.7, 0.4, self.table_height + abs(clearbox_8_mesh.bounds[0][2])]), rot=[0, 0, np.pi/2])
 
-        self.rect_bottom_box = get_object_mesh('rect_box.stl', [0.002, 0.0025, 0.0005])
+        self.rect_bottom_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
         self.rect_bottom_box.apply_translation(-self.rect_bottom_box.center_mass)
 
         self.rect_bottom_right_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
@@ -60,17 +60,6 @@ class Benchmark3(Benchmark):
         self.rect_bottom_left_box.apply_transform(get_h_mat(orientation=np.array([np.pi/2, 0, 0])))
         self.rect_bottom_left_box.apply_translation(-self.rect_bottom_left_box.center_mass)
 
-        self.rect_top_box = get_object_mesh('rect_box.stl', [0.002, 0.002, 0.0005])
-        self.rect_top_box.apply_translation(-self.rect_top_box.center_mass)
-
-        self.rect_top_right_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
-        self.rect_top_right_box.apply_transform(get_h_mat(orientation=np.array([np.pi/2, 0, 0])))
-        self.rect_top_right_box.apply_translation(-self.rect_top_right_box.center_mass)
-
-        self.rect_top_left_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
-        self.rect_top_left_box.apply_transform(get_h_mat(orientation=np.array([np.pi/2, 0, 0])))
-        self.rect_top_left_box.apply_translation(-self.rect_top_left_box.center_mass)
-
         self.half_cylinder_box = get_object_mesh('half_cylinder_box.stl', [0.002, 0.002, 0.002])
         self.half_cylinder_box.apply_transform(get_h_mat(orientation=[0, -np.pi/2, 0]))
         self.half_cylinder_box.apply_translation(-self.half_cylinder_box.center_mass)
@@ -79,10 +68,7 @@ class Benchmark3(Benchmark):
         self.rect_bottom_right_box_pose = Transform(pos=np.array([0.65, -0.25, self.table_height + self.rect_bottom_right_box.bounds[1][2]+ self.rect_bottom_box.bounds[1][2]*2]))
         self.rect_bottom_center_box_pose = Transform(pos=np.array([0.65, -0.3, self.table_height + self.rect_bottom_center_box.bounds[1][2]+ self.rect_bottom_box.bounds[1][2]*2]))
         self.rect_bottom_left_box_pose = Transform(pos=np.array([0.65, -0.35, self.table_height + self.rect_bottom_left_box.bounds[1][2]+ self.rect_bottom_box.bounds[1][2]*2]))
-        self.rect_top_box_pose = Transform(np.array([0.65, -0.3, self.table_height + self.rect_bottom_box.bounds[1][2]*2 + self.rect_bottom_center_box.bounds[1][2]*2]))
-        self.rect_top_right_box_pose = Transform(pos=np.array([0.65, -0.25, self.table_height + self.rect_bottom_box.bounds[1][2]*3 + self.rect_bottom_center_box.bounds[1][2]*3]))
-        self.rect_top_left_box_pose = Transform(pos=np.array([0.65, -0.35, self.table_height + self.rect_bottom_box.bounds[1][2]*3 + self.rect_bottom_center_box.bounds[1][2]*3]))
-        self.half_cylinder_box_pose = Transform(pos=np.array([0.65, -0.3, self.table_height + self.rect_bottom_box.bounds[1][2]*4 + self.rect_bottom_center_box.bounds[1][2]*4]))
+        self.half_cylinder_box_pose = Transform(pos=np.array([0.65, -0.3, self.table_height + + abs(self.half_cylinder_box.bounds[0][2]) + self.rect_bottom_box.bounds[1][2]*2 + self.rect_bottom_center_box.bounds[1][2]*2]))
 
     def _load_scene(self):
         self.benchmark_config = {3 : None}
@@ -91,11 +77,8 @@ class Benchmark3(Benchmark):
         self.scene_mngr.add_object(name="rect_bottom_right_box", gtype="mesh", gparam=self.rect_bottom_right_box, h_mat=self.rect_bottom_right_box_pose.h_mat)
         self.scene_mngr.add_object(name="rect_bottom_center_box", gtype="mesh", gparam=self.rect_bottom_center_box, h_mat=self.rect_bottom_center_box_pose.h_mat)
         self.scene_mngr.add_object(name="rect_bottom_left_box", gtype="mesh", gparam=self.rect_bottom_left_box, h_mat=self.rect_bottom_left_box_pose.h_mat)
-        self.scene_mngr.add_object(name="rect_top_box", gtype="mesh", gparam=self.rect_top_box, h_mat=self.rect_top_box_pose.h_mat)
-        self.scene_mngr.add_object(name="rect_top_right_box", gtype="mesh", gparam=self.rect_top_right_box, h_mat=self.rect_top_right_box_pose.h_mat)
-        self.scene_mngr.add_object(name="rect_top_left_box", gtype="mesh", gparam=self.rect_top_left_box, h_mat=self.rect_top_left_box_pose.h_mat)
         self.scene_mngr.add_object(name="half_cylinder_box", gtype="mesh", gparam=self.half_cylinder_box, h_mat=self.half_cylinder_box_pose.h_mat)
-        self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
+        # self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
         self.scene_mngr.add_robot(self.robot)
         
         for i in range(20):
@@ -108,11 +91,8 @@ class Benchmark3(Benchmark):
         self.scene_mngr.set_logical_state("rect_bottom_right_box", ("on", "rect_bottom_box"))
         self.scene_mngr.set_logical_state("rect_bottom_center_box", ("on", "rect_bottom_box"))
         self.scene_mngr.set_logical_state("rect_bottom_left_box", ("on", "rect_bottom_box"))
-        self.scene_mngr.set_logical_state("rect_top_box", ("on", "rect_bottom_right_box"), ("on", "rect_bottom_center_box"), ("on", "rect_bottom_left_box"))
-        self.scene_mngr.set_logical_state("rect_top_right_box", ("on", "rect_top_box"))
-        self.scene_mngr.set_logical_state("rect_top_left_box", ("on", "rect_top_box"))
-        self.scene_mngr.set_logical_state("half_cylinder_box", ("on", "rect_top_right_box"), ("on", "rect_top_left_box"))
-        self.scene_mngr.set_logical_state("ceiling", (self.scene_mngr.scene.logical_state.static, True))
+        self.scene_mngr.set_logical_state("half_cylinder_box", ("on", "rect_bottom_right_box"), ("on", "rect_bottom_center_box"), ("on", "rect_bottom_left_box"))
+        # self.scene_mngr.set_logical_state("ceiling", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))
         

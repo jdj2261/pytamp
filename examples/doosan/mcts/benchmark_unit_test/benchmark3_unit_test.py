@@ -9,7 +9,7 @@ from pytamp.search.mcts import MCTS
 # #? python3 benchmark3_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 3.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
-parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
+parser.add_argument('--max_depth', metavar='H', type=int, default=30, help='Max depth')
 parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
 parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Sampler Name')
 parser.add_argument('--debug_mode', metavar='debug', type=bool, default=False, help='Debug mode')
@@ -25,11 +25,11 @@ seed = args.seed
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="collision")
 mcts = MCTS(benchmark3.scene_mngr)
-
-mcts.debug_mode = False
+# mcts.only_optimize_1 = True
+# mcts.debug_mode = True
 mcts.budgets = 100
 mcts.max_depth = 20
-mcts.c = 30
+mcts.c = 10
 
 # mcts.sampling_method = 'bai_ucb' 
 mcts.sampling_method = 'bai_perturb' 
@@ -41,7 +41,7 @@ for i in range(mcts.budgets):
 subtree = mcts.get_success_subtree(optimizer_level=2)
 mcts.visualize_tree("MCTS", subtree)
 best_nodes = mcts.get_best_node(subtree)
-
+mcts.show_logical_actions(best_nodes)
 level_1_max_values = mcts.values_for_level_1
 level_2_max_values = mcts.values_for_level_2
 
