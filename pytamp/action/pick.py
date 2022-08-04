@@ -40,6 +40,9 @@ class PickAction(ActivityBase):
                 if isinstance(self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on), list):
                     for placed_obj in self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on):
                         placed_obj_name = placed_obj.name
+                        if self.scene_mngr.scene.bench_num == 1:
+                            if placed_obj_name not in ["shelf_8", "shelf_15"]:
+                                continue
                         if self.scene_mngr.scene.bench_num == 2:
                             if placed_obj_name in ["shelf_8", "shelf_15"]:
                                 continue
@@ -48,6 +51,7 @@ class PickAction(ActivityBase):
                     if self.scene_mngr.scene.bench_num == 2:
                         if placed_obj_name in ["shelf_8", "shelf_15"]:
                             continue
+                        
             if not any(logical_state in self.scene_mngr.scene.logical_states[obj_name] for logical_state in self.filter_logical_states):
                 action_level_1 = self.get_action_level_1_for_single_object(obj_name=obj_name)
                 if not action_level_1[self.info.GRASP_POSES]:
@@ -200,7 +204,7 @@ class PickAction(ActivityBase):
             ## Change Logical State
             # Remove pick obj in logical state of support obj
             supporting_obj = next_scene.logical_states[pick_obj].get(next_scene.logical_state.on)
-            
+            next_scene.prev_place_obj_name = []
             if isinstance(supporting_obj, list):
                 for obj in supporting_obj:
                     next_scene.prev_place_obj_name.append(obj.name)

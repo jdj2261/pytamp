@@ -31,7 +31,7 @@ final_level_2_values = []
 final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
-c_list = 10**np.linspace(0., 4., 1000)
+c_list = 10**np.linspace(0., 3., 100)
 for idx, c in enumerate(c_list):
     mcts = MCTS(
         scene_mngr=benchmark1.scene_mngr, 
@@ -41,7 +41,7 @@ for idx, c in enumerate(c_list):
         c=c,
         debug_mode=debug_mode)
     for i in range(budgets):
-        print(f"\nBenchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
+        print(f"\n[{idx+1}/{len(c_list)}] Benchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
         mcts.do_planning(i)
 
     level_1_max_values = mcts.values_for_level_1

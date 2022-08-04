@@ -58,8 +58,8 @@ class MCTS:
         self.nodes = None
         
         if self.scene_mngr.scene.bench_num == 1:
-            self.infeasible_reward = -3
-            self.goal_reward = 3
+            self.infeasible_reward = -10
+            self.goal_reward = 10
 
         if self.scene_mngr.scene.bench_num == 2:
             self.infeasible_reward = -10
@@ -375,7 +375,7 @@ class MCTS:
                         return reward * 1/(depth+1) * 40
                 # else:
                 #     print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
-                #     return reward * 2/(depth+1)
+                #     return reward * 40/(depth+1)
         
         return 0
 

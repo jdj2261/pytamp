@@ -14,8 +14,7 @@ class Benchmark3(Benchmark):
         geom="visual", 
         is_pyplot=True
     ):
-        param = {'goal_object' : 'rect_bottom_center_box'}
-        self.benchmark_config = {3 : param}
+        self.benchmark_config = {3 : None}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
         self._load_robot()

@@ -30,8 +30,8 @@ mcts.only_optimize_1 = True
 
 # 최대부터
 mcts.budgets = 1000
-mcts.max_depth = 20
-mcts.c = 5
+mcts.max_depth = 30
+mcts.c = 3
 # mcts.sampling_method = 'bai_ucb' 
 mcts.sampling_method = 'bai_perturb' 
 # mcts.sampling_method = 'uct' 

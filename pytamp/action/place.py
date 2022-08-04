@@ -52,7 +52,7 @@ class PlaceAction(ActivityBase):
                 if "box" in sup_obj and "box" in held_obj:
                     sup_obj_num = ord(sup_obj.split('_')[0])
                     held_obj_num = ord(held_obj.split('_')[0])
-                    if held_obj_num <= sup_obj_num:
+                    if held_obj_num < sup_obj_num:
                         continue
 
             #? for benchmark 2
@@ -77,10 +77,13 @@ class PlaceAction(ActivityBase):
                     if held_obj_num < sup_obj_num:
                         continue
 
+            is_same_prev_sup_obj = False
             for prev_place_obj_name in self.scene_mngr.scene.prev_place_obj_name:
                 if sup_obj == prev_place_obj_name:
-                    if sup_obj not in ["table", "shelf_9"]:
-                        continue
+                    if sup_obj not in ["shelf_9"]:
+                        is_same_prev_sup_obj = True
+            if is_same_prev_sup_obj:
+                continue
 
             if not any(logical_state in self.scene_mngr.scene.logical_states[sup_obj] for logical_state in self.filter_logical_states):
                 action_level_1 = self.get_action_level_1_for_single_object(sup_obj, held_obj, eef_pose)
@@ -387,13 +390,13 @@ class PlaceAction(ActivityBase):
         n_sample_sup_obj = self.n_samples_sup_obj
         if self.scene_mngr.scene.bench_num == 1:
             if obj_name == "table":
-                n_sample_sup_obj = 3
+                n_sample_sup_obj = 1
         sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, n_sample_sup_obj, weights)
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 
         # TODO heuristic
         if self.scene_mngr.scene.bench_num != 4:
-            if obj_name not in ["table", "shelf_8", "shelf_9", "shelf_15"]:
+            if obj_name not in ["shelf_8", "shelf_9", "shelf_15"]:
                 center_upper_point = np.zeros(3)
                 center_upper_point[0] = center_point[0] + np.random.uniform(-0.002, 0.002)
                 center_upper_point[1] = center_point[1] + np.random.uniform(-0.002, 0.002)

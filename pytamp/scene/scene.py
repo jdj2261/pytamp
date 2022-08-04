@@ -70,9 +70,6 @@ class Scene:
                         "rect_bottom_right_box",
                         "rect_bottom_center_box",
                         "rect_bottom_left_box",
-                        # "rect_top_right_box",
-                        # "rect_top_center_box",
-                        # "rect_top_left_box", 
                         "half_cylinder_box"]
         
     def _init_bench_4(self):
