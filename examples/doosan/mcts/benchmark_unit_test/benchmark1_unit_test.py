@@ -10,8 +10,8 @@ from pytamp.search.mcts import MCTS
 parser = argparse.ArgumentParser(description='Test Benchmark 1.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
-parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
-parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Sampler Name')
+parser.add_argument('--seed', metavar='i', type=int, default=2, help='A random seed')
+parser.add_argument('--algo', metavar='alg', type=str, default='uct', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Sampler Name')
 parser.add_argument('--debug_mode', metavar='debug', type=bool, default=False, help='Debug mode')
 parser.add_argument('--benchmark', metavar='N', type=int, default=1, help='Benchmark Number')
 args = parser.parse_args()
@@ -21,25 +21,25 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-# np.random.seed(seed)
+np.random.seed(seed)
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=6)
-mcts = MCTS(benchmark1.scene_mngr)
-mcts.debug_mode = False
-mcts.only_optimize_1 = True
 
-# 최대부터
-mcts.budgets = 1000
-mcts.max_depth = 30
-mcts.c = 3
-# mcts.sampling_method = 'bai_ucb' 
-mcts.sampling_method = 'bai_perturb' 
-# mcts.sampling_method = 'uct' 
+c_list = 10**np.linspace(0., 3., 100)
+for idx, c in enumerate(c_list):
+    mcts = MCTS(benchmark1.scene_mngr)
+    mcts.debug_mode = False
+    mcts.only_optimize_1 = True
 
-for i in range(mcts.budgets):
-    mcts.do_planning(i)
+    # 최대부터
+    mcts.budgets = 1000
+    mcts.max_depth = 18
+    mcts.sampling_method = 'bai_perturb' 
+    mcts.c = c
+    print(c)
+    for i in range(mcts.budgets):
+        mcts.do_planning(i)
 
-if mcts.level_wise_1_success:
     subtree = mcts.get_success_subtree(optimizer_level=1)
     mcts.visualize_tree("MCTS", subtree)
     best_nodes = mcts.get_best_node(subtree)
@@ -67,8 +67,8 @@ if mcts.level_wise_1_success:
         is_save=True)
     p_utils.show_figure()
 
-    # Do planning
-    # mcts.get_all_joint_path(mcts.optimal_nodes)
-    pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
-    mcts.show_logical_actions(mcts.optimal_nodes)
-    mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+    # # Do planning
+    # # mcts.get_all_joint_path(mcts.optimal_nodes)
+    # pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+    # mcts.show_logical_actions(mcts.optimal_nodes)
+    # mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

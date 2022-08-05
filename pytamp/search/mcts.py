@@ -58,8 +58,8 @@ class MCTS:
         self.nodes = None
         
         if self.scene_mngr.scene.bench_num == 1:
-            self.infeasible_reward = -10
-            self.goal_reward = 10
+            self.infeasible_reward = -3
+            self.goal_reward = 1
 
         if self.scene_mngr.scene.bench_num == 2:
             self.infeasible_reward = -10
@@ -79,6 +79,7 @@ class MCTS:
 
         self.level_wise_1_success = False
         self.infeasible_sub_nodes = []
+        self.history_optimal_nodes = []
         self.optimal_nodes = []
         self.only_optimize_1 = False
 
@@ -116,9 +117,17 @@ class MCTS:
             success_level_1_sub_nodes = None
             if self.level_wise_1_success:
                 success_level_1_sub_nodes = self.get_nodes_from_leaf_node(self.success_level_1_leaf_node)[::-1]
-                self._level_wise_2_optimize(success_level_1_sub_nodes)
-                self._update_success_level_1_and_2(success_level_1_sub_nodes)
-                self.values_for_level_2.append(self.get_max_value_level_2(success_level_1_sub_nodes))
+
+                has_aleardy_optimal_nodes = False
+                for optimal_nodes in self.history_optimal_nodes:
+                    if set(success_level_1_sub_nodes).issubset(optimal_nodes):
+                        print("Aleady has optimal nodes!!")
+                        has_aleardy_optimal_nodes = True
+                        
+                if not has_aleardy_optimal_nodes:
+                    self._level_wise_2_optimize(success_level_1_sub_nodes)
+                    self._update_success_level_1_and_2(success_level_1_sub_nodes)
+                    self.values_for_level_2.append(self.get_max_value_level_2(success_level_1_sub_nodes))
                 self.level_wise_1_success = False
             else:
                 self.values_for_level_2.append(self.level2_max_value)
@@ -130,7 +139,7 @@ class MCTS:
     def _level_wise_1_optimize(self, state_node, depth):
         cur_state_node = state_node
         cur_state:Scene = self.tree.nodes[cur_state_node][NodeData.STATE]
-
+            
         #? Check Current State
         #*======================================================================================================================== #
         if self._is_terminal(cur_state):
@@ -142,12 +151,12 @@ class MCTS:
             self._update_value(cur_state_node, reward)
             return reward
         
-        if depth == self.max_depth:
+        if depth >= self.max_depth:
             # reward = self.infeasible_reward
             # self._update_value(cur_state_node, reward)
             print(f"{sc.WARNING}Exceeded the maximum depth!!{sc.ENDC}")
             return 0
-        
+
         #? Select Logical Action
         #*======================================================================================================================== #
         cur_logical_action_node = self._select_logical_action_node(cur_state_node, cur_state, depth, self._sampling_method)
@@ -188,13 +197,13 @@ class MCTS:
         if cur_logical_action_node is None or next_state_node is None:
             value = reward
         else:
-            discount_value = -0.5
+            discount_value = -0.1
             value = reward + discount_value + self.gamma * self._level_wise_1_optimize(next_state_node, depth+1)
 
         self._update_value(cur_state_node, value)
         # print(f"{sc.MAGENTA}[Backpropagation]{sc.ENDC} Cur state Node : {cur_state_node}, Value : {np.round(value,3)}")
-        if self.debug_mode:
-            self.visualize_tree("Backpropagation", self.tree)
+        # if self.debug_mode:
+        #     self.visualize_tree("Backpropagation", self.tree)
 
         return value
 
@@ -363,20 +372,21 @@ class MCTS:
             logical_action_type = cur_logical_action[self.pick_action.info.TYPE]
 
             if logical_action_type == 'place':
-                prev_succes_stacked_box_num = cur_state.success_stacked_box_num
+                prev_stacked_box_num = cur_state.success_stacked_box_num
                 next_state_is_success = next_state.check_success_stacked_bench_1()
                 
                 if next_state_is_success:
-                    if next_state.stacked_box_num - prev_succes_stacked_box_num == 1:
+                    if next_state.stacked_box_num - prev_stacked_box_num == 1:
                         print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
-                        return abs(reward) * 1/(depth+1) * 20
-                    if next_state.stacked_box_num - prev_succes_stacked_box_num == -1:
+                        return min(abs(reward) * 1/(depth+1) * 5, self.goal_reward)
+                    if next_state.stacked_box_num - prev_stacked_box_num == -1:
                         print(f"{sc.FAIL}Bad Action{sc.ENDC}")
-                        return reward * 1/(depth+1) * 40
+                        return max(reward * 1/(depth+1) * 5, self.infeasible_reward)
                 # else:
-                #     print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
-                #     return reward * 40/(depth+1)
-        
+                #     if next_state.stacked_box_num != prev_stacked_box_num:
+                #         print(next_state.stacked_box_num, prev_stacked_box_num)
+                #         print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
+                #         return reward * np.clip(40/(depth+1), 2, 0.5)
         return 0
 
     def _level_wise_2_optimize(self, sub_optimal_nodes):
@@ -572,7 +582,9 @@ class MCTS:
         else:
             value_sum = self.tree.nodes[0][NodeData.VALUE_HISTORY][-1] + value_sum
             if self.level2_max_value <= value_sum:
-                self.optimal_nodes = sub_optimal_nodes
+                if not set(sub_optimal_nodes).issubset(self.optimal_nodes):
+                    self.optimal_nodes = sub_optimal_nodes
+                    self.history_optimal_nodes.append(sub_optimal_nodes)
                 self.level2_max_value = np.round(value_sum, 6)
                 print(f"{sc.COLOR_CYAN}Update Sub optimal Nodes!! Value is {self.level2_max_value}.{sc.ENDC}")
             return self.level2_max_value

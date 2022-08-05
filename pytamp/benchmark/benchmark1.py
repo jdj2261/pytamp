@@ -47,10 +47,10 @@ class Benchmark1(Benchmark):
         self.box_poses = []
         A_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]]))
         B_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2]]))
-        C_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
-        D_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2] + box_height]))
-        E_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2] + box_height]))
-        F_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2] + box_height]))
+        C_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2] + box_height]))
+        D_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]+ box_height]))
+        E_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2]]))
+        F_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2] + box_height]))
 
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 
@@ -82,10 +82,10 @@ class Benchmark1(Benchmark):
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
         logical_states = [("A_box", ("on", "table")),
                           ("B_box", ("on", "table")),
-                          ("C_box", ("on", "table")),
+                          ("C_box", ("on", "B_box")),
                           ("D_box", ("on", "A_box")),
-                          ("E_box", ("on", "B_box")),
-                          ("F_box", ("on", "C_box")),]
+                          ("E_box", ("on", "table")),
+                          ("F_box", ("on", "E_box")),]
 
         for i in range(self.box_num):
             box_name = self.scene_mngr.scene.alphabet_list[i] + '_box'

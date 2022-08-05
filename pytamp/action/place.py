@@ -390,7 +390,7 @@ class PlaceAction(ActivityBase):
         n_sample_sup_obj = self.n_samples_sup_obj
         if self.scene_mngr.scene.bench_num == 1:
             if obj_name == "table":
-                n_sample_sup_obj = 1
+                n_sample_sup_obj = 3
         sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, n_sample_sup_obj, weights)
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 

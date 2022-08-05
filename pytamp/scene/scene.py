@@ -148,6 +148,7 @@ class Scene:
         is_success = False
 
         stacked_boxes = self.get_objs_chain_list_from_bottom(self.goal_object)[1:]
+
         stacked_box_num = len(stacked_boxes)
         self.stacked_box_num = stacked_box_num
 
