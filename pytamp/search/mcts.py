@@ -58,8 +58,8 @@ class MCTS:
         self.nodes = None
         
         if self.scene_mngr.scene.bench_num == 1:
-            self.infeasible_reward = -3
-            self.goal_reward = 1
+            self.infeasible_reward = -10
+            self.goal_reward = 10
 
         if self.scene_mngr.scene.bench_num == 2:
             self.infeasible_reward = -10
@@ -79,7 +79,7 @@ class MCTS:
 
         self.level_wise_1_success = False
         self.infeasible_sub_nodes = []
-        self.history_optimal_nodes = []
+        self.history_level_1_optimal_nodes = []
         self.optimal_nodes = []
         self.only_optimize_1 = False
 
@@ -118,16 +118,21 @@ class MCTS:
             if self.level_wise_1_success:
                 success_level_1_sub_nodes = self.get_nodes_from_leaf_node(self.success_level_1_leaf_node)[::-1]
 
-                has_aleardy_optimal_nodes = False
-                for optimal_nodes in self.history_optimal_nodes:
-                    if set(success_level_1_sub_nodes).issubset(optimal_nodes):
+                has_aleardy_level_1_optimal_nodes = False
+                for level_1_optimal_nodes in self.history_level_1_optimal_nodes:
+                    print(success_level_1_sub_nodes, level_1_optimal_nodes)
+                    if set(success_level_1_sub_nodes).issubset(level_1_optimal_nodes):
                         print("Aleady has optimal nodes!!")
-                        has_aleardy_optimal_nodes = True
+                        has_aleardy_level_1_optimal_nodes = True
+                        break
                         
-                if not has_aleardy_optimal_nodes:
+                if not has_aleardy_level_1_optimal_nodes:
                     self._level_wise_2_optimize(success_level_1_sub_nodes)
                     self._update_success_level_1_and_2(success_level_1_sub_nodes)
+                    self.history_level_1_optimal_nodes.append(success_level_1_sub_nodes)
                     self.values_for_level_2.append(self.get_max_value_level_2(success_level_1_sub_nodes))
+                else:
+                    self.values_for_level_2.append(self.level2_max_value)
                 self.level_wise_1_success = False
             else:
                 self.values_for_level_2.append(self.level2_max_value)
@@ -581,12 +586,11 @@ class MCTS:
             return self.level2_max_value
         else:
             value_sum = self.tree.nodes[0][NodeData.VALUE_HISTORY][-1] + value_sum
-            if self.level2_max_value <= value_sum:
+            if self.level2_max_value < value_sum:
                 if not set(sub_optimal_nodes).issubset(self.optimal_nodes):
                     self.optimal_nodes = sub_optimal_nodes
-                    self.history_optimal_nodes.append(sub_optimal_nodes)
-                self.level2_max_value = np.round(value_sum, 6)
-                print(f"{sc.COLOR_CYAN}Update Sub optimal Nodes!! Value is {self.level2_max_value}.{sc.ENDC}")
+                    self.level2_max_value = np.round(value_sum, 6)
+                    print(f"{sc.COLOR_CYAN}Update Sub optimal Nodes!! Value is {self.level2_max_value}.{sc.ENDC}")
             return self.level2_max_value
 
     def get_all_joint_path(self, nodes):

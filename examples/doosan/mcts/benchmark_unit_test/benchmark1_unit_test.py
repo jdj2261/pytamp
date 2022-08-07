@@ -10,7 +10,7 @@ from pytamp.search.mcts import MCTS
 parser = argparse.ArgumentParser(description='Test Benchmark 1.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
-parser.add_argument('--seed', metavar='i', type=int, default=2, help='A random seed')
+parser.add_argument('--seed', metavar='i', type=int, default=5, help='A random seed')
 parser.add_argument('--algo', metavar='alg', type=str, default='uct', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Sampler Name')
 parser.add_argument('--debug_mode', metavar='debug', type=bool, default=False, help='Debug mode')
 parser.add_argument('--benchmark', metavar='N', type=int, default=1, help='Benchmark Number')
@@ -25,7 +25,8 @@ np.random.seed(seed)
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=6)
 
-c_list = 10**np.linspace(0., 3., 100)
+c_list = 10**np.linspace(0., 3., 10)
+c_list = [10]
 for idx, c in enumerate(c_list):
     mcts = MCTS(benchmark1.scene_mngr)
     mcts.debug_mode = False
@@ -33,14 +34,14 @@ for idx, c in enumerate(c_list):
 
     # 최대부터
     mcts.budgets = 1000
-    mcts.max_depth = 18
+    mcts.max_depth = 20
     mcts.sampling_method = 'bai_perturb' 
     mcts.c = c
     print(c)
     for i in range(mcts.budgets):
         mcts.do_planning(i)
 
-    subtree = mcts.get_success_subtree(optimizer_level=1)
+    subtree = mcts.get_success_subtree(optimizer_level=2)
     mcts.visualize_tree("MCTS", subtree)
     best_nodes = mcts.get_best_node(subtree)
 
