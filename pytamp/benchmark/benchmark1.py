@@ -13,7 +13,7 @@ class Benchmark1(Benchmark):
         geom="visual", 
         is_pyplot=True
     ):
-        assert box_num <= 6, f"The number of boxes must be 6 or less."
+        # assert box_num <= 6, f"The number of boxes must be 6 or less."
         self.box_num = box_num
         self.param = {'stack_num' : self.box_num, 'goal_object':'tray_red'}
         self.benchmark_config = {1 : self.param}
@@ -47,17 +47,21 @@ class Benchmark1(Benchmark):
         self.box_poses = []
         A_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]]))
         B_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2]]))
-        C_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2] + box_height]))
-        D_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]+ box_height]))
-        E_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2]]))
-        F_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2] + box_height]))
+        C_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
+        D_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2]]))
+        E_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2] + box_height]))
+        F_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2] + box_height * 2]))
+        G_box_pose = Transform(pos=np.array([0.8, -0.2, self.table_mesh.bounds[1][2]]))
+        H_box_pose = Transform(pos=np.array([0.8, 0.2, self.table_mesh.bounds[1][2]]))
 
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 
                               C_box_pose, 
                               D_box_pose,
                               E_box_pose,
-                              F_box_pose])
+                              F_box_pose,
+                              G_box_pose,
+                              H_box_pose])
 
         self.box_colors = []
         A_box_color=np.array([1.0, 0.0, 0.0])
@@ -66,13 +70,17 @@ class Benchmark1(Benchmark):
         D_box_color=np.array([1.0, 1.0, 0.0])
         E_box_color=np.array([0.0, 1.0, 1.0])
         F_box_color=np.array([1.0, 0.0, 1.0])
+        G_box_color=np.array([1.0, 0.0, 1.0])
+        H_box_color=np.array([1.0, 0.0, 1.0])
 
         self.box_colors.extend([A_box_color, 
                               B_box_color, 
                               C_box_color, 
                               D_box_color,
                               E_box_color,
-                              F_box_color])
+                              F_box_color,
+                              G_box_color,
+                              H_box_color])
 
         self.table_pose = Transform(pos=np.array([1.1, -0.4, -0.03]))
         self.ceiling_pose = Transform(pos=np.array([1.1, -0.4, 1.7]))
@@ -82,10 +90,12 @@ class Benchmark1(Benchmark):
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
         logical_states = [("A_box", ("on", "table")),
                           ("B_box", ("on", "table")),
-                          ("C_box", ("on", "B_box")),
-                          ("D_box", ("on", "A_box")),
-                          ("E_box", ("on", "table")),
-                          ("F_box", ("on", "E_box")),]
+                          ("C_box", ("on", "table")),
+                          ("D_box", ("on", "table")),
+                          ("E_box", ("on", "D_box")),
+                          ("F_box", ("on", "E_box")),
+                          ("G_box", ("on", "table")),
+                          ("H_box", ("on", "table")),]
 
         for i in range(self.box_num):
             box_name = self.scene_mngr.scene.alphabet_list[i] + '_box'

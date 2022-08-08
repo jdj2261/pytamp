@@ -52,7 +52,7 @@ if mcts.level_wise_1_success:
         ax,
         level_1_max_values, 
         label="Sum of Values", 
-        title="Benchamrk2_Level_1", 
+        title="Benchamrk2_Level_1_" + mcts.sampling_method, 
         save_dir_name='benchmark2_result', 
         is_save=False)
         
@@ -60,7 +60,7 @@ if mcts.level_wise_1_success:
         ax,
         level_2_max_values, 
         label="Optiaml Values", 
-        title="Benchamrk2_Level_2", 
+        title="Benchamrk2_Level_2_" + mcts.sampling_method, 
         save_dir_name='benchmark2_result', 
         is_save=True)
     p_utils.show_figure()

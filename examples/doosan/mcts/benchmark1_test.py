@@ -31,7 +31,8 @@ final_level_2_values = []
 final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
-c_list = 10**np.linspace(0., 2., 3)
+c_list = 10**np.linspace(0., 3., 4)
+
 for idx, c in enumerate(c_list):
     mcts = MCTS(
         scene_mngr=benchmark1.scene_mngr, 

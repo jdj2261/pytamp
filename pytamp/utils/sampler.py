@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import networkx as nx
 from pytamp.search.node_data import NodeData
@@ -33,9 +34,9 @@ def find_idx_from_uct(tree, children, c):
     
     selected_values = np.asarray(selected_values)
     # selected_values[np.isinf(selected_values)] = 0.
-    selected_values[np.where(np.asarray(selected_visits) == 0)] = 0 #! 0
+    selected_values[np.where(np.asarray(selected_visits) == 0)] = sys.maxsize #! 0
     
-    ucts = selected_values + c * np.sqrt(1 / np.maximum(1., selected_visits))
+    ucts = selected_values + c * np.sqrt(total_visits / np.maximum(1., selected_visits))
     # print(ucts, selected_values , c * np.sqrt(total_visits / np.maximum(1., selected_visits)))
     best_node_idx = np.argmax(ucts)
 

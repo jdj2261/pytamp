@@ -34,7 +34,7 @@ class MCTS:
         
         if bench_num == 1:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=1)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=3)
         elif bench_num == 2:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=4)
@@ -120,7 +120,6 @@ class MCTS:
 
                 has_aleardy_level_1_optimal_nodes = False
                 for level_1_optimal_nodes in self.history_level_1_optimal_nodes:
-                    print(success_level_1_sub_nodes, level_1_optimal_nodes)
                     if set(success_level_1_sub_nodes).issubset(level_1_optimal_nodes):
                         print("Aleady has optimal nodes!!")
                         has_aleardy_level_1_optimal_nodes = True
@@ -383,11 +382,12 @@ class MCTS:
                 if next_state_is_success:
                     if next_state.stacked_box_num - prev_stacked_box_num == 1:
                         print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
-                        return min(abs(reward) * 1/(depth+1) * 5, self.goal_reward)
+                        # return min(abs(reward) * 1/(depth+1) * 5, self.goal_reward)
+                        return abs(reward) * 1/(depth+1) * 20
                     if next_state.stacked_box_num - prev_stacked_box_num == -1:
                         print(f"{sc.FAIL}Bad Action{sc.ENDC}")
-                        return max(reward * 1/(depth+1) * 5, self.infeasible_reward)
-                # else:
+                        # return max(reward * 1/(depth+1) * 5, self.infeasible_reward)
+                        return reward * 1/(depth+1) * 40
                 #     if next_state.stacked_box_num != prev_stacked_box_num:
                 #         print(next_state.stacked_box_num, prev_stacked_box_num)
                 #         print(f"{sc.WARNING}Wrong Action{sc.ENDC}")

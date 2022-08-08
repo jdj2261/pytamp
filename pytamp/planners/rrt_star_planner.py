@@ -148,7 +148,7 @@ class RRTStarPlanner(Planner):
             self.tree.nodes[0][NodeData.POINT] = self._cur_qpos
 
             for step in range(self._max_iter):
-                if step % 100 == 0 and step !=0:
+                if step % 500 == 0 and step !=0:
                     logger.info(f"iter : {step}")
                     
                 q_rand = self._sample_free()

@@ -50,7 +50,7 @@ p_utils.plot_values(
     ax,
     level_1_max_values, 
     label="Sum of Values", 
-    title="Benchamrk3_Level_1", 
+    title="Benchamrk3_Level_1_" + mcts.sampling_method, 
     save_dir_name='benchmark3_result', 
     is_save=False)
     
@@ -58,7 +58,7 @@ p_utils.plot_values(
     ax,
     level_2_max_values, 
     label="Optiaml Values", 
-    title="Benchamrk3_Level_2", 
+    title="Benchamrk3_Level_2_" + mcts.sampling_method, 
     save_dir_name='benchmark3_result', 
     is_save=True)
 p_utils.show_figure()
