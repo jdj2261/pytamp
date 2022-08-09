@@ -1,9 +1,26 @@
 import numpy as np
+from copy import deepcopy
 from trimesh import Trimesh
 
 from pytamp.scene.scene_manager import SceneManager
 from pykin.utils import transform_utils as t_utils
 from pykin.utils import mesh_utils as m_utils
+
+def get_custom_tcp_pose(scene_mngr:SceneManager, 
+                        object_name:str):
+    copied_mesh = deepcopy(scene_mngr.scene.objs[object_name].gparam)
+    copied_mesh.apply_translation(-copied_mesh.center_mass)
+    copied_mesh.apply_transform(scene_mngr.scene.objs[object_name].h_mat)
+        
+    obj_pose = np.eye(4)
+    obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
+    obj_pose[:3, 3] = copied_mesh.center_mass + [0, 0, -0.005]
+    r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, np.pi, 0])
+    
+    tcp_pose = np.eye(4)
+    tcp_pose[:3, :3] = r_mat_y
+    tcp_pose = np.dot(obj_pose, tcp_pose)
+    return tcp_pose
 
 def get_heuristic_tcp_pose(scene_mngr:SceneManager, 
                            object_name:str,

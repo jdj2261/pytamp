@@ -39,7 +39,7 @@ class Benchmark2(Benchmark):
             
         if self.robot_name == "doosan":
             self.robot.setup_link_name("base_0", "right_hand")
-            self.robot.init_qpos = np.array([0, -np.pi/3, np.pi/1.5, 0, np.pi/3, np.pi/2])
+            self.robot.init_qpos = np.array([0, -np.pi/3, np.pi/1.5, 0, np.pi/3, 0])
         
     def _load_objects(self):
         self.shelf_pose = Transform(pos=np.array([0.9, 0, 1.41725156]),rot=np.array([0, 0, np.pi/2]))

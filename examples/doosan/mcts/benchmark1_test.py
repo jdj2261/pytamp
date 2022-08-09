@@ -73,7 +73,7 @@ with open(filename, 'wb') as f:
              budgets=budgets,
              max_depth=max_depth,
              algo=algo,
-             c=c,
+             c=c_list,
              seed=seed,
              level_1_values=final_level_1_values,
              level_2_values=final_level_2_values,

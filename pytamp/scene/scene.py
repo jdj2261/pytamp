@@ -18,6 +18,7 @@ class State:
 
 class Scene:
     def __init__(self, benchmark:dict):
+        self.benchmark_config = None
         if benchmark is not None:
             self.benchmark_config:int = benchmark
             self.bench_num:int = list(self.benchmark_config.keys())[0]

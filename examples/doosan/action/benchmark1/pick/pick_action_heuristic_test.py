@@ -14,7 +14,7 @@ for obj in benchmark1.scene_mngr.scene.goal_objects:
         pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
         pick.scene_mngr.set_gripper_pose(pose[i][pick.move_data.MOVE_grasp])
         pick.scene_mngr.render_axis(ax, pose=pick.scene_mngr.scene.robot.gripper.info["tcp"][3])
-        # pick.scene_mngr.render_gripper(ax)
+        pick.scene_mngr.render_gripper(ax)
 
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)

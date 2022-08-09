@@ -21,7 +21,8 @@ class Benchmark:
         self.urdf_file = 'urdf/' + self.robot_name + '/' + urdf_file_name + '.urdf'
 
         self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=benchmark_config, debug_mode=True)
-    
+        self.robot = None
+        
     def _load_robot(self):
         pass
 
