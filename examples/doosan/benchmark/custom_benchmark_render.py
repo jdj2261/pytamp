@@ -74,7 +74,6 @@ result = []
 if default_joint_path:
     result = pre_grasp_joint_path + grasp_joint_path + post_grasp_joint_path + default_joint_path
 
-print(result)
 pick.scene_mngr.animation(
     ax,
     fig,
