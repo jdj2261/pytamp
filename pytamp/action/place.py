@@ -80,8 +80,12 @@ class PlaceAction(ActivityBase):
             is_same_prev_sup_obj = False
             for prev_place_obj_name in self.scene_mngr.scene.prev_place_obj_name:
                 if sup_obj == prev_place_obj_name:
-                    if sup_obj not in ["shelf_9"]:
-                        is_same_prev_sup_obj = True
+                    if self.scene_mngr.scene.bench_num == 2:
+                        if sup_obj not in ["shelf_9"]:
+                            is_same_prev_sup_obj = True
+                    if self.scene_mngr.scene.bench_num == 4:
+                        if sup_obj not in ["table"]:
+                            is_same_prev_sup_obj = True
             if is_same_prev_sup_obj:
                 continue
 

@@ -4,11 +4,10 @@ from pytamp.benchmark import Benchmark
 from pytamp.action.pick import PickAction
 from pytamp.utils.heuristic_utils import get_custom_tcp_pose
 
+from pykin.utils import plot_utils as p_utils
 from pykin.robots.single_arm import SingleArm
 from pykin.kinematics.transform import Transform
 from pykin.utils.mesh_utils import get_object_mesh
-
-
 
 # Custom Benchmark Setting
 custom_benchmark = Benchmark(robot_name="doosan", geom="visual", is_pyplot=True)
@@ -38,7 +37,6 @@ pick_obj = "A_box"
 
 # Pick Action
 pick = PickAction(custom_benchmark.scene_mngr, n_contacts=0, n_directions=10, retreat_distance=0.1)
-
 tcp_pose = get_custom_tcp_pose(pick.scene_mngr, pick_obj)
 
 grasp_poses = {}
@@ -51,13 +49,40 @@ grasp_pose = grasp_poses[pick.move_data.MOVE_grasp]
 post_grasp_pose = grasp_poses[pick.move_data.MOVE_post_grasp]
 
 # pre_grasp_joint_path = pick.get_rrt_star_path(pick.scene_mngr.scene.robot.init_qpos, pre_grasp_pose)
-
+success_joint_path = False
+fig, ax = p_utils.init_3d_figure()
+default_thetas = pick.scene_mngr.scene.robot.init_qpos
 pre_grasp_thetas = pick.scene_mngr.scene.robot.inverse_kin(pick.scene_mngr.scene.robot.init_qpos, pre_grasp_pose)
-grasp_joint_path = pick.get_cartesian_path(pre_grasp_thetas, grasp_pose)
 
+# default pose -> pre grasp pose(rrt)
+pre_grasp_joint_path = pick.get_rrt_star_path(default_thetas, pre_grasp_pose)
 
-result = np.round(np.array(grasp_joint_path), 6).reshape(-1).tolist()
+if pre_grasp_joint_path:
+    grasp_joint_path = pick.get_cartesian_path(pre_grasp_joint_path[-1], grasp_pose)
+    if grasp_joint_path:
+        post_grasp_joint_path = pick.get_cartesian_path(grasp_joint_path[-1], post_grasp_pose)
+        if post_grasp_joint_path:
+            default_joint_path = pick.get_rrt_star_path(post_grasp_joint_path[-1], goal_q=default_thetas)
+        else:
+            success_joint_path = False
+    else:
+        success_joint_path = False
+else:
+    success_joint_path = False
+
+result = []
+if default_joint_path:
+    result = pre_grasp_joint_path + grasp_joint_path + post_grasp_joint_path + default_joint_path
+
 print(result)
-print(type(result))
-
-
+pick.scene_mngr.animation(
+    ax,
+    fig,
+    joint_path=result,
+    # eef_poses=eef_poses,
+    visible_gripper=True,
+    visible_text=True,
+    alpha=1.0,
+    interval=50,
+    repeat=True
+)

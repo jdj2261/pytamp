@@ -26,12 +26,12 @@ number = args.disk_number
 
 benchmark4 = Benchmark4(robot_name="doosan", geom="collision", disk_num=number)
 mcts = MCTS(benchmark4.scene_mngr)
-mcts.only_optimize_1 = True
+mcts.only_optimize_1 = False
 
 mcts.debug_mode = False
-mcts.budgets = 1000
-mcts.max_depth = 30
-mcts.c = 300
+mcts.budgets = 2000
+mcts.max_depth = 14
+mcts.c = 3000
 
 # mcts.sampling_method = 'bai_ucb' 
 mcts.sampling_method = 'bai_perturb' 
@@ -48,23 +48,23 @@ if mcts.level_wise_1_success:
     level_1_max_values = mcts.values_for_level_1
     level_2_max_values = mcts.values_for_level_2
 
-    fig, ax = p_utils.init_2d_figure("test")
-    p_utils.plot_values(
-        ax,
-        level_1_max_values, 
-        label="Sum of Values", 
-        title="Benchamrk4_Level_1_" + mcts.sampling_method, 
-        save_dir_name='benchmark4_result', 
-        is_save=False)
+    # fig, ax = p_utils.init_2d_figure("test")
+    # p_utils.plot_values(
+    #     ax,
+    #     level_1_max_values, 
+    #     label="Sum of Values", 
+    #     title="Benchamrk4_Level_1_" + mcts.sampling_method, 
+    #     save_dir_name='benchmark4_result', 
+    #     is_save=False)
         
-    p_utils.plot_values(
-        ax,
-        level_2_max_values, 
-        label="Optiaml Values", 
-        title="Benchamrk4_Level_2_" + mcts.sampling_method, 
-        save_dir_name='benchmark4_result', 
-        is_save=True)
-    p_utils.show_figure()
+    # p_utils.plot_values(
+    #     ax,
+    #     level_2_max_values, 
+    #     label="Optiaml Values", 
+    #     title="Benchamrk4_Level_2_" + mcts.sampling_method, 
+    #     save_dir_name='benchmark4_result', 
+    #     is_save=True)
+    # p_utils.show_figure()
 
     # Do planning
     pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)

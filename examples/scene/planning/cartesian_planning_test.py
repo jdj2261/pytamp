@@ -76,6 +76,7 @@ planner.run(
 joint_path = planner.get_joint_path()
 eef_poses = planner.get_target_eef_poses()
 
+print(eef_poses)
 scene_mngr.animation(
     ax,
     fig,
