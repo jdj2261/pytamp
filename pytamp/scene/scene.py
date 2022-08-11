@@ -74,6 +74,7 @@ class Scene:
                         "half_cylinder_box"]
         
     def _init_bench_4(self):
+        self.disk_num = 6
         if self.benchmark_config[self.bench_num].get("disk_num"):
             self.disk_num = self.benchmark_config[self.bench_num].get("disk_num")
         self.goal_objects = ["hanoi_disk_" + str(i) for i in range(self.disk_num)]
