@@ -25,7 +25,7 @@ seed = args.seed
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="collision")
 mcts = MCTS(benchmark3.scene_mngr)
-# mcts.only_optimize_1 = True
+mcts.only_optimize_1 = True
 # mcts.debug_mode = True
 mcts.budgets = 100
 mcts.max_depth = 20

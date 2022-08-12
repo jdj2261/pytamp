@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(description='Test Benchmark 4.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
 parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
-parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Choose one (bai_perturb, bai_ucb, uct)')
+parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct', 'random', 'greedy'], help='Choose one (bai_perturb, bai_ucb, uct)')
 parser.add_argument('--debug_mode', default=False, type=lambda x: (str(x).lower() == 'true'), help='Debug mode')
 parser.add_argument('--disk_number', metavar='N', type=int, default=3, help='Disk Number(5 or less.)')
 args = parser.parse_args()
@@ -31,7 +31,8 @@ final_level_2_values = []
 final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
-c_list = 10**np.linspace(0., 3., 100)
+c_list = 10**np.linspace(0., 3., 4)
+
 for idx, c in enumerate(c_list):
     mcts = MCTS(
         scene_mngr=benchmark4.scene_mngr, 
@@ -41,13 +42,20 @@ for idx, c in enumerate(c_list):
         c=c,
         debug_mode=debug_mode)
     for i in range(budgets):
-        print(f"\nBenchmark: {benchmark4.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
+        print(f"\nBenchmark: {benchmark4.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}, Disk Num : {number}")
         mcts.do_planning(i)
 
     level_1_max_values = mcts.values_for_level_1
     level_2_max_values = mcts.values_for_level_2
     final_level_1_values.append(mcts.values_for_level_1)
     final_level_2_values.append(mcts.values_for_level_2)
+
+    if mcts.level_wise_2_success:
+        pnp_all_joint_paths, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+        final_pnp_all_joint_paths.append(pnp_all_joint_paths)
+        final_pick_all_objects.append(pick_all_objects)
+        final_place_all_object_poses.append(place_all_object_poses)
+
 
 #### File Save ####
 pytamp_path = os.path.abspath(os.path.dirname(__file__) + "/../../../")
@@ -67,7 +75,7 @@ with open(filename, 'wb') as f:
              budgets=budgets,
              max_depth=max_depth,
              algo=algo,
-             c=c,
+             c=c_list,
              seed=seed,
              level_1_values=final_level_1_values,
              level_2_values=final_level_2_values,

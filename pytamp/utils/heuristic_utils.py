@@ -67,33 +67,22 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
                     yield tcp_pose
 
     if bench_num == 3:
-        if object_name in scene_mngr.scene.castle:
-            center_point = object_mesh.bounds[0] + (object_mesh.bounds[1] - object_mesh.bounds[0])/2        
-            if object_name == "rect_bottom_box" or object_name == "half_cylinder_box" or object_name == "rect_top_box":
-                for theta in np.linspace(np.pi - np.pi/24, np.pi + np.pi/24, n_directions):
-                    r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, theta, 0])
-                    tcp_pose = np.eye(4)
-                    tcp_pose[:3, :3] = r_mat_y
-                    tcp_pose[:3,3] = center_point + [0, 0, 0.005]
-                    
-                    r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, np.pi/2])
-                    h_mat_z = np.eye(4)
-                    h_mat_z[:3, :3] = r_mat_z
-                    tcp_pose[:3, :3] = np.dot(h_mat_z[:3, :3], tcp_pose[:3, :3])
-                    
-                    yield tcp_pose
-            else:
-                obj_pose = np.eye(4)
-                obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
-                obj_pose[:3, 3] = center_point
-                for theta in np.linspace(np.pi, np.pi + np.pi/24, n_directions):
-                    r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, theta, 0])
-                    for theta2 in np.linspace(np.pi/2 - np.pi/12, np.pi/2 + np.pi/12, n_directions):
-                        r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta2])
-                        tcp_pose = np.eye(4)
-                        tcp_pose[:3, :3] = np.dot(r_mat_z, r_mat_y)
-                        tcp_pose = np.dot(obj_pose, tcp_pose)
-                        yield tcp_pose
+        obj_pose = np.eye(4)
+        obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
+        if "can" in object_name:
+            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.01]
+        elif "milk" in object_name:
+            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.07]
+        else:
+            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.05]
+        for theta in np.linspace(np.pi+np.pi/24, np.pi-np.pi/24, n_directions):
+            r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
+            for theta2 in np.linspace(0, np.pi/2, 2):
+                r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta2])
+                tcp_pose = np.eye(4)
+                tcp_pose[:3, :3] = np.dot(r_mat_z, r_mat_y)
+                tcp_pose = np.dot(obj_pose, tcp_pose)
+                yield tcp_pose
 
     if bench_num == 4:
         if "hanoi_disk" in object_name:

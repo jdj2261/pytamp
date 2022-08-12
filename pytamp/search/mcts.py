@@ -39,12 +39,11 @@ class MCTS:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=4)
         elif bench_num == 3:
-            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=3, retreat_distance=0.15)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10, retreat_distance=0.2, n_directions=5)
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=10, retreat_distance=0.15)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=2, retreat_distance=0.2, n_directions=3)
         elif bench_num == 4:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=3)
-
 
         self._sampling_method = sampling_method
         self._budgets = budgets
@@ -78,6 +77,7 @@ class MCTS:
         self.level2_max_value = -np.inf
 
         self.level_wise_1_success = False
+        self.level_wise_2_success = False
         self.infeasible_sub_nodes = []
         self.history_level_1_optimal_nodes = []
         self.optimal_nodes = []
@@ -485,13 +485,13 @@ class MCTS:
                         success_pick = False
                         break
 
-        
         if success_pick:
             if self.scene_mngr.scene.bench_num == 2:      
                 print(f"{sc.COLOR_YELLOW}move {pick_scene.pick_obj_name} to bin{sc.ENDC}")
                 if not self.scene_mngr.scene.has_already_final_path:
                     self.scene_mngr.scene.ben_2_final_path = self.place_action.get_rrt_star_path(self.scene_mngr.scene.robot.init_qpos, goal_q=self.scene_mngr.scene.goal_q)
                     self.scene_mngr.scene.has_already_final_path = True
+            self.level_wise_2_success = True
         else:
             self.infeasible_sub_nodes.append(sub_optimal_nodes)
             print(self.infeasible_sub_nodes)

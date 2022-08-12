@@ -6,7 +6,6 @@ from pykin.utils.mesh_utils import get_object_mesh
 from pykin.utils.transform_utils import get_h_mat
 from pytamp.benchmark.benchmark import Benchmark
 
-
 class Benchmark3(Benchmark):
     def __init__(
         self, 
@@ -14,7 +13,8 @@ class Benchmark3(Benchmark):
         geom="visual", 
         is_pyplot=True
     ):
-        self.benchmark_config = {3 : None}
+        param = {'goal_object' : 'goal_can'}
+        self.benchmark_config = {3 : param}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
         
         self._load_robot()
@@ -43,41 +43,55 @@ class Benchmark3(Benchmark):
         #! clearbox 8, 16 is placing spot
         clearbox_8_mesh = get_object_mesh(f'clearbox_8.stl', scale=[1.4, 1.3, 1.5])
         self.clearbox1_pose = Transform(pos=np.array([0.7, 0.4, self.table_height + abs(clearbox_8_mesh.bounds[0][2])]), rot=[0, 0, np.pi/2])
+        self.clearbox1_height = clearbox_8_mesh.bounds[1][2] - clearbox_8_mesh.bounds[0][2]
 
-        self.rect_bottom_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
-        self.rect_bottom_box.apply_translation(-self.rect_bottom_box.center_mass)
-
-        self.rect_bottom_right_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
-        self.rect_bottom_right_box.apply_transform(get_h_mat(orientation=np.array([np.pi/2, 0, 0])))
-        self.rect_bottom_right_box.apply_translation(-self.rect_bottom_right_box.center_mass)
-
-        self.rect_bottom_center_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
-        self.rect_bottom_center_box.apply_transform(get_h_mat(orientation=np.array([np.pi/2, 0, 0])))
-        self.rect_bottom_center_box.apply_translation(-self.rect_bottom_center_box.center_mass)
-
-        self.rect_bottom_left_box = get_object_mesh('rect_box.stl', [0.002, 0.001, 0.0005])
-        self.rect_bottom_left_box.apply_transform(get_h_mat(orientation=np.array([np.pi/2, 0, 0])))
-        self.rect_bottom_left_box.apply_translation(-self.rect_bottom_left_box.center_mass)
-
-        self.half_cylinder_box = get_object_mesh('half_cylinder_box.stl', [0.002, 0.002, 0.002])
-        self.half_cylinder_box.apply_transform(get_h_mat(orientation=[0, -np.pi/2, 0]))
+        self.half_cylinder_box = get_object_mesh('half_cylinder_box.stl', [0.004, 0.002, 0.002])
+        self.half_cylinder_box.apply_transform(get_h_mat(orientation=[0, -np.pi/2, np.pi/2]))
         self.half_cylinder_box.apply_translation(-self.half_cylinder_box.center_mass)
 
-        self.rect_bottom_box_pose = Transform(np.array([0.65, -0.3, self.table_height + self.rect_bottom_box.bounds[1][2]]))
-        self.rect_bottom_right_box_pose = Transform(pos=np.array([0.65, -0.25, self.table_height + self.rect_bottom_right_box.bounds[1][2]+ self.rect_bottom_box.bounds[1][2]*2]))
-        self.rect_bottom_center_box_pose = Transform(pos=np.array([0.65, -0.3, self.table_height + self.rect_bottom_center_box.bounds[1][2]+ self.rect_bottom_box.bounds[1][2]*2]))
-        self.rect_bottom_left_box_pose = Transform(pos=np.array([0.65, -0.35, self.table_height + self.rect_bottom_left_box.bounds[1][2]+ self.rect_bottom_box.bounds[1][2]*2]))
-        self.half_cylinder_box_pose = Transform(pos=np.array([0.65, -0.3, self.table_height + + abs(self.half_cylinder_box.bounds[0][2]) + self.rect_bottom_box.bounds[1][2]*2 + self.rect_bottom_center_box.bounds[1][2]*2]))
+        self.square_box = get_object_mesh('ben_cube.stl', [0.12, 0.12, 0.2])
+        self.square_box.apply_translation(-self.square_box.center_mass)
 
+        self.rect_box = get_object_mesh('rect_box.stl', [0.002, 0.0015, 0.002])
+        self.rect_box.apply_transform(get_h_mat(orientation=np.array([np.pi/2, 0, np.pi/2])))
+        self.rect_box.apply_translation(-self.rect_box.center_mass)
+
+        self.milk1 = get_object_mesh('milk.stl', [1.4, 1.4, 1.5])
+        # self.milk.apply_transform(get_h_mat(orientation=[0, 0, np.pi/2]))
+        self.milk1.apply_translation(-self.milk1.center_mass)
+
+        self.milk2 = get_object_mesh('milk.stl', [1.4, 1.4, 1.5])
+        self.milk2.apply_translation(-self.milk2.center_mass)
+
+        self.milk3 = get_object_mesh('milk.stl', [1.4, 1.4, 1.5])
+        self.milk3.apply_translation(-self.milk3.center_mass)
+
+        self.milk4 = get_object_mesh('milk.stl', [1.4, 1.4, 1.5])
+        self.milk4.apply_translation(-self.milk4.center_mass)
+
+        self.can = get_object_mesh('can.stl', [1.8, 1.8, 2.0])
+        self.can.apply_translation(-self.can.center_mass)
+
+        self.half_cylinder_box_pose = Transform(pos=np.array([0.6, 0.4, self.table_height + self.clearbox1_height + abs(self.half_cylinder_box.bounds[0][2])]))
+        self.square_box_pose = Transform(pos=np.array([0.85, 0.4, self.table_height + self.clearbox1_height + abs(self.square_box.bounds[0][2])]))
+        self.rect_box_pose = Transform(pos=np.array([0.72, 0.3, self.table_height + self.clearbox1_height + abs(self.rect_box.bounds[0][2])]))
+        self.can_pose = Transform(pos=np.array([0.72, 0.4, self.table_height + self.clearbox1_height + abs(self.can.bounds[0][2])]))
+        self.milk1_pose = Transform(pos=np.array([0.7, 0.48, self.table_height + self.clearbox1_height + abs(self.milk1.bounds[0][2])]), rot=[0, 0, np.pi/12])
+        self.milk2_pose = Transform(pos=np.array([0.62, 0.4, self.table_height + self.clearbox1_height + abs(self.milk2.bounds[0][2])]), rot=[0, 0, -np.pi/12])
+        self.milk3_pose = Transform(pos=np.array([0.6, 0.48, self.table_height + self.clearbox1_height + abs(self.milk3.bounds[0][2])]), rot=[0, 0, np.pi/4])
+        self.milk4_pose = Transform(pos=np.array([0.58, 0.32, self.table_height + self.clearbox1_height + abs(self.milk3.bounds[0][2])]), rot=[0, 0, np.pi/6])
+    
     def _load_scene(self):
         self.benchmark_config = {3 : None}
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
-        self.scene_mngr.add_object(name="rect_bottom_box", gtype="mesh", gparam=self.rect_bottom_box, h_mat=self.rect_bottom_box_pose.h_mat)
-        self.scene_mngr.add_object(name="rect_bottom_right_box", gtype="mesh", gparam=self.rect_bottom_right_box, h_mat=self.rect_bottom_right_box_pose.h_mat)
-        self.scene_mngr.add_object(name="rect_bottom_center_box", gtype="mesh", gparam=self.rect_bottom_center_box, h_mat=self.rect_bottom_center_box_pose.h_mat)
-        self.scene_mngr.add_object(name="rect_bottom_left_box", gtype="mesh", gparam=self.rect_bottom_left_box, h_mat=self.rect_bottom_left_box_pose.h_mat)
-        self.scene_mngr.add_object(name="half_cylinder_box", gtype="mesh", gparam=self.half_cylinder_box, h_mat=self.half_cylinder_box_pose.h_mat)
-        # self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
+        # self.scene_mngr.add_object(name="half_cylinder_box", gtype="mesh", gparam=self.half_cylinder_box, h_mat=self.half_cylinder_box_pose.h_mat)
+        self.scene_mngr.add_object(name="square_box", gtype="mesh", gparam=self.square_box, h_mat=self.square_box_pose.h_mat)
+        self.scene_mngr.add_object(name="rect_box", gtype="mesh", gparam=self.rect_box, h_mat=self.rect_box_pose.h_mat)
+        self.scene_mngr.add_object(name="milk1", gtype="mesh", gparam=self.milk1, h_mat=self.milk1_pose.h_mat)
+        self.scene_mngr.add_object(name="milk2", gtype="mesh", gparam=self.milk2, h_mat=self.milk2_pose.h_mat)
+        self.scene_mngr.add_object(name="milk3", gtype="mesh", gparam=self.milk3, h_mat=self.milk3_pose.h_mat)
+        self.scene_mngr.add_object(name="milk4", gtype="mesh", gparam=self.milk4, h_mat=self.milk4_pose.h_mat)
+        self.scene_mngr.add_object(name="goal_can", gtype="mesh", gparam=self.can, h_mat=self.can_pose.h_mat, color=[1., 0., 0.])
         self.scene_mngr.add_robot(self.robot)
         
         for i in range(20):
@@ -86,12 +100,14 @@ class Benchmark3(Benchmark):
             self.scene_mngr.add_object(name=clearbox_1_name, gtype="mesh", h_mat=self.clearbox1_pose.h_mat, gparam=clearbox_1_mesh, color=[0.8 + i*0.01, 0.8 + i*0.01, 0.8 + i*0.01])
             self.scene_mngr.set_logical_state(clearbox_1_name, (self.scene_mngr.scene.logical_state.static, True), ("on", "table"))
             
-        self.scene_mngr.set_logical_state("rect_bottom_box", ("on", "table"))
-        self.scene_mngr.set_logical_state("rect_bottom_right_box", ("on", "rect_bottom_box"))
-        self.scene_mngr.set_logical_state("rect_bottom_center_box", ("on", "rect_bottom_box"))
-        self.scene_mngr.set_logical_state("rect_bottom_left_box", ("on", "rect_bottom_box"))
-        self.scene_mngr.set_logical_state("half_cylinder_box", ("on", "rect_bottom_right_box"), ("on", "rect_bottom_center_box"), ("on", "rect_bottom_left_box"))
-        # self.scene_mngr.set_logical_state("ceiling", (self.scene_mngr.scene.logical_state.static, True))
+        # self.scene_mngr.set_logical_state("half_cylinder_box", ("on", "clearbox_1_8"))
+        self.scene_mngr.set_logical_state("square_box", ("on", "clearbox_1_16"))
+        self.scene_mngr.set_logical_state("rect_box", ("on", "clearbox_1_16"))
+        self.scene_mngr.set_logical_state("goal_can", ("on", "clearbox_1_16"))
+        self.scene_mngr.set_logical_state("milk1", ("on", "clearbox_1_16"))
+        self.scene_mngr.set_logical_state("milk2", ("on", "clearbox_1_16"))
+        self.scene_mngr.set_logical_state("milk3", ("on", "clearbox_1_8"))
+        self.scene_mngr.set_logical_state("milk4", ("on", "clearbox_1_8"))
         self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True))
         self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))
         

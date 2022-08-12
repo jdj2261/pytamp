@@ -66,13 +66,9 @@ class Scene:
         self.has_already_final_path = False
 
     def _init_bench_3(self):
-        self.goal_objects = ["clearbox_1_8", "clearbox_1_16"]
-        self.castle = [ "rect_bottom_box",
-                        "rect_bottom_right_box",
-                        "rect_bottom_center_box",
-                        "rect_bottom_left_box",
-                        "half_cylinder_box"]
-        
+        if self.benchmark_config[self.bench_num].get("goal_object"):
+            self.goal_object = self.benchmark_config[self.bench_num]["goal_object"]
+
     def _init_bench_4(self):
         self.disk_num = 6
         if self.benchmark_config[self.bench_num].get("disk_num"):
@@ -179,17 +175,10 @@ class Scene:
 
     def check_terminal_state_bench_3(self):
         is_success = False
-        support_obj_num = 0
-        for goal_object in self.goal_objects:
-            support_obj_num += len(self.logical_states[goal_object].get(self.logical_state.support, []))
-        if support_obj_num == len(self.castle):
-            is_success = True     
+        if self.robot.gripper.attached_obj_name == self.goal_object:
+            is_success = True
         return is_success
-        # is_success = False
-        # if self.robot.gripper.attached_obj_name == self.goal_object:
-        #     is_success = True
-        # return is_success
-    
+        
     def check_terminal_state_bench_4(self):
         is_success = False
 

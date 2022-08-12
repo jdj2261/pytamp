@@ -9,10 +9,10 @@ from pytamp.search.mcts import MCTS
 
 #? python3 benchmark2_test.py --budgets 1000 --max_depth 20 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 2.')
-parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
+parser.add_argument('--budgets', metavar='T', type=int, default=25, help='Horizon')
 parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
 parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
-parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct'], help='Choose one (bai_perturb, bai_ucb, uct)')
+parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct', 'random', 'greedy'], help='Choose one (bai_perturb, bai_ucb, uct)')
 parser.add_argument('--debug_mode', default=False, type=lambda x: (str(x).lower() == 'true'), help='Debug mode')
 parser.add_argument('--bottle_number', metavar='N', type=int, default=6, help='Bottle Number(6 or less.)')
 args = parser.parse_args()
@@ -31,8 +31,8 @@ final_level_2_values = []
 final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
+c_list = 10**np.linspace(0., 3., 4)
 
-c_list = 10**np.linspace(0., 3., 100)
 for idx, c in enumerate(c_list):
     mcts = MCTS(
         scene_mngr=benchmark2.scene_mngr, 
@@ -50,10 +50,12 @@ for idx, c in enumerate(c_list):
     final_level_1_values.append(mcts.values_for_level_1)
     final_level_2_values.append(mcts.values_for_level_2)
 
-    pnp_all_joint_paths, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
-    final_pnp_all_joint_paths.append(pnp_all_joint_paths)
-    final_pick_all_objects.append(pick_all_objects)
-    final_place_all_object_poses.append(place_all_object_poses)
+    
+    if mcts.level_wise_2_success:
+        pnp_all_joint_paths, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+        final_pnp_all_joint_paths.append(pnp_all_joint_paths)
+        final_pick_all_objects.append(pick_all_objects)
+        final_place_all_object_poses.append(place_all_object_poses)
 
 #### File Save ####
 pytamp_path = os.path.abspath(os.path.dirname(__file__) + "/../../../")
@@ -73,7 +75,7 @@ with open(filename, 'wb') as f:
              budgets=budgets,
              max_depth=max_depth,
              algo=algo,
-             c=c,
+             c=c_list,
              seed=seed,
              level_1_values=final_level_1_values,
              level_2_values=final_level_2_values,

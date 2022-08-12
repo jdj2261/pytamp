@@ -7,11 +7,10 @@ pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=3, retreat_d
 
 
 ################# Action Test ##################
-for object in benchmark3.scene_mngr.scene.castle:
-    pose = list(pick.get_grasp_pose_from_heuristic(obj_name=object))
+for obj_name in ["square_box", "rect_box", "milk1", "milk2"]:
+    pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj_name))
     for i in range(len(pose)):
         fig, ax = p_utils.init_3d_figure(name="Heuristic")
-        print(object)
         pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])
         pick.scene_mngr.set_gripper_pose(pose[i][pick.move_data.MOVE_grasp])
         pick.scene_mngr.close_gripper()

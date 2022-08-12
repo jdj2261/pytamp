@@ -62,7 +62,7 @@ class PlaceAction(ActivityBase):
             
             #? for benchmark 3
             if self.scene_mngr.scene.bench_num == 3:
-                if sup_obj not in ["clearbox_1_8", "clearbox_1_16"]:
+                if sup_obj not in ["table"]:
                     continue
             
             #? for benchmark 4
