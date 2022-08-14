@@ -27,8 +27,8 @@ benchmark3 = Benchmark3(robot_name="doosan", geom="collision")
 mcts = MCTS(benchmark3.scene_mngr)
 mcts.only_optimize_1 = False
 mcts.debug_mode = False
-mcts.budgets = 10
-mcts.max_depth = 20
+mcts.budgets = 300
+mcts.max_depth = 20 #14 is best
 mcts.c = 10
 
 # mcts.sampling_method = 'bai_ucb' 

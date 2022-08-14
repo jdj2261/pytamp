@@ -62,9 +62,13 @@ class PlaceAction(ActivityBase):
             
             #? for benchmark 3
             if self.scene_mngr.scene.bench_num == 3:
-                if sup_obj not in ["table"]:
-                    continue
-            
+                if "can" not in held_obj:
+                    if sup_obj not in ["table"]:
+                        continue
+                else:
+                    if sup_obj not in ["tray_blue"]:
+                        continue
+                    
             #? for benchmark 4
             if self.scene_mngr.scene.bench_num == 4:
                 support_objects = self.scene_mngr.scene.goal_objects + ["table"]
@@ -389,13 +393,16 @@ class PlaceAction(ActivityBase):
         max_y = center_point[1] + len_y * alpha
         margin = (min_x, max_x, min_y, max_y)
 
-
         weights = self._get_weights_for_support_obj(copied_mesh)
         
         n_sample_sup_obj = self.n_samples_sup_obj
-        if self.scene_mngr.scene.bench_num == 1:
-            if obj_name == "table":
+        
+        if obj_name == "table":
+            if self.scene_mngr.scene.bench_num == 1:
                 n_sample_sup_obj = 3
+            if self.scene_mngr.scene.bench_num == 3:
+                n_sample_sup_obj = 3
+
         sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, n_sample_sup_obj, weights)
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
 
