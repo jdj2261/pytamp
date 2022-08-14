@@ -39,7 +39,7 @@ class MCTS:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=4)
         elif bench_num == 3:
-            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=10, retreat_distance=0.15)
+            self.pick_action = PickAction(scene_mngr, n_contacts=3, n_directions=3, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=2, retreat_distance=0.2, n_directions=3)
         elif bench_num == 4:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)

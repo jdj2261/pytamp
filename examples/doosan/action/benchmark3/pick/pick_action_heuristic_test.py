@@ -7,7 +7,7 @@ pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=3, retreat_d
 
 
 ################# Action Test ##################
-for obj_name in ["square_box", "rect_box", "milk1", "milk2"]:
+for obj_name in ["square_box1", "rect_box1", "milk1", "milk2"]:
     pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj_name))
     for i in range(len(pose)):
         fig, ax = p_utils.init_3d_figure(name="Heuristic")

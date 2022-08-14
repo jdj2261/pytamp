@@ -207,6 +207,7 @@ class PlaceAction(ActivityBase):
             next_scene.release_poses = release_poses
             next_scene.robot.gripper.place_obj_pose = obj_pose_transformed
             next_scene.robot.gripper.release_pose = release_poses[self.move_data.MOVE_release]
+            next_scene.robot.gripper.set_gripper_pose(release_poses[self.move_data.MOVE_release])
 
             # Move pick object on support obj
             next_scene.objs[held_obj_name].h_mat = obj_pose_transformed

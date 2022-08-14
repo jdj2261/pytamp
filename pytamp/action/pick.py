@@ -198,7 +198,7 @@ class PickAction(ActivityBase):
             # Move a gripper to default pose
             default_thetas = self.scene_mngr.scene.robot.init_qpos
             default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)[self.scene_mngr.scene.robot.eef_name].h_mat
-            next_scene.robot.gripper.set_gripper_pose(default_pose)
+            # next_scene.robot.gripper.set_gripper_pose(default_pose)
             
             # Move pick object to default pose
             next_scene.objs[pick_obj].h_mat = np.dot(next_scene.robot.gripper.get_gripper_pose(), transform_bet_gripper_n_obj)

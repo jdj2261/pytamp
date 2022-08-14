@@ -25,9 +25,9 @@ seed = args.seed
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="collision")
 mcts = MCTS(benchmark3.scene_mngr)
-mcts.only_optimize_1 = True
-# mcts.debug_mode = True
-mcts.budgets = 100
+mcts.only_optimize_1 = False
+mcts.debug_mode = False
+mcts.budgets = 10
 mcts.max_depth = 20
 mcts.c = 10
 
@@ -65,5 +65,4 @@ p_utils.show_figure()
 
 # Do planning
 pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
-mcts.show_logical_actions(mcts.optimal_nodes)
 mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

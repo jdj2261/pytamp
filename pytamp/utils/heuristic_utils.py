@@ -72,9 +72,9 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
         if "can" in object_name:
             obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.01]
         elif "milk" in object_name:
-            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.07]
+            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.065]
         else:
-            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.05]
+            obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, 0.005]
         for theta in np.linspace(np.pi+np.pi/24, np.pi-np.pi/24, n_directions):
             r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
             for theta2 in np.linspace(0, np.pi/2, 2):
