@@ -28,9 +28,11 @@ np.random.seed(seed)
 benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=number)
 final_level_1_values = []
 final_level_2_values = []
+final_optimal_nodes = []
 final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
+final_trees = []
 c_list = 10**np.linspace(0., 3., 4)
 
 for idx, c in enumerate(c_list):
@@ -45,8 +47,7 @@ for idx, c in enumerate(c_list):
         print(f"\n[{idx+1}/{len(c_list)}] Benchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
         mcts.do_planning(i)
 
-    level_1_max_values = mcts.values_for_level_1
-    level_2_max_values = mcts.values_for_level_2
+    final_trees.append(mcts.tree)
     final_level_1_values.append(mcts.values_for_level_1)
     final_level_2_values.append(mcts.values_for_level_2)
 
@@ -55,6 +56,8 @@ for idx, c in enumerate(c_list):
         final_pnp_all_joint_paths.append(pnp_all_joint_paths)
         final_pick_all_objects.append(pick_all_objects)
         final_place_all_object_poses.append(place_all_object_poses)
+        final_optimal_nodes.append(mcts.optimal_nodes)
+
 
 #### File Save ####
 pytamp_path = os.path.abspath(os.path.dirname(__file__) + "/../../../")
@@ -80,6 +83,8 @@ with open(filename, 'wb') as f:
              level_2_values=final_level_2_values,
              pnp_all_joint_paths=final_pnp_all_joint_paths,
              pick_all_objects=final_pick_all_objects,
-             place_all_object_poses=final_place_all_object_poses
+             place_all_object_poses=final_place_all_object_poses,
+             optimal_nodes=final_optimal_nodes,
+             trees=final_trees
              )
 print('Data saved at {}'.format(filename))
