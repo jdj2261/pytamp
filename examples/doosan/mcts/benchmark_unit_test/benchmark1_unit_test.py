@@ -9,7 +9,7 @@ from pytamp.search.mcts import MCTS
 #? python3 benchmark1_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 1.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
-parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
+parser.add_argument('--max_depth', metavar='H', type=int, default=18, help='Max depth')
 parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
 parser.add_argument('--algo', metavar='alg', type=str, default='uct', choices=['bai_perturb', 'bai_ucb', 'uct', 'random'], help='Sampler Name')
 parser.add_argument('--debug_mode', metavar='debug', type=bool, default=False, help='Debug mode')
@@ -21,7 +21,7 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-np.random.seed(seed)
+# np.random.seed(seed)
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=6)
 
@@ -34,8 +34,8 @@ for idx, c in enumerate(c_list):
 
     # 최대부터
     mcts.budgets = 100
-    mcts.max_depth = 20
-    mcts.sampling_method = 'bai_ucb' 
+    mcts.max_depth = 16
+    mcts.sampling_method = 'bai_perturb' 
     mcts.c = c
     print(c)
     for i in range(mcts.budgets):
@@ -57,7 +57,7 @@ for idx, c in enumerate(c_list):
         label=f"Sum of Values({mcts.sampling_method}, {mcts.budgets}, {mcts.c})", 
         title="Benchamrk1_Level_1_" + mcts.sampling_method + "-" + str(mcts.budgets) + "-" + str(mcts.c),
         save_dir_name='benchmark1_result', 
-        is_save=True)
+        is_save=False)
         
     # p_utils.plot_values(
     #     ax,

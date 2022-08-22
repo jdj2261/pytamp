@@ -1,6 +1,7 @@
 import numpy as np
 import argparse
 import os
+import psutil
 
 from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark1
@@ -9,9 +10,9 @@ from pytamp.search.mcts import MCTS
 
 #? python3 benchmark1_test.py --budgets 1000 --max_depth 20 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 1.')
-parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
-parser.add_argument('--max_depth', metavar='H', type=int, default=20, help='Max depth')
-parser.add_argument('--seed', metavar='i', type=int, default=1, help='A random seed')
+parser.add_argument('--budgets', metavar='T', type=int, default=100, help='Horizon')
+parser.add_argument('--max_depth', metavar='H', type=int, default=16, help='Max depth')
+parser.add_argument('--seed', metavar='i', type=int, default=2, help='A random seed')
 parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct', 'random', 'greedy'], help='Choose one (bai_perturb, bai_ucb, uct)')
 parser.add_argument('--debug_mode', default=False, type=lambda x: (str(x).lower() == 'true'), help='Debug mode')
 parser.add_argument('--box_number', metavar='N', type=int, default=6, help='Box Number(6 or less)')
@@ -32,8 +33,8 @@ final_optimal_nodes = []
 final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
-final_trees = []
-c_list = 10**np.linspace(0., 3., 4)
+# final_optimal_trees = []
+c_list = 10**np.linspace(0, 3., 4)
 
 for idx, c in enumerate(c_list):
     mcts = MCTS(
@@ -47,7 +48,6 @@ for idx, c in enumerate(c_list):
         print(f"\n[{idx+1}/{len(c_list)}] Benchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
         mcts.do_planning(i)
 
-    final_trees.append(mcts.tree)
     final_level_1_values.append(mcts.values_for_level_1)
     final_level_2_values.append(mcts.values_for_level_2)
 
@@ -57,6 +57,15 @@ for idx, c in enumerate(c_list):
         final_pick_all_objects.append(pick_all_objects)
         final_place_all_object_poses.append(place_all_object_poses)
         final_optimal_nodes.append(mcts.optimal_nodes)
+    else:
+        final_pnp_all_joint_paths.append([])
+        final_pick_all_objects.append([])
+        final_place_all_object_poses.append([])
+        final_optimal_nodes.append([])
+        # final_optimal_trees.append(mcts.tree.nodes)
+    del mcts
+    # print(final_optimal_trees)
+    print('delete mcts')
 
 
 #### File Save ####
@@ -85,6 +94,6 @@ with open(filename, 'wb') as f:
              pick_all_objects=final_pick_all_objects,
              place_all_object_poses=final_place_all_object_poses,
              optimal_nodes=final_optimal_nodes,
-             trees=final_trees
+            #  optimal_trees=final_optimal_trees
              )
 print('Data saved at {}'.format(filename))

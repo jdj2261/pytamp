@@ -28,10 +28,12 @@ np.random.seed(seed)
 benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True, disk_num=number)
 final_level_1_values = []
 final_level_2_values = []
+final_optimal_nodes = []
 final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
-c_list = 10**np.linspace(0., 3., 4)
+# final_optimal_trees = []
+c_list = 10**np.linspace(0, 3., 4)
 
 for idx, c in enumerate(c_list):
     mcts = MCTS(
@@ -42,11 +44,9 @@ for idx, c in enumerate(c_list):
         c=c,
         debug_mode=debug_mode)
     for i in range(budgets):
-        print(f"\nBenchmark: {benchmark4.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}, Disk Num : {number}")
+        print(f"\n[{idx+1}/{len(c_list)}] Benchmark: {benchmark4.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
         mcts.do_planning(i)
 
-    level_1_max_values = mcts.values_for_level_1
-    level_2_max_values = mcts.values_for_level_2
     final_level_1_values.append(mcts.values_for_level_1)
     final_level_2_values.append(mcts.values_for_level_2)
 
@@ -55,6 +55,16 @@ for idx, c in enumerate(c_list):
         final_pnp_all_joint_paths.append(pnp_all_joint_paths)
         final_pick_all_objects.append(pick_all_objects)
         final_place_all_object_poses.append(place_all_object_poses)
+        final_optimal_nodes.append(mcts.optimal_nodes)
+    else:
+        final_pnp_all_joint_paths.append([])
+        final_pick_all_objects.append([])
+        final_place_all_object_poses.append([])
+        final_optimal_nodes.append([])
+        # final_optimal_trees.append(mcts.tree.nodes)
+    del mcts
+    # print(final_optimal_trees)
+    print('delete mcts')
 
 
 #### File Save ####
@@ -81,6 +91,8 @@ with open(filename, 'wb') as f:
              level_2_values=final_level_2_values,
              pnp_all_joint_paths=final_pnp_all_joint_paths,
              pick_all_objects=final_pick_all_objects,
-             place_all_object_poses=final_place_all_object_poses
+             place_all_object_poses=final_place_all_object_poses,
+             optimal_nodes=final_optimal_nodes,
+            #  optimal_trees=final_optimal_trees
              )
 print('Data saved at {}'.format(filename))

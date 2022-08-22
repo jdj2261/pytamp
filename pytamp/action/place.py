@@ -55,9 +55,13 @@ class PlaceAction(ActivityBase):
                     if held_obj_num < sup_obj_num:
                         continue
 
+                if sup_obj in self.scene_mngr.scene.prev_place_obj_name:
+                    continue
+
             #? for benchmark 2
             if self.scene_mngr.scene.bench_num == 2:
-                if sup_obj not in ["shelf_9", "shelf_8", "shelf_15"]:
+                # if sup_obj not in ["shelf_9", "shelf_8", "shelf_15"]:
+                if sup_obj not in ["shelf_9", "shelf_15"]:
                     continue
             
             #? for benchmark 3
