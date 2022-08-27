@@ -18,9 +18,9 @@ class Benchmark2(Benchmark):
         robot_name="panda", 
         geom="visual", 
         is_pyplot=True,
-        bottle_num=6
+        bottle_num=10
     ):
-        assert bottle_num <= 6, f"The number of bottles must be 6 or less."
+        assert bottle_num <= 10, f"The number of bottles must be 10 or less."
         self.bottle_num = bottle_num
         param = {'bottle_num' : self.bottle_num, 'goal_object' : 'goal_bottle'}
         self.benchmark_config = {2 : param}
@@ -46,20 +46,28 @@ class Benchmark2(Benchmark):
         self.bin_pose = Transform(pos=np.array([0.0, 1.0, 0.3864222]))
         
         self.bottle_meshes = [get_object_mesh('bottle.stl') for _ in range(self.bottle_num)]
-        self.goal_bottle_pose = Transform(pos=np.array([1.0, 0, 1.29]))
+        self.goal_bottle_pose = Transform(pos=np.array([1.04, 0, 1.29]))
 
         self.bottle_poses = []
-        bottle_pose1 = Transform(pos=np.array([0.95, 0.10, 1.29]))
-        bottle_pose2 = Transform(pos=np.array([0.95, -0.10,1.29]))
-        bottle_pose3 = Transform(pos=np.array([0.85, 0.15, 1.29]))
-        bottle_pose4 = Transform(pos=np.array([0.85, 0, 1.29]))
-        bottle_pose5 = Transform(pos=np.array([0.85, -0.15, 1.29]))
+        bottle_pose1 = Transform(pos=np.array([0.98, 0.05, 1.29]))
+        bottle_pose2 = Transform(pos=np.array([0.98, -0.05, 1.29]))
+        bottle_pose3 = Transform(pos=np.array([0.88, 0.1, 1.29]))
+        bottle_pose4 = Transform(pos=np.array([0.88, 0, 1.29]))
+        bottle_pose5 = Transform(pos=np.array([0.88, -0.1, 1.29]))
+        bottle_pose6 = Transform(pos=np.array([0.78, -0.15, 1.29]))
+        bottle_pose7 = Transform(pos=np.array([0.78, -0.05, 1.29]))
+        bottle_pose8 = Transform(pos=np.array([0.78, 0.05, 1.29]))
+        bottle_pose9 = Transform(pos=np.array([0.78, 0.15, 1.29]))
         
         self.bottle_poses.extend([bottle_pose1,
                                   bottle_pose2,
                                   bottle_pose3,
                                   bottle_pose4,
-                                  bottle_pose5])
+                                  bottle_pose5,
+                                  bottle_pose6,
+                                  bottle_pose7,
+                                  bottle_pose8,
+                                  bottle_pose9,])
     def _load_scene(self):
         for i in range(20):
             shelf_name = 'shelf_' + str(i)

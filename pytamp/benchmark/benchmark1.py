@@ -42,17 +42,19 @@ class Benchmark1(Benchmark):
         self.ceiling_mesh = get_object_mesh('ben_table_ceiling.stl')
         self.tray_red_mesh = get_object_mesh('ben_tray_red.stl')
         self.box_mesh = get_object_mesh('ben_cube.stl', 0.06)
+
         box_height = self.box_mesh.bounds[1][2] - self.box_mesh.bounds[0][2]
+        table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
 
         self.box_poses = []
-        A_box_pose = Transform(pos=np.array([0.6, 0, self.table_mesh.bounds[1][2]]))
-        B_box_pose = Transform(pos=np.array([0.6, -0.2, self.table_mesh.bounds[1][2]]))
-        C_box_pose = Transform(pos=np.array([0.6, 0.2, self.table_mesh.bounds[1][2]]))
-        D_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2]]))
-        E_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2] + box_height]))
-        F_box_pose = Transform(pos=np.array([0.7, 0, self.table_mesh.bounds[1][2] + box_height * 2]))
-        G_box_pose = Transform(pos=np.array([0.8, -0.2, self.table_mesh.bounds[1][2]]))
-        H_box_pose = Transform(pos=np.array([0.8, 0.2, self.table_mesh.bounds[1][2]]))
+        A_box_pose = Transform(pos=np.array([0.6, 0, table_height + abs(self.box_mesh.bounds[0][2])]))
+        B_box_pose = Transform(pos=np.array([0.6, -0.2, table_height + abs(self.box_mesh.bounds[0][2])]))
+        C_box_pose = Transform(pos=np.array([0.6, 0.2, table_height + abs(self.box_mesh.bounds[0][2])]))
+        D_box_pose = Transform(pos=np.array([0.7, 0, table_height + abs(self.box_mesh.bounds[0][2])]))
+        E_box_pose = Transform(pos=np.array([0.7, 0, table_height + abs(self.box_mesh.bounds[0][2]) + box_height]))
+        F_box_pose = Transform(pos=np.array([0.7, 0, table_height + abs(self.box_mesh.bounds[0][2]) + box_height * 2]))
+        G_box_pose = Transform(pos=np.array([0.8, -0.2, table_height + abs(self.box_mesh.bounds[0][2])]))
+        H_box_pose = Transform(pos=np.array([0.8, 0.2, table_height + abs(self.box_mesh.bounds[0][2])]))
 
         self.box_poses.extend([A_box_pose, 
                               B_box_pose, 
@@ -84,7 +86,7 @@ class Benchmark1(Benchmark):
 
         self.table_pose = Transform(pos=np.array([1.1, -0.4, -0.03]))
         self.ceiling_pose = Transform(pos=np.array([1.1, -0.4, 1.7]))
-        self.tray_red_pose = Transform(pos=np.array([0.6, -0.5-0.3, 0.8]))
+        self.tray_red_pose = Transform(pos=np.array([0.6, -0.5 - 0.3, 0.8]))
 
     def _load_scene(self):
         self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])

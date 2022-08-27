@@ -3,6 +3,7 @@ from collections import OrderedDict
 from copy import deepcopy
 
 from pykin.utils import mesh_utils as m_utils
+from pykin.utils import plot_utils as p_utils
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene
 from pytamp.utils import heuristic_utils as h_utils
@@ -64,12 +65,10 @@ class PickAction(ActivityBase):
     def get_action_level_1_for_single_object(self, scene=None, obj_name:str=None) -> dict:
         if scene is not None:
             self.deepcopy_scene(scene)
-
         grasp_poses = list(self.get_all_grasp_poses(obj_name=obj_name))
         if self.scene_mngr.heuristic:
             grasp_poses.extend(list(self.get_grasp_pose_from_heuristic(obj_name)))
         grasp_poses_not_collision = list(self.get_all_grasp_poses_not_collision(grasp_poses))
-
         action_level_1 = self.get_action(obj_name, grasp_poses_not_collision)
         return action_level_1
 
@@ -260,12 +259,20 @@ class PickAction(ActivityBase):
             raise ValueError("Not found grasp poses!")
 
         for all_grasp_pose in grasp_poses:
+            # if self.scene_mngr.scene.bench_num == 2:
+            #     self.scene_mngr.close_gripper(0.015)
             for name, pose in all_grasp_pose.items():
                 is_collision = False
+
                 if name == self.move_data.MOVE_grasp:
                     self.scene_mngr.set_gripper_pose(pose)
                     for name in self.scene_mngr.scene.objs:
                         self.scene_mngr.obj_collision_mngr.set_transform(name, self.scene_mngr.scene.objs[name].h_mat)
+                    # fig, ax = p_utils.init_3d_figure("test")
+                    # self.scene_mngr.render_gripper(ax)
+                    # self.scene_mngr.render_objects(ax)
+                    # self.scene_mngr.show()
+                    # print("test")
                     if self._collide(is_only_gripper=True):
                         is_collision = True
                         break
@@ -279,6 +286,7 @@ class PickAction(ActivityBase):
                     if self._collide(is_only_gripper=True):
                         is_collision = True
                         break
+            # self.scene_mngr.open_gripper(0.015)
             if not is_collision:
                 yield all_grasp_pose
             

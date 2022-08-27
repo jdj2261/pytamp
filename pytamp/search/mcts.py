@@ -36,8 +36,8 @@ class MCTS:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=3)
         elif bench_num == 2:
-            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=5)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=3)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=30)
         elif bench_num == 3:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=3, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=3)
@@ -58,7 +58,7 @@ class MCTS:
         
         if self.scene_mngr.scene.bench_num == 1:
             self.infeasible_reward = -10
-            self.goal_reward = 10
+            self.goal_reward = 5
 
         if self.scene_mngr.scene.bench_num == 2:
             self.infeasible_reward = -10
@@ -106,7 +106,9 @@ class MCTS:
 
     def do_planning(self, iter):
         print(f"{sc.HEADER}=========== Search iteration : {iter+1} ==========={sc.ENDC}")
-        
+        if self.debug_mode:
+            # visited_tree = self.get_visited_subtree()
+            self.visualize_tree("Next Logical Node", self.tree)
         self.success_level_1_leaf_node = None
         
         self._level_wise_1_optimize(state_node=0, depth=0)
@@ -156,8 +158,8 @@ class MCTS:
             return reward
         
         if depth >= self.max_depth:
-            # reward = self.infeasible_reward
-            # self._update_value(cur_state_node, reward)
+            reward = self.infeasible_reward
+            self._update_value(cur_state_node, reward)
             print(f"{sc.WARNING}Exceeded the maximum depth!!{sc.ENDC}")
             return 0
 
@@ -166,9 +168,9 @@ class MCTS:
         cur_logical_action_node = self._select_logical_action_node(cur_state_node, cur_state, depth, self._sampling_method)
         cur_logical_action = None
         
-        #! [DEBUG]
-        if self.debug_mode:
-            self.visualize_tree("Next Logical Node", self.tree)
+        # #! [DEBUG]
+        # if self.debug_mode:
+        #     self.visualize_tree("Next Logical Node", self.tree)
         
         next_state_node = None
         next_state = None
@@ -228,7 +230,7 @@ class MCTS:
             logical_action_node = np.random.choice(expanded_children)
         else:
             # print(f"Current state node has children {children}")
-            logical_action_node = self._sample_child_node(children, exploration_method)
+            logical_action_node = self._sample_child_node(children, exploration_method, depth)
 
         return logical_action_node
 
@@ -277,7 +279,7 @@ class MCTS:
             next_state_node = np.random.choice(expanded_children)
         else:
             # print(f"Logical action node has children {children}")
-            next_state_node = self._sample_child_node(children, exploration_method)
+            next_state_node = self._sample_child_node(children, exploration_method, depth)
     
         return next_state_node
 
@@ -315,18 +317,21 @@ class MCTS:
                                                   NodeData.TEST: (),})])
             self.tree.add_edge(cur_logical_action_node, next_node)
 
-    def _sample_child_node(self, children, exploration_method):
+    def _sample_child_node(self, children, exploration_method, depth):
         assert len(children) != 0
         if exploration_method == "random":
             best_idx = sampler.find_best_idx_from_random(self.tree, children)
         if exploration_method == "greedy":
             best_idx = sampler.find_idx_from_greedy(self.tree, children)
         if exploration_method == "uct":
-            best_idx = sampler.find_idx_from_uct(self.tree, children, self.c)
+            c = self.c / np.maximum(depth, 1)
+            best_idx = sampler.find_idx_from_uct(self.tree, children, c)
         if exploration_method == "bai_ucb":
-            best_idx = sampler.find_idx_from_bai_ucb(self.tree, children, self.c)
+            c = self.c / np.maximum(depth, 1)
+            best_idx = sampler.find_idx_from_bai_ucb(self.tree, children, c)
         if exploration_method == "bai_perturb":
-            best_idx = sampler.find_idx_from_bai_perturb(self.tree, children, self.c)
+            c = self.c / np.maximum(depth, 1)
+            best_idx = sampler.find_idx_from_bai_perturb(self.tree, children, c)
         
         child_node = children[best_idx]
         return child_node
@@ -361,38 +366,47 @@ class MCTS:
             return self.goal_reward
 
         if cur_state is None:
-            print(f"Current state is None.. Reward is {self.infeasible_reward}")
-            return self.infeasible_reward
+            print(f"Current state is None.. Reward is {self.infeasible_reward / (max(1, depth)) * 10}")
+            return self.infeasible_reward / (max(1, depth)) * 1
         
         if cur_logical_action is None:
-            print(f"Current logical action is None.. Reward is {self.infeasible_reward}")
-            return self.infeasible_reward
+            print(f"Current logical action is None.. Reward is {self.infeasible_reward / (max(1, depth)) * 10}")
+            return self.infeasible_reward / (max(1, depth)) * 1
 
         if next_state is None:
-            print(f"Next state is None.. Reward is {self.infeasible_reward}")
-            return self.infeasible_reward
+            print(f"Next state is None.. Reward is {self.infeasible_reward / (max(1, depth)) * 10}")
+            return self.infeasible_reward / (max(1, depth)) * 1
 
         if self.scene_mngr.scene.bench_num == 1:
             logical_action_type = cur_logical_action[self.pick_action.info.TYPE]
-
+            prev_stacked_box_num = cur_state.success_stacked_box_num
+            next_state_is_success = next_state.check_success_stacked_bench_1()
             if logical_action_type == 'place':
-                prev_stacked_box_num = cur_state.success_stacked_box_num
-                next_state_is_success = next_state.check_success_stacked_bench_1()
-                
                 if next_state_is_success:
                     if next_state.stacked_box_num - prev_stacked_box_num == 1:
                         print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
-                        # return min(abs(reward) * 1/(depth+1) * 5, self.goal_reward)
                         return abs(reward) * 1/(depth+1) * 20
-                    if next_state.stacked_box_num - prev_stacked_box_num == -1:
-                        print(f"{sc.FAIL}Bad Action{sc.ENDC}")
-                        # return max(reward * 1/(depth+1) * 5, self.infeasible_reward)
-                        return reward * 1/(depth+1) * 40
-                #     if next_state.stacked_box_num != prev_stacked_box_num:
-                #         print(next_state.stacked_box_num, prev_stacked_box_num)
-                #         print(f"{sc.WARNING}Wrong Action{sc.ENDC}")
-                #         return reward * np.clip(40/(depth+1), 2, 0.5)
-        return 0
+            if logical_action_type == 'pick':
+                if next_state.stacked_box_num - prev_stacked_box_num == -1:
+                    print(f"{sc.FAIL}Bad Action{sc.ENDC}")
+                    return max(reward * 1/(depth+1) * 40, self.infeasible_reward)
+
+        if self.scene_mngr.scene.bench_num == 2:
+
+            logical_action_type = cur_logical_action[self.pick_action.info.TYPE]
+            
+            if logical_action_type == 'pick':
+                pick_obj_name = cur_logical_action[self.pick_action.info.PICK_OBJ_NAME]
+                if "goal" not in pick_obj_name:
+                    pick_obj_num = int(pick_obj_name.split('_')[-1])
+                    print(pick_obj_num)
+                    return 1 / pick_obj_num * 5 
+        #         if place_obj_name in ["shelf_9"]:
+        #             return max(reward * 1/(depth+1) * 40, self.infeasible_reward)
+        #         else:
+        #             return abs(reward) * 1/(depth+1) * 20
+
+        return reward
 
     def _level_wise_2_optimize(self, sub_optimal_nodes):
         if not sub_optimal_nodes:
@@ -542,7 +556,14 @@ class MCTS:
 
         subtree:nx.DiGraph = self.tree.subgraph(visited_nodes)
         return subtree
+
+    def get_visited_subtree(self):
+        visited_nodes = []
+        visited_nodes = [n for n in self.tree.nodes if self.tree.nodes[n][NodeData.VISIT] >= 1]
         
+        subtree:nx.DiGraph = self.tree.subgraph(visited_nodes)
+        return subtree
+
     def get_all_leaf_nodes(self, tree:nx.DiGraph):
         leaf_nodes = [node for node in tree.nodes if not [c for c in tree.neighbors(node)]]
         leaf_nodes.sort()

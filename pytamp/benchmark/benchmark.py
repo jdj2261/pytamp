@@ -6,12 +6,14 @@ class Benchmark:
         robot_name,
         geom="collision",
         is_pyplot=True,
-        benchmark_config=None
+        benchmark_config=None,
+        only_sim=False
     ):
         self.robot_name = robot_name
         self.geom = geom
         self.is_pyplot = is_pyplot
         self.benchmark_config = benchmark_config
+        self.only_sim = only_sim
 
         urdf_file_name = self.robot_name
         self.gripper_name = "panda"

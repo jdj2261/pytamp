@@ -261,14 +261,15 @@ class SceneManager:
             if link in self.gripper_collision_mngr._objs:
                 self.gripper_collision_mngr.set_transform(link, info[3])
 
-    def close_gripper(self):
+    def close_gripper(self, z_dis=None):
         if not self._scene.robot.has_gripper:
             raise ValueError("Robot doesn't have a gripper")
 
-        if "panda" in self._scene.robot.gripper_name:
-            z_dis = 0.003
-        else:
-            z_dis = 0.015
+        if z_dis is None:
+            if "panda" in self._scene.robot.gripper_name:
+                z_dis = 0.003
+            else:
+                z_dis = 0.015
     
         self._scene.robot.close_gripper(z_dis)
         self._scene.robot.gripper.close_gripper(z_dis)
@@ -281,14 +282,15 @@ class SceneManager:
                 if link in self._scene.robot.gripper.finger_names:
                     self.gripper_collision_mngr.set_transform(link, info[3])
 
-    def open_gripper(self):
+    def open_gripper(self, z_dis=None):
         if not self._scene.robot.has_gripper:
             raise ValueError("Robot doesn't have a gripper")
 
-        if "panda" in self._scene.robot.gripper_name:
-            z_dis = 0.003
-        else:
-            z_dis = 0.015
+        if z_dis is None:
+            if "panda" in self._scene.robot.gripper_name:
+                z_dis = 0.003
+            else:
+                z_dis = 0.015
 
         self._scene.robot.open_gripper(z_dis)
         self._scene.robot.gripper.open_gripper(z_dis)

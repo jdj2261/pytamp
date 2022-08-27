@@ -49,22 +49,22 @@ def get_heuristic_tcp_pose(scene_mngr:SceneManager,
             obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
             obj_pose[:3, 3] = center_point + [0, 0, 0.005]
 
-            if "goal_bottle" not in object_name:
-                for theta in np.linspace(-np.pi+np.pi/(2.2), -np.pi/(2.2), n_directions):
-                    r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
-                    for theta2 in np.linspace(-np.pi/3, np.pi/3, 5):
-                        r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta2])
-                        tcp_pose = np.eye(4)
-                        tcp_pose[:3, :3] = np.dot(r_mat_z, r_mat_y)
-                        tcp_pose = np.dot(obj_pose, tcp_pose)
-                        yield tcp_pose
-            else:
-                for theta in np.linspace(-np.pi+np.pi/(2.2), -np.pi/(2.2), n_directions):
-                    r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
+            # if "goal_bottle" not in object_name:
+            for theta in np.linspace(-np.pi+np.pi/4, -np.pi+np.pi/3, n_directions):
+                r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
+                for theta2 in np.linspace(-np.pi/3, np.pi/3, 5):
+                    r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta2])
                     tcp_pose = np.eye(4)
-                    tcp_pose[:3, :3] = r_mat_y
+                    tcp_pose[:3, :3] = np.dot(r_mat_z, r_mat_y)
                     tcp_pose = np.dot(obj_pose, tcp_pose)
                     yield tcp_pose
+            # else:
+            #     for theta in np.linspace(-np.pi+np.pi/(2.2), -np.pi/(2.2), n_directions):
+            #         r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
+            #         tcp_pose = np.eye(4)
+            #         tcp_pose[:3, :3] = r_mat_y
+            #         tcp_pose = np.dot(obj_pose, tcp_pose)
+            #         yield tcp_pose
 
     if bench_num == 3:
         obj_pose = np.eye(4)

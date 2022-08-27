@@ -21,12 +21,12 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-# np.random.seed(seed)
+np.random.seed(seed)
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=6)
 
-c_list = 10**np.linspace(0., 3., 10)
-c_list = [10]
+c_list = 10**np.linspace(-2, 1., 10)
+# c_list = [1, 10, 100, 1000]
 for idx, c in enumerate(c_list):
     mcts = MCTS(benchmark1.scene_mngr)
     mcts.debug_mode = False
@@ -35,7 +35,7 @@ for idx, c in enumerate(c_list):
     # 최대부터
     mcts.budgets = 100
     mcts.max_depth = 16
-    mcts.sampling_method = 'bai_perturb' 
+    mcts.sampling_method = 'bai_ucb' 
     mcts.c = c
     print(c)
     for i in range(mcts.budgets):
@@ -51,14 +51,15 @@ for idx, c in enumerate(c_list):
     level_1_max_values = mcts.values_for_level_1
     level_2_max_values = mcts.values_for_level_2
     fig, ax = p_utils.init_2d_figure("test")
+
     p_utils.plot_values(
         ax,
         level_1_max_values, 
         label=f"Sum of Values({mcts.sampling_method}, {mcts.budgets}, {mcts.c})", 
         title="Benchamrk1_Level_1_" + mcts.sampling_method + "-" + str(mcts.budgets) + "-" + str(mcts.c),
         save_dir_name='benchmark1_result', 
-        is_save=False)
-        
+        is_save=True)
+            
     # p_utils.plot_values(
     #     ax,
     #     level_2_max_values, 
@@ -66,7 +67,7 @@ for idx, c in enumerate(c_list):
     #     title="Benchamrk1_Level_2_" + mcts.sampling_method,  
     #     save_dir_name='benchmark1_result', 
     #     is_save=True)
-    p_utils.show_figure()
+    # p_utils.show_figure()
 
     # # Do planning
     # # mcts.get_all_joint_path(mcts.optimal_nodes)

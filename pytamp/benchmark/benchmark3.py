@@ -11,12 +11,12 @@ class Benchmark3(Benchmark):
         self, 
         robot_name="panda", 
         geom="visual", 
-        is_pyplot=True
+        is_pyplot=True,
+        only_sim=False
     ):
         param = {'goal_object' : 'goal_can'}
         self.benchmark_config = {3 : param}
-        super().__init__(robot_name, geom, is_pyplot, self.benchmark_config)
-        
+        super().__init__(robot_name, geom, is_pyplot, self.benchmark_config, only_sim)
         self._load_robot()
         self._load_objects()
         self._load_scene()
@@ -128,32 +128,33 @@ class Benchmark3(Benchmark):
         self.scene_mngr.add_object(name="tray_blue", gtype="mesh", gparam=self.tray_blue_mesh, h_mat=self.tray_blue_pose.h_mat, color=[0, 0, 1.])
         self.scene_mngr.add_robot(self.robot)
 
-        for i in range(self.rect_box_num):
-            rect_box_name = "rect_box" + str(i)
-            if rect_box_name == "rect_box0":
-                self.scene_mngr.set_logical_state(rect_box_name, ("on", "table"))
-            else:
-                prev_rect_box_name = "rect_box" + str(i-1)
-                self.scene_mngr.set_logical_state(rect_box_name, ("on", prev_rect_box_name))
+        if not self.only_sim:
+            for i in range(self.rect_box_num):
+                rect_box_name = "rect_box" + str(i)
+                if rect_box_name == "rect_box0":
+                    self.scene_mngr.set_logical_state(rect_box_name, ("on", "table"))
+                else:
+                    prev_rect_box_name = "rect_box" + str(i-1)
+                    self.scene_mngr.set_logical_state(rect_box_name, ("on", prev_rect_box_name))
 
-        for i in range(self.square_box_num):
-            square_box_name = "square_box" + str(i)
-            if square_box_name == "square_box0":
-                self.scene_mngr.set_logical_state(square_box_name, ("on", "table"))
-            else:
-                prev_square_box_name = "square_box" + str(i-1)
-                self.scene_mngr.set_logical_state(square_box_name, ("on", prev_square_box_name))
+            for i in range(self.square_box_num):
+                square_box_name = "square_box" + str(i)
+                if square_box_name == "square_box0":
+                    self.scene_mngr.set_logical_state(square_box_name, ("on", "table"))
+                else:
+                    prev_square_box_name = "square_box" + str(i-1)
+                    self.scene_mngr.set_logical_state(square_box_name, ("on", prev_square_box_name))
 
-        self.scene_mngr.set_logical_state("goal_can", ("on", "clearbox"))
-        self.scene_mngr.set_logical_state("milk1", ("on", "clearbox"))
-        self.scene_mngr.set_logical_state("milk2", ("on", "clearbox"))
-        self.scene_mngr.set_logical_state("milk3", ("on", "clearbox"))
-        self.scene_mngr.set_logical_state("milk4", ("on", "clearbox"))
-        self.scene_mngr.set_logical_state("milk5", ("on", "clearbox"))
-        self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True))
-        self.scene_mngr.set_logical_state("tray_blue", (self.scene_mngr.scene.logical_state.static, True))
-        self.scene_mngr.set_logical_state("clearbox", (self.scene_mngr.scene.logical_state.static, True), ("on", "table"))
-        self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))
-    
+            self.scene_mngr.set_logical_state("goal_can", ("on", "clearbox"))
+            self.scene_mngr.set_logical_state("milk1", ("on", "clearbox"))
+            self.scene_mngr.set_logical_state("milk2", ("on", "clearbox"))
+            self.scene_mngr.set_logical_state("milk3", ("on", "clearbox"))
+            self.scene_mngr.set_logical_state("milk4", ("on", "clearbox"))
+            self.scene_mngr.set_logical_state("milk5", ("on", "clearbox"))
+            self.scene_mngr.set_logical_state("table", (self.scene_mngr.scene.logical_state.static, True))
+            self.scene_mngr.set_logical_state("tray_blue", (self.scene_mngr.scene.logical_state.static, True))
+            self.scene_mngr.set_logical_state("clearbox", (self.scene_mngr.scene.logical_state.static, True), ("on", "table"))
+            self.scene_mngr.set_logical_state(self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None))
+            self.scene_mngr.show_logical_states()
         self.scene_mngr.update_logical_states(is_init=True)
-        self.scene_mngr.show_logical_states()
+        

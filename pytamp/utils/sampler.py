@@ -33,8 +33,8 @@ def find_idx_from_uct(tree, children, c):
     # total_visits = tree.nodes[0][NodeData.VISIT]
     
     selected_values = np.asarray(selected_values)
-    selected_values[np.isinf(selected_values)] = 0.
-    # selected_values[np.where(np.asarray(selected_visits) == 0)] = sys.maxsize #! 0
+    # selected_values[np.isinf(selected_values)] = 0.
+    selected_values[np.where(np.asarray(selected_visits) == 0)] = sys.maxsize #! 0
     
     ucts = selected_values + c * np.sqrt(1. / np.maximum(1., selected_visits))
     # print(ucts, selected_values , c * np.sqrt(total_visits / np.maximum(1., selected_visits)))
