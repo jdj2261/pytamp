@@ -37,7 +37,7 @@ class MCTS:
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=3)
         elif bench_num == 2:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=3)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=30)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
         elif bench_num == 3:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=3, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=3)
@@ -61,11 +61,11 @@ class MCTS:
             self.goal_reward = 5
 
         if self.scene_mngr.scene.bench_num == 2:
-            self.infeasible_reward = -10
-            self.goal_reward = 10
+            self.infeasible_reward = -5
+            self.goal_reward = 5
 
         if self.scene_mngr.scene.bench_num == 3:
-            self.infeasible_reward = -10
+            self.infeasible_reward = -5
             self.goal_reward = 10
 
         if self.scene_mngr.scene.bench_num == 4:
@@ -82,6 +82,8 @@ class MCTS:
         self.history_level_1_optimal_nodes = []
         self.optimal_nodes = []
         self.only_optimize_1 = False
+
+        
 
     def _create_tree(self, state:Scene):
         tree = nx.DiGraph()
@@ -105,6 +107,7 @@ class MCTS:
         return tree
 
     def do_planning(self, iter):
+        self.pick_obj_list = set()
         print(f"{sc.HEADER}=========== Search iteration : {iter+1} ==========={sc.ENDC}")
         if self.debug_mode:
             # visited_tree = self.get_visited_subtree()
@@ -324,13 +327,16 @@ class MCTS:
         if exploration_method == "greedy":
             best_idx = sampler.find_idx_from_greedy(self.tree, children)
         if exploration_method == "uct":
-            c = self.c / np.maximum(depth, 1)
+            # c = self.c / np.maximum(depth, 1)
+            c = self.c 
             best_idx = sampler.find_idx_from_uct(self.tree, children, c)
         if exploration_method == "bai_ucb":
-            c = self.c / np.maximum(depth, 1)
+            # c = self.c / np.maximum(depth, 1)
+            c = self.c 
             best_idx = sampler.find_idx_from_bai_ucb(self.tree, children, c)
         if exploration_method == "bai_perturb":
-            c = self.c / np.maximum(depth, 1)
+            # c = self.c / np.maximum(depth, 1)
+            c = self.c
             best_idx = sampler.find_idx_from_bai_perturb(self.tree, children, c)
         
         child_node = children[best_idx]
@@ -364,18 +370,28 @@ class MCTS:
         if is_terminal:
             print(f"Terminal State! Reward is {self.goal_reward}")
             return self.goal_reward
+            # return self.goal_reward / (max(1, depth)) * 10
+
+        inf_reward = self.infeasible_reward / (max(1, depth)) * 2
+        if self.scene_mngr.scene.bench_num == 1:
+            # inf_reward = self.infeasible_reward / (max(1, depth)) * 10
+            inf_reward = self.infeasible_reward / (max(1, depth)) * 10
+        
+        if self.scene_mngr.scene.bench_num == 2:
+            # inf_reward = self.infeasible_reward / (max(1, depth)) * 10
+            inf_reward = self.infeasible_reward / (max(1, depth)) * 2
 
         if cur_state is None:
-            print(f"Current state is None.. Reward is {self.infeasible_reward / (max(1, depth)) * 10}")
-            return self.infeasible_reward / (max(1, depth)) * 1
+            print(f"Current state is None.. Reward is {inf_reward}")
+            return inf_reward
         
         if cur_logical_action is None:
-            print(f"Current logical action is None.. Reward is {self.infeasible_reward / (max(1, depth)) * 10}")
-            return self.infeasible_reward / (max(1, depth)) * 1
+            print(f"Current logical action is None.. Reward is {inf_reward}")
+            return inf_reward
 
         if next_state is None:
-            print(f"Next state is None.. Reward is {self.infeasible_reward / (max(1, depth)) * 10}")
-            return self.infeasible_reward / (max(1, depth)) * 1
+            print(f"Next state is None.. Reward is {inf_reward}")
+            return inf_reward
 
         if self.scene_mngr.scene.bench_num == 1:
             logical_action_type = cur_logical_action[self.pick_action.info.TYPE]
@@ -392,19 +408,42 @@ class MCTS:
                     return max(reward * 1/(depth+1) * 40, self.infeasible_reward)
 
         if self.scene_mngr.scene.bench_num == 2:
-
             logical_action_type = cur_logical_action[self.pick_action.info.TYPE]
-            
+            if logical_action_type == 'place':
+                pick_obj_y_dis = next_state.get_pose_from_goal_obj(next_state.pick_obj_name)[1, 3]
+                prev_pick_obj_y_dis = cur_state.get_pose_from_goal_obj(next_state.pick_obj_name)[1, 3]
+                goal_obj_y_dis = cur_state.get_pose_from_goal_obj("goal_bottle")[1, 3]
+                dis_between_pick_and_goal_obj = abs(pick_obj_y_dis - goal_obj_y_dis)
+                
+                if dis_between_pick_and_goal_obj > 0.2:
+                    if pick_obj_y_dis - goal_obj_y_dis < 0:
+                        if pick_obj_y_dis - prev_pick_obj_y_dis < 0:
+                            print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
+                            reward = abs(reward) * 1/(depth+1) * 2
+                        else:
+                            print(f"{sc.FAIL}Bad Action{sc.ENDC}")
+                            reward = -1
+                    if pick_obj_y_dis - goal_obj_y_dis > 0:
+                        if pick_obj_y_dis - prev_pick_obj_y_dis > 0:
+                            print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
+                            reward = abs(reward) * 1/(depth+1) * 2
+                        else:
+                            print(f"{sc.FAIL}Bad Action{sc.ENDC}")
+                            reward = -1
+                else:
+                    print(f"{sc.FAIL}Bad Action{sc.ENDC}")
+                    reward = -1
+                return reward
+
             if logical_action_type == 'pick':
-                pick_obj_name = cur_logical_action[self.pick_action.info.PICK_OBJ_NAME]
-                if "goal" not in pick_obj_name:
-                    pick_obj_num = int(pick_obj_name.split('_')[-1])
-                    print(pick_obj_num)
-                    return 1 / pick_obj_num * 5 
-        #         if place_obj_name in ["shelf_9"]:
-        #             return max(reward * 1/(depth+1) * 40, self.infeasible_reward)
-        #         else:
-        #             return abs(reward) * 1/(depth+1) * 20
+                cur_pick_obj_name = cur_logical_action[self.pick_action.info.PICK_OBJ_NAME]
+                if cur_pick_obj_name in self.pick_obj_list:
+                    print(f"{sc.FAIL}Bad Action{sc.ENDC}")
+                    reward = -1
+                else:
+                    reward = 1
+                self.pick_obj_list.add(cur_pick_obj_name)
+
 
         return reward
 

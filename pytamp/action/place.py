@@ -61,8 +61,8 @@ class PlaceAction(ActivityBase):
             #? for benchmark 2
             if self.scene_mngr.scene.bench_num == 2:
                 # if sup_obj not in ["shelf_9", "shelf_8", "shelf_15"]:
-                if sup_obj not in ["shelf_9", "shelf_15"]:
-                # if sup_obj not in ["shelf_9"]:
+                # if sup_obj not in ["shelf_9", "shelf_15"]:
+                if sup_obj not in ["shelf_9"]:
                     continue
             
             #? for benchmark 3
@@ -504,7 +504,7 @@ class PlaceAction(ActivityBase):
         if bench_num == 1:
             alpha = 0.9
         elif bench_num == 2:
-            alpha = 0.95
+            alpha = 1
         elif bench_num == 3:
             alpha = 0.9
         
@@ -534,19 +534,19 @@ class PlaceAction(ActivityBase):
                 if bench_num == 2:
                     center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2
                     if "shelf_8" in support_obj_name:
-                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.1):
+                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.2):
                             continue
-                        if not (min_y + 0.1 <= center_point[1] <= max_y - 0.05):
+                        if not (min_y + 0.1 <= center_point[1] <= max_y - 0.1):
                             continue
                     if "shelf_9" in support_obj_name:
-                        if not (min_x + 0.02 <= center_point[0] <= max_x - 0.001):
+                        if not (min_x + 0.02 <= center_point[0] <= max_x - 0.1):
                             continue
-                        if not (min_y <= center_point[1] <= max_y - 0.5):
+                        if not (min_y + 0.05 <= center_point[1] <= max_y - 0.7):
                             continue
                     if "shelf_15" in support_obj_name:
-                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.001):
+                        if not (min_x + 0.05 <= center_point[0] <= max_x - 0.2):
                             continue
-                        if not (min_y <= center_point[1] <= max_y ):
+                        if not (min_y + 0.2 <= center_point[1] <= max_y - 0.1):
                             continue
                 if bench_num == 3:
                     if "table" in support_obj_name:

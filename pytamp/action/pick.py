@@ -260,7 +260,7 @@ class PickAction(ActivityBase):
 
         for all_grasp_pose in grasp_poses:
             # if self.scene_mngr.scene.bench_num == 2:
-            #     self.scene_mngr.close_gripper(0.015)
+                # self.scene_mngr.close_gripper(0.015)
             for name, pose in all_grasp_pose.items():
                 is_collision = False
 

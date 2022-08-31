@@ -173,6 +173,14 @@ class Scene:
             is_success = True
         return is_success
 
+    def get_prev_place_object(self, pick_obj_name):
+        if pick_obj_name is not None:
+            return self.logical_states[pick_obj_name].get(self.logical_state.on).name
+
+    def get_pose_from_goal_obj(self, pick_obj_name):
+        if pick_obj_name is not None:
+            return self.objs[pick_obj_name].h_mat
+
     def check_terminal_state_bench_3(self):
         is_success = False
         if self.robot.gripper.attached_obj_name == self.goal_object:

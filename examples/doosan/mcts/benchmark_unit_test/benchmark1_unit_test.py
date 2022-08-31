@@ -35,7 +35,7 @@ for idx, c in enumerate(c_list):
     # 최대부터
     mcts.budgets = 100
     mcts.max_depth = 16
-    mcts.sampling_method = 'bai_ucb' 
+    mcts.sampling_method = 'bai_perturb' 
     mcts.c = c
     print(c)
     for i in range(mcts.budgets):

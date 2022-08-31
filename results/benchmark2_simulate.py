@@ -34,7 +34,7 @@ def get_final_all_values(algo, budgets, n_seed, end_num=0):
 
     return result_all_values 
 
-bai_perturb_result_all_values = get_final_all_values("bai_perturb", 100, 5, 0)
+bai_perturb_result_all_values = get_final_all_values("bai_perturb", 100, 10, 0)
 idx = np.unravel_index(bai_perturb_result_all_values['level_2_values'].argmax(), bai_perturb_result_all_values['level_2_values'].shape)
 pnp_all_joint_path = bai_perturb_result_all_values['pnp_all_joint_paths'][idx[0]][idx[1]]
 pick_all_objects = bai_perturb_result_all_values['pick_all_objects'][idx[0]][idx[1]]

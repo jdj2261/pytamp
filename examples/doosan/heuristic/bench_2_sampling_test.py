@@ -41,31 +41,33 @@ scene_mngr.add_object(name="bottle_4", gtype="mesh", gparam=bottle_meshes[3], h_
 scene_mngr.add_object(name="bottle_5", gtype="mesh", gparam=bottle_meshes[4], h_mat=bottle_pose5.h_mat, color=[0, 1, 0])
 scene_mngr.add_object(name="bottle_6", gtype="mesh", gparam=bottle_meshes[5], h_mat=bottle_pose6.h_mat, color=[0, 1, 0])
 
-place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=50)
+place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=100)
 surface_points_for_support_obj = list(place_action.get_surface_points_for_support_obj("shelf_9", alpha=1))
 fig, ax = p_utils.init_3d_figure(figsize=(10,6), dpi=120, name="Sampling Object")
 p_utils.plot_basis(ax)
 place_action.scene_mngr.render_objects(ax, alpha=0.1)
 for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
-    if not (min_x <= point[0] <= max_x):
+    
+    if not (min_x + 0.02 <= point[0] <= max_x - 0.1):
         continue
-    if not (min_y <= point[1] <= max_y):
+    if not (min_y + 0.05 <= point[1] <= max_y - 0.7):
         continue
     place_action.scene_mngr.render.render_point(ax, point, radius=0.01)
 
 surface_points_for_support_obj = list(place_action.get_surface_points_for_support_obj("shelf_15", alpha=1))
 for point, noormal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
-    if not (min_x <= point[0] <= max_x):
+    print(min_x, max_x)
+    if not (min_x + 0.05 <= point[0] <= max_x - 0.2):
         continue
-    if not (min_y <= point[1] <= max_y):
+    if not (min_y + 0.2 <= point[1] <= max_y - 0.1):
         continue
     place_action.scene_mngr.render.render_point(ax, point, radius=0.01)
 
 surface_points_for_support_obj = list(place_action.get_surface_points_for_support_obj("shelf_8", alpha=1))
 for point, noormal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
-    if not (min_x <= point[0] <= max_x):
+    if not (min_x + 0.05 <= point[0] <= max_x - 0.2):
         continue
-    if not (min_y <= point[1] <= max_y):
+    if not (min_y + 0.1 <= point[1] <= max_y - 0.1):
         continue
     place_action.scene_mngr.render.render_point(ax, point, radius=0.01)
 

@@ -21,20 +21,20 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-# np.random.seed(seed)
+np.random.seed(seed)
 
-benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=10)
-c_list = 10**np.linspace(-2, 1., 10)
-# c_list = [1, 10, 100, 1000]
+benchmark2 = Benchmark2(robot_name="doosan", geom="collision", bottle_num=6, is_pyplot=True)
+# c_list = 10**np.linspace(-2, 2., 5)
+c_list = 10**np.linspace(-2, 2., 10)
 for idx, c in enumerate(c_list):
     mcts = MCTS(benchmark2.scene_mngr)
-    mcts.debug_mode = False
+    mcts.debug_mode = False 
     mcts.only_optimize_1 = True
 
     # 최대부터
     mcts.budgets = 100
-    mcts.max_depth = 20
-    mcts.sampling_method = 'bai_perturb' 
+    mcts.max_depth = 16
+    mcts.sampling_method = 'bai_perturb'
     mcts.c = c
     print(c)
     for i in range(mcts.budgets):
@@ -58,7 +58,8 @@ for idx, c in enumerate(c_list):
         title="Benchamrk2_Level_1_" + mcts.sampling_method + "-" + str(mcts.budgets) + "-" + str(mcts.c),
         save_dir_name='benchmark2_result', 
         is_save=True)
-            
+    
+    del mcts
     # p_utils.plot_values(
     #     ax,
     #     level_2_max_values, 
