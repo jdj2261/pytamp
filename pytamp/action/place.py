@@ -60,8 +60,6 @@ class PlaceAction(ActivityBase):
 
             #? for benchmark 2
             if self.scene_mngr.scene.bench_num == 2:
-                # if sup_obj not in ["shelf_9", "shelf_8", "shelf_15"]:
-                # if sup_obj not in ["shelf_9", "shelf_15"]:
                 if sup_obj not in ["shelf_9"]:
                     continue
             
@@ -237,6 +235,7 @@ class PlaceAction(ActivityBase):
                 y_pose = obj_pose_transformed[1, 3]
                 peg = self._get_peg(y_pose)
                 next_scene.logical_states[held_obj_name][next_scene.logical_state.hang] = next_scene.objs[peg]
+                next_scene.cur_peg_name = next_scene.objs[peg].name
             next_scene.update_logical_states()
 
             if self.scene_mngr.scene.bench_num == 1:
@@ -433,11 +432,14 @@ class PlaceAction(ActivityBase):
                     yield point, normal_vector, margin
                     
             if "hanoi_disk" in obj_name:
-                sample_points = np.array([np.array(support_obj.h_mat[:3, 3])])
+                center_upper_point = np.array(support_obj.h_mat[:3, 3])
                 hanoi_disk_height = support_obj.h_mat[2, 3] + (support_obj.gparam.bounds[1][2] - support_obj.gparam.bounds[0][2])/2
-                sample_points[:3, 2] = hanoi_disk_height
+
+                center_upper_point[2] = hanoi_disk_height
                 normals = np.array([[0, 0, 1]])
-            
+
+                sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
+                normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)
                 for point, normal_vector in zip(sample_points, normals):
                     yield point, normal_vector, margin
             

@@ -52,7 +52,7 @@ class ActivityBase(metaclass=ABCMeta):
 
         if self.scene_mngr.scene.robot is not None:
             self.cartesian_planner = CartesianPlanner(dimension=self.scene_mngr.scene.robot.arm_dof)
-            self.rrt_planner = RRTStarPlanner(delta_distance=0.05, epsilon=0.2, gamma_RRT_star=1.0, dimension=self.scene_mngr.scene.robot.arm_dof)
+            self.rrt_planner = RRTStarPlanner(delta_distance=0.05, epsilon=0.2, gamma_RRT_star=2.0, dimension=self.scene_mngr.scene.robot.arm_dof)
 
     def __repr__(self) -> str:
         return 'pytamp.action.activity.{}()'.format(type(self).__name__)
@@ -117,6 +117,7 @@ class ActivityBase(metaclass=ABCMeta):
         visible_path=False,
         fig=None,
         ax=None,
+        is_save=False,
     ):
         assert pnp_all_joint_path[0], f"Cannot simulate joint path"
 
@@ -177,7 +178,8 @@ class ActivityBase(metaclass=ABCMeta):
                 pick_object = pick_all_object,
                 attach_idx = attach_idxes,
                 detach_idx = detach_idxes,
-                place_obj_pose= place_all_object_pose)
+                place_obj_pose= place_all_object_pose,
+                is_save=is_save)
 
     def show(self):
         self.scene_mngr.show()

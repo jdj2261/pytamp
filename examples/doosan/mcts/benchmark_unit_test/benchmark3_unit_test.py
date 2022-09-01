@@ -21,7 +21,7 @@ budgets = args.budgets
 max_depth = args.max_depth
 algo = args.algo
 seed = args.seed
-# np.random.seed(seed)
+np.random.seed(seed)
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="collision")
 # c_list = 10**np.linspace(-2, 2., 5)
@@ -34,7 +34,7 @@ for idx, c in enumerate(c_list):
     # 최대부터
     mcts.budgets = 100
     mcts.max_depth = 14
-    mcts.sampling_method = 'bai_perturb'
+    mcts.sampling_method = 'random'
     mcts.c = c
     print(c)
     for i in range(mcts.budgets):

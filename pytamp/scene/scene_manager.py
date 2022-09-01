@@ -524,7 +524,8 @@ class SceneManager:
         pick_object=None,
         attach_idx:list = None,
         detach_idx:list = None,
-        place_obj_pose=None
+        place_obj_pose=None,
+        is_save=False
     ):
         self.is_pyplot = True       
         
@@ -590,7 +591,11 @@ class SceneManager:
             if i == len(joint_path)-1:
                 print("Animation Finished..")
         ani = animation.FuncAnimation(fig, update, np.arange(len(joint_path)), interval=interval, repeat=repeat)
-        self.show()
+        if is_save:
+            ani.save('test.mp4', writer="ffmpeg")
+            print("Save finished..")
+        else:
+            self.show()
 
     def show(self):
         self.render.show()

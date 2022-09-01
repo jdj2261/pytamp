@@ -1,5 +1,6 @@
 import pprint
 import string
+import numpy as np
 from collections import OrderedDict
 from dataclasses import dataclass
 
@@ -77,6 +78,7 @@ class Scene:
         self.goal_object = self.goal_objects[0]
         self.pegs = ["peg_1", "peg_2", "peg_3"]
         self.prev_peg_name = None
+        self.cur_peg_name = None
 
     def show_scene_info(self):
         print(f"*"*23 + f" {sc.OKGREEN}Scene{sc.ENDC} "+ f"*"*23)
@@ -188,6 +190,12 @@ class Scene:
                 is_success = True
         return is_success
         
+    def get_distance_between_obj1_and_obj2(self, obj1_name, obj2_name):
+        obj1_pos = self.objs[obj1_name].h_mat[:2, 3]
+        obj2_pos = self.objs[obj2_name].h_mat[:2, 3]
+        distance = np.linalg.norm(obj1_pos-obj2_pos)
+        return distance
+
     def check_terminal_state_bench_4(self):
         is_success = False
 

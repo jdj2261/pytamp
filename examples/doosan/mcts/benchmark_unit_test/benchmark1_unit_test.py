@@ -30,7 +30,7 @@ c_list = 10**np.linspace(-2, 1., 10)
 for idx, c in enumerate(c_list):
     mcts = MCTS(benchmark1.scene_mngr)
     mcts.debug_mode = False
-    mcts.only_optimize_1 = True
+    mcts.only_optimize_1 = False
 
     # 최대부터
     mcts.budgets = 100
@@ -41,7 +41,7 @@ for idx, c in enumerate(c_list):
     for i in range(mcts.budgets):
         mcts.do_planning(i)
 
-    subtree = mcts.get_success_subtree(optimizer_level=1)
+    # subtree = mcts.get_success_subtree(optimizer_level=1)
     # mcts.visualize_tree("MCTS", subtree)
     # best_nodes = mcts.get_best_node(subtree)
 
@@ -50,15 +50,15 @@ for idx, c in enumerate(c_list):
 
     level_1_max_values = mcts.values_for_level_1
     level_2_max_values = mcts.values_for_level_2
-    fig, ax = p_utils.init_2d_figure("test")
+    # fig, ax = p_utils.init_2d_figure("test")
 
-    p_utils.plot_values(
-        ax,
-        level_1_max_values, 
-        label=f"Sum of Values({mcts.sampling_method}, {mcts.budgets}, {mcts.c})", 
-        title="Benchamrk1_Level_1_" + mcts.sampling_method + "-" + str(mcts.budgets) + "-" + str(mcts.c),
-        save_dir_name='benchmark1_result', 
-        is_save=True)
+    # p_utils.plot_values(
+    #     ax,
+    #     level_1_max_values, 
+    #     label=f"Sum of Values({mcts.sampling_method}, {mcts.budgets}, {mcts.c})", 
+    #     title="Benchamrk1_Level_1_" + mcts.sampling_method + "-" + str(mcts.budgets) + "-" + str(mcts.c),
+    #     save_dir_name='benchmark1_result', 
+    #     is_save=True)
             
     # p_utils.plot_values(
     #     ax,
@@ -70,7 +70,7 @@ for idx, c in enumerate(c_list):
     # p_utils.show_figure()
 
     # # Do planning
-    # # mcts.get_all_joint_path(mcts.optimal_nodes)
-    # pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
-    # mcts.show_logical_actions(mcts.optimal_nodes)
-    # mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)
+    # mcts.get_all_joint_path(mcts.optimal_nodes)
+    pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+    mcts.show_logical_actions(mcts.optimal_nodes)
+    mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses, is_save=True)

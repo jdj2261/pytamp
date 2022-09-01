@@ -6,7 +6,6 @@ from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark3
 from pytamp.search.mcts import MCTS
 
-
 # #? python3 benchmark3_test.py --budgets 1000 --max_depth 20 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 3.')
 parser.add_argument('--budgets', metavar='T', type=int, default=300, help='Horizon')
@@ -31,7 +30,7 @@ final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
 # final_optimal_trees = []
-c_list = 10**np.linspace(0, 3., 4)
+c_list = 10**np.linspace(-2, 2., 10)
 
 for idx, c in enumerate(c_list):
     mcts = MCTS(
