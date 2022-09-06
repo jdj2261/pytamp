@@ -33,7 +33,7 @@ final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
 # final_optimal_trees = []
-c_list = 10**np.linspace(0, 3., 4)
+c_list = 10**np.linspace(-2, 2., 10)
 
 for idx, c in enumerate(c_list):
     mcts = MCTS(

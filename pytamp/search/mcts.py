@@ -36,14 +36,14 @@ class MCTS:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=3)
         elif bench_num == 2:
-            self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=3)
+            self.pick_action = PickAction(scene_mngr, n_contacts=0, limit_angle_for_force_closure=0.02, n_directions=3)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
         elif bench_num == 3:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=3, retreat_distance=0.15)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=3)
         elif bench_num == 4:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.15)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=2, retreat_distance=0.2, n_directions=5)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, retreat_distance=0.2, n_directions=3)
 
         self._sampling_method = sampling_method
         self._budgets = budgets
@@ -69,8 +69,8 @@ class MCTS:
             self.goal_reward = 10
 
         if self.scene_mngr.scene.bench_num == 4:
-            self.infeasible_reward = -10
-            self.goal_reward = 10
+            self.infeasible_reward = -5
+            self.goal_reward = 15
 
         self.values_for_level_1 = []
         self.values_for_level_2 = []
@@ -106,7 +106,7 @@ class MCTS:
 
     def do_planning(self, iter):
         self.pick_obj_set = set()
-        self.place_obj_list = []
+        self.pick_obj_list = []
         print(f"{sc.HEADER}=========== Search iteration : {iter+1} ==========={sc.ENDC}")
         if self.debug_mode:
             # visited_tree = self.get_visited_subtree()
@@ -205,7 +205,9 @@ class MCTS:
         if cur_logical_action_node is None or next_state_node is None:
             value = reward
         else:
-            discount_value = -0.5
+            discount_value = -0.1
+            if self.scene_mngr.scene.bench_num >= 3:
+                discount_value = -0.5
             value = reward + discount_value + self.gamma * self._level_wise_1_optimize(next_state_node, depth+1)
 
         self._update_value(cur_state_node, value)
@@ -381,7 +383,7 @@ class MCTS:
             inf_reward = self.infeasible_reward / (max(1, depth)) * 2
 
         if self.scene_mngr.scene.bench_num == 4:
-            inf_reward = self.infeasible_reward / (max(1, depth)) * 10
+            inf_reward = self.infeasible_reward / (max(1, depth)) * 2
 
         if cur_state is None:
             print(f"Current state is None.. Reward is {inf_reward}")
@@ -411,6 +413,7 @@ class MCTS:
                     return max(reward * 1/(depth+1) * 40, self.infeasible_reward)
 
         if self.scene_mngr.scene.bench_num == 2:
+            logical_action_type = cur_logical_action[self.pick_action.info.TYPE]
             if logical_action_type == 'place':
                 pick_obj_y_dis = next_state.get_pose_from_goal_obj(next_state.pick_obj_name)[1, 3]
                 prev_pick_obj_y_dis = cur_state.get_pose_from_goal_obj(next_state.pick_obj_name)[1, 3]
@@ -439,12 +442,12 @@ class MCTS:
 
             if logical_action_type == 'pick':
                 cur_pick_obj_name = cur_logical_action[self.pick_action.info.PICK_OBJ_NAME]
-                if cur_pick_obj_name in self.pick_obj_set:
+                if cur_pick_obj_name in self.pick_obj_list:
                     print(f"{sc.FAIL}Bad Action{sc.ENDC}")
                     reward = -1
                 else:
                     reward = 1
-                self.pick_obj_set.add(cur_pick_obj_name)
+                self.pick_obj_list.append(cur_pick_obj_name)
 
         if self.scene_mngr.scene.bench_num == 3:
             if logical_action_type == 'pick':
@@ -457,17 +460,31 @@ class MCTS:
                 self.pick_obj_set.add(cur_pick_obj_name)
 
         if self.scene_mngr.scene.bench_num == 4:
-            if logical_action_type == 'place':
-                cur_obj_pose = next_state.get_pose_from_goal_obj(next_state.pick_obj_name)[:3, 3]
-                peg_name = next_state.cur_peg_name
-                peg_pose = next_state.get_pose_from_goal_obj(peg_name)[:3, 3]
+            if logical_action_type == 'pick':
+                cur_pick_obj_name = cur_logical_action[self.pick_action.info.PICK_OBJ_NAME]
+                if self.pick_obj_list:
+                    if cur_pick_obj_name == self.pick_obj_list[-1]:
+                        print(f"{sc.FAIL}Bad Action{sc.ENDC}")
+                        # reward = max(reward * 1/(depth+1) * 20, self.infeasible_reward)
+                        reward = -1
+                    else:
+                        print(f"{sc.COLOR_CYAN}Good Action{sc.ENDC}")
+                        # reward = abs(reward) * 1/(depth+1) * 10
+                        reward = 2
+                self.pick_obj_list.append(cur_pick_obj_name)
 
-                print(cur_obj_pose[1], peg_pose[1])
-                if not np.isclose(cur_obj_pose[1], peg_pose[1], 1e-01):
-                    print(f"{sc.FAIL}Bad Action{sc.ENDC}")
-                    reward = -3
-                else:
-                    reward = 1
+        # if self.scene_mngr.scene.bench_num == 4:
+        #     if logical_action_type == 'place':
+        #         cur_obj_pose = next_state.get_pose_from_goal_obj(next_state.pick_obj_name)[:3, 3]
+        #         peg_name = next_state.cur_peg_name
+        #         peg_pose = next_state.get_pose_from_goal_obj(peg_name)[:3, 3]
+
+        #         print(cur_obj_pose[1], peg_pose[1])
+        #         if not np.isclose(cur_obj_pose[1], peg_pose[1], 1e-02):
+        #             print(f"{sc.FAIL}Bad Action{sc.ENDC}")
+        #             reward = -1
+        #         else:
+        #             reward = 1
 
         return reward
 

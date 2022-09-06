@@ -48,7 +48,7 @@ class PlaceAction(ActivityBase):
                 continue
             
             #? for benchmark 1
-            if self.scene_mngr.scene.bench_num == 1:
+            if self.scene_mngr.scene.bench_num == 1: 
                 if "box" in sup_obj and "box" in held_obj:
                     sup_obj_num = ord(sup_obj.split('_')[0])
                     held_obj_num = ord(held_obj.split('_')[0])
@@ -422,7 +422,7 @@ class PlaceAction(ActivityBase):
             for point, normal_vector in zip(sample_points, normals):
                 yield point, normal_vector, margin
         else:
-            margin = (0, 0, 0, 0)
+            
             if "table" in obj_name:   
                 normals = np.tile(np.array([0, 0, 1]), reps=(3, 1))
                 sample_points = np.array([np.array(self.scene_mngr.get_object_pose(peg)[:3, 3]) for peg in self.scene_mngr.scene.pegs])
@@ -432,17 +432,15 @@ class PlaceAction(ActivityBase):
                     yield point, normal_vector, margin
                     
             if "hanoi_disk" in obj_name:
-                center_upper_point = np.array(support_obj.h_mat[:3, 3])
+                margin = (0, 0, 0, 0)
+                sample_points = np.array([np.array(support_obj.h_mat[:3, 3])])
                 hanoi_disk_height = support_obj.h_mat[2, 3] + (support_obj.gparam.bounds[1][2] - support_obj.gparam.bounds[0][2])/2
-
-                center_upper_point[2] = hanoi_disk_height
+                sample_points[:3, 2] = hanoi_disk_height
                 normals = np.array([[0, 0, 1]])
-
-                sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
-                normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)
+            
                 for point, normal_vector in zip(sample_points, normals):
                     yield point, normal_vector, margin
-            
+                    
     @staticmethod
     def _get_weights_for_support_obj(obj_mesh):
         # heuristic
@@ -509,6 +507,8 @@ class PlaceAction(ActivityBase):
             alpha = 1
         elif bench_num == 3:
             alpha = 0.9
+        elif bench_num == 4:
+            alpha = 0.3
         
         held_obj_pose = deepcopy(self.scene_mngr.scene.objs[held_obj_name].h_mat)
         surface_points_for_sup_obj = list(self.get_surface_points_for_support_obj(support_obj_name, alpha=alpha))

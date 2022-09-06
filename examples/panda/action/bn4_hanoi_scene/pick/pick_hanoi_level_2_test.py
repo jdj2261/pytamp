@@ -48,7 +48,7 @@ for i in range(disk_num):
 scene_mngr.add_object(name="peg_1", gtype="mesh", gparam=peg_mesh, h_mat=peg1_pose.h_mat, color=[1, 0., 0.])
 scene_mngr.add_object(name="peg_2", gtype="mesh", gparam=peg_mesh, h_mat=peg2_pose.h_mat, color=[1, 0., 0.])
 scene_mngr.add_object(name="peg_3", gtype="mesh", gparam=peg_mesh, h_mat=peg3_pose.h_mat, color=[1, 0., 0.])
-scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.39, 0.263, 0.129])
+scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55])
 scene_mngr.add_robot(robot)
 
 scene_mngr.scene.logical_states["peg_1"] = {scene_mngr.scene.logical_state.on : scene_mngr.scene.objs["table"]}

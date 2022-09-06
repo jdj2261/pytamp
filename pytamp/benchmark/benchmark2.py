@@ -73,7 +73,7 @@ class Benchmark2(Benchmark):
             for i in range(20):
                 shelf_name = 'shelf_' + str(i)
                 self.shelf_mesh = get_object_mesh(shelf_name + '.stl', scale=0.9)
-                self.scene_mngr.add_object(name=shelf_name, gtype="mesh", h_mat=self.shelf_pose.h_mat, gparam=self.shelf_mesh, color=[0.39, 0.263, 0.129])
+                self.scene_mngr.add_object(name=shelf_name, gtype="mesh", h_mat=self.shelf_pose.h_mat, gparam=self.shelf_mesh, color=[0.823, 0.71, 0.55])
 
             for i in range(20):
                 bin_name = 'bin_' + str(i)
@@ -97,7 +97,7 @@ class Benchmark2(Benchmark):
             self.shelf_pose = Transform(pos=np.array([0.9, 0, abs(self.shelf_mesh.bounds[0][2])]),rot=np.array([0, 0, np.pi/2]))
             self.bin_pose = Transform(pos=np.array([0.0, 1.0, abs(self.bin_mesh.bounds[0][2])]))
         
-            self.scene_mngr.add_object(name='shelf', gtype="mesh", h_mat=self.shelf_pose.h_mat, gparam=self.shelf_mesh, color=[0.39, 0.263, 0.129])
+            self.scene_mngr.add_object(name='shelf', gtype="mesh", h_mat=self.shelf_pose.h_mat, gparam=self.shelf_mesh, color=[0.823, 0.71, 0.55])
             self.scene_mngr.add_object(name='bin', gtype="mesh", h_mat=self.bin_pose.h_mat, gparam=self.bin_mesh, color=[0.8, 0.8, 0.8])
             self.scene_mngr.set_logical_state(f"shelf", (self.scene_mngr.scene.logical_state.static, True))
             self.scene_mngr.set_logical_state(f"bin", (self.scene_mngr.scene.logical_state.static, True))

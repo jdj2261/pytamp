@@ -37,7 +37,7 @@ for i in range(20):
     clearbox_2_mesh = get_object_mesh(f'clearbox_{i}' + '.stl', scale=0.9)
     scene_mngr.add_object(name=clearbox_2_name, gtype="mesh", h_mat=clearbox2_pose.h_mat, gparam=clearbox_2_mesh, color=[0.8 + i*0.01, 0.8 + i*0.01, 0.8 + i*0.01])
 
-scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.39, 0.263, 0.129])
+scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55])
 scene_mngr.add_robot(robot)
 
 fig, ax = p_utils.init_3d_figure(name="Benchmark 3")

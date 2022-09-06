@@ -31,9 +31,9 @@ param = {'stack_num' : 6}
 benchmark_config = {2 : param}
 
 scene_mngr = SceneManager("visual", is_pyplot=False, benchmark=benchmark_config)
-scene_mngr.add_object(name="shelf_9", gtype="mesh", gparam=shelf_9_mesh, h_mat=shelf_pose.h_mat, color=[0.39, 0.263, 0.129])
-scene_mngr.add_object(name="shelf_15", gtype="mesh", gparam=shelf_15_mesh, h_mat=shelf_pose.h_mat, color=[0.39, 0.263, 0.129])
-scene_mngr.add_object(name="shelf_8", gtype="mesh", gparam=shelf_8_mesh, h_mat=shelf_pose.h_mat, color=[0.39, 0.263, 0.129])
+scene_mngr.add_object(name="shelf_9", gtype="mesh", gparam=shelf_9_mesh, h_mat=shelf_pose.h_mat, color=[0.823, 0.71, 0.55])
+scene_mngr.add_object(name="shelf_15", gtype="mesh", gparam=shelf_15_mesh, h_mat=shelf_pose.h_mat, color=[0.823, 0.71, 0.55])
+scene_mngr.add_object(name="shelf_8", gtype="mesh", gparam=shelf_8_mesh, h_mat=shelf_pose.h_mat, color=[0.823, 0.71, 0.55])
 scene_mngr.add_object(name="bottle_1", gtype="mesh", gparam=bottle_meshes[0], h_mat=bottle_pose1.h_mat, color=[1, 0, 0])
 scene_mngr.add_object(name="bottle_2", gtype="mesh", gparam=bottle_meshes[1], h_mat=bottle_pose2.h_mat, color=[0, 1, 0])
 scene_mngr.add_object(name="bottle_3", gtype="mesh", gparam=bottle_meshes[2], h_mat=bottle_pose3.h_mat, color=[0, 1, 0])

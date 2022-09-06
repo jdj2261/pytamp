@@ -41,7 +41,7 @@ scene_mngr = SceneManager("visual", is_pyplot=False, benchmark=benchmark_config)
 for i in range(20):
     shelf_name = 'shelf_' + str(i)
     shelf_mesh_test = get_object_mesh(shelf_name + '.stl', scale=0.9)
-    scene_mngr.add_object(name=shelf_name, gtype="mesh", h_mat=shelf_pose.h_mat, gparam=shelf_mesh_test, color=[0.39, 0.263, 0.129])
+    scene_mngr.add_object(name=shelf_name, gtype="mesh", h_mat=shelf_pose.h_mat, gparam=shelf_mesh_test, color=[0.823, 0.71, 0.55])
 
 for i in range(20):
     bin_name = 'bin_' + str(i)

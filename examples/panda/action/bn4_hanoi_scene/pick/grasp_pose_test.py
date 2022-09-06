@@ -45,7 +45,7 @@ rot = [0, 0, np.pi/3]
 disk_name = "hanoi_disk_6"
 hanoi_mesh = get_object_mesh(disk_name + '.stl')
 scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=Transform(rot=rot).h_mat, color=[0., 1., 0.])
-scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.39, 0.263, 0.129])
+scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55])
 scene_mngr.add_robot(robot)
 
 fig, ax = p_utils.init_3d_figure(name="Level wise 2", visible_axis=True)

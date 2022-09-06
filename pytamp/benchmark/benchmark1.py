@@ -89,7 +89,7 @@ class Benchmark1(Benchmark):
         self.tray_red_pose = Transform(pos=np.array([0.6, -0.5 - 0.3, 0.8]))
 
     def _load_scene(self):
-        self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
+        self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.823, 0.71, 0.55])
         logical_states = [("A_box", ("on", "table")),
                           ("B_box", ("on", "table")),
                           ("C_box", ("on", "table")),
@@ -105,7 +105,7 @@ class Benchmark1(Benchmark):
             self.scene_mngr.add_object(name=box_name, gtype="mesh", gparam=box_mesh, h_mat=self.box_poses[i].h_mat, color=self.box_colors[i])
             self.scene_mngr.set_logical_state(logical_states[i][0], logical_states[i][1])
 
-        self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.39, 0.263, 0.129])
+        self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.823, 0.71, 0.55])
         self.scene_mngr.add_object(name="tray_red", gtype="mesh", gparam=self.tray_red_mesh, h_mat=self.tray_red_pose.h_mat, color=[1.0, 0, 0])
         self.scene_mngr.add_robot(self.robot, self.robot.init_qpos)
         

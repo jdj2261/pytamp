@@ -204,5 +204,12 @@ class Scene:
         peg = self.logical_states[self.goal_object].get(self.logical_state.hang)
         if peg is not None:
             if peg.name == self.pegs[2] and stacked_box_num == self.disk_num:
-                is_success = True
+                peg_y_pos = self.get_pose_from_goal_obj(peg.name)[1, 3]
+                for disk in stacked_disks:
+                    disk_y_pos = self.get_pose_from_goal_obj(disk)[1, 3]
+                    if not np.isclose(disk_y_pos, peg_y_pos, 1e-05):
+                        is_success = False
+                        break
+                    else:
+                        is_success = True
         return is_success

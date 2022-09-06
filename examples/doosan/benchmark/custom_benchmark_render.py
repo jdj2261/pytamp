@@ -30,7 +30,7 @@ table_pose = Transform(pos=np.array([1.1, -0.4, -0.03]))
 tray_red_pose = Transform(pos=np.array([0.6, -0.5-0.3, 0.8]))
 A_box_pose = Transform(pos=np.array([0.6, 0, table_mesh.bounds[1][2]]))
 
-custom_benchmark.scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.39, 0.263, 0.129])
+custom_benchmark.scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55])
 custom_benchmark.scene_mngr.add_object(name="A_box", gtype="mesh", gparam=box_mesh, h_mat=A_box_pose.h_mat, color=[1.0, 1.0, 0.])
 
 pick_obj = "A_box"

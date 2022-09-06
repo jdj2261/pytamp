@@ -34,8 +34,9 @@ class PickAction(ActivityBase):
         self.deepcopy_scene(scene)
         
         for obj_name in self.scene_mngr.scene.objs:
-            if obj_name == self.scene_mngr.scene.pick_obj_name:
-                continue
+            if self.scene_mngr.scene.bench_num != 4:
+                if obj_name == self.scene_mngr.scene.pick_obj_name:
+                    continue
             
             if self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on):
                 if isinstance(self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on), list):

@@ -108,7 +108,7 @@ class Benchmark3(Benchmark):
 
     def _load_scene(self):
         self.benchmark_config = {3 : None}
-        self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.39, 0.263, 0.129])
+        self.scene_mngr.add_object(name="table", gtype="mesh", gparam=self.table_mesh, h_mat=self.table_pose.h_mat, color=[0.823, 0.71, 0.55])
 
         for i in range(self.rect_box_num):
             rect_box_name = "rect_box" + str(i)
