@@ -117,19 +117,19 @@ if bench_num == 4:
 
 plt.figure(figsize=(8,6))
 
-linearplot_with_confidence(x_list, perturb_level_2_mean_list, perturb_level_2_std_list, "Perturb", ">", "m")
-linearplot_with_confidence(x_list, uct_level_2_mean_list, uct_level_2_std_list, "uct", "v", "c")
-linearplot_with_confidence(x_list, bai_ucb_level_2_mean_list, bai_ucb_level_2_std_list, "bai_ucb", "o", "g")
-linearplot_with_confidence(x_list, random_level_2_mean_list, random_level_2_std_list, "random", "^", "r")
+linearplot_with_confidence(x_list, perturb_level_2_mean_list, perturb_level_2_std_list, "PBAI", ">", "m")
+linearplot_with_confidence(x_list, uct_level_2_mean_list, uct_level_2_std_list, "UCT", "v", "c")
+linearplot_with_confidence(x_list, bai_ucb_level_2_mean_list, bai_ucb_level_2_std_list, "BAI-UCB", "o", "g")
+linearplot_with_confidence(x_list, random_level_2_mean_list, random_level_2_std_list, "Random", "^", "r")
 
-# leg = plt.legend(loc='upper left', prop={'size' : 14})
+# leg = plt.legend(loc='upper left', prop={'size' : 20})
 # leg.get_frame().set_linewidth(0.0)
 
-plt.xlabel("Number of Trials",fontsize=16)
-plt.ylabel("Max Reward",fontsize=16)
+plt.xlabel("Number of Trials",fontsize=20)
+plt.ylabel("Total Reward",fontsize=20)
 
-plt.xticks(x_list[::20],x_list[::20],fontsize=12)
-plt.yticks(fontsize=12)
+plt.xticks(x_list[::20],x_list[::20],fontsize=16)
+plt.yticks(fontsize=16)
 
 save_dir_name="result_images"
 p_utils.createDirectory(save_dir_name)

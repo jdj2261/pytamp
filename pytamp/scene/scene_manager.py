@@ -417,7 +417,7 @@ class SceneManager:
         else:
             if not self.render.trimesh_scene:
                 self.render = RenderTriMesh()
-            self.render.render_objects_and_gripper(objs=scene.objs, robot=scene.robot)
+            self.render.render_objects_and_gripper(objs=scene.objs, robot=scene.robot, geom=self.geom)
 
     def render_objects(self, ax=None, scene=None, alpha=1.0):
         scene = scene

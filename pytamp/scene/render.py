@@ -36,9 +36,9 @@ class RenderTriMesh(SceneRender):
         self.render_objects(objs)
         self.render_robot(robot, geom)
 
-    def render_objects_and_gripper(self, objs, robot):
+    def render_objects_and_gripper(self, objs, robot, geom="collision"):
         self.render_objects(objs)
-        self.render_gripper(robot)
+        self.render_gripper(robot, geom)
 
     def render_objects(self, objs):
         self.trimesh_scene = apply_objects_to_scene(trimesh_scene=self.trimesh_scene, objs=objs)
@@ -54,8 +54,8 @@ class RenderTriMesh(SceneRender):
     def render_robot(self, robot, geom):
         self.trimesh_scene = apply_robot_to_scene(trimesh_scene=self.trimesh_scene, robot=robot, geom=geom)
         
-    def render_gripper(self, robot):
-        self.trimesh_scene = apply_gripper_to_scene(trimesh_scene=self.trimesh_scene, robot=robot)
+    def render_gripper(self, robot, geom):
+        self.trimesh_scene = apply_gripper_to_scene(trimesh_scene=self.trimesh_scene, robot=robot, geom=geom)
 
     def render_axis(
         self,
@@ -130,6 +130,8 @@ class RenderPyPlot(SceneRender):
             return
 
         for link, info in gripper_info.items():
+            if link == "collision_pad":
+                continue
             p_utils.plot_geom_from_info(ax, robot, link, "collision", info, alpha, robot_color)
 
     @staticmethod

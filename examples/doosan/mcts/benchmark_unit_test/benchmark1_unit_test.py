@@ -2,9 +2,13 @@ import numpy as np
 import argparse
 
 from pykin.utils import plot_utils as p_utils
-from pytamp.benchmark import Benchmark1
+from pytamp.benchmark import Benchmark, Benchmark1
 from pytamp.search.mcts import MCTS
 
+
+benchmark = Benchmark(robot_name="doosan", geom="visual", is_pyplot=True)
+fig, ax = p_utils.init_3d_figure(name="Benchmark")
+benchmark.scene_mngr.show()
 
 #? python3 benchmark1_test.py --budgets 1 --max_depth 1 --seed 3 --algo bai_ucb
 parser = argparse.ArgumentParser(description='Test Benchmark 1.')
@@ -23,14 +27,14 @@ algo = args.algo
 seed = args.seed
 np.random.seed(seed)
 
-benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=6)
+benchmark1 = Benchmark1(robot_name="doosan", geom="visual", is_pyplot=False, box_num=6)
 
 c_list = 10**np.linspace(-2, 1., 10)
 # c_list = [1, 10, 100, 1000]
 for idx, c in enumerate(c_list):
     mcts = MCTS(benchmark1.scene_mngr)
     mcts.debug_mode = False
-    mcts.only_optimize_1 = False
+    mcts.only_optimize_1 = True
 
     # 최대부터
     mcts.budgets = 100
@@ -41,15 +45,30 @@ for idx, c in enumerate(c_list):
     for i in range(mcts.budgets):
         mcts.do_planning(i)
 
+        if mcts.level_wise_1_success:
+            sub_nodes = mcts.get_nodes_from_leaf_node(mcts.success_level_1_leaf_node)[::-1]
+            for n in sub_nodes:
+                if mcts.tree.nodes[n][mcts.node_data.TYPE] == "state":
+                    action = mcts.tree.nodes[n].get(mcts.node_data.ACTION)
+                    state = mcts.tree.nodes[n][mcts.node_data.STATE]
+                    if action:
+                        if list(action.keys())[0] == 'grasp':
+                            print("pick")
+                            mcts.render_state("Success", state, close_gripper=True)
+                        if list(action.keys())[0] == 'release':
+                            print("place")
+                            mcts.render_state("Success", state, close_gripper=False)
+        mcts.level_wise_1_success = False
+
     # subtree = mcts.get_success_subtree(optimizer_level=1)
     # mcts.visualize_tree("MCTS", subtree)
     # best_nodes = mcts.get_best_node(subtree)
 
-    level_1_max_value = mcts.values_for_level_1
-    max_iter = np.argmax(level_1_max_value)
+    # level_1_max_value = mcts.values_for_level_1
+    # max_iter = np.argmax(level_1_max_value)
 
-    level_1_max_values = mcts.values_for_level_1
-    level_2_max_values = mcts.values_for_level_2
+    # level_1_max_values = mcts.values_for_level_1
+    # level_2_max_values = mcts.values_for_level_2
     # fig, ax = p_utils.init_2d_figure("test")
 
     # p_utils.plot_values(
@@ -71,6 +90,6 @@ for idx, c in enumerate(c_list):
 
     # # Do planning
     # mcts.get_all_joint_path(mcts.optimal_nodes)
-    pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
-    mcts.show_logical_actions(mcts.optimal_nodes)
-    mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses, is_save=True)
+    # pnp_all_joint_path, pick_all_objects, place_all_object_poses = mcts.get_all_joint_path(mcts.optimal_nodes)
+    # mcts.show_logical_actions(mcts.optimal_nodes)
+    # mcts.place_action.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses, is_save=True)

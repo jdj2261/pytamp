@@ -136,6 +136,7 @@ class MCTS:
                     self.values_for_level_2.append(self.get_max_value_level_2(success_level_1_sub_nodes))
                 else:
                     self.values_for_level_2.append(self.level2_max_value)
+                    
                 self.level_wise_1_success = False
             else:
                 self.values_for_level_2.append(self.level2_max_value)
@@ -162,6 +163,7 @@ class MCTS:
         if depth >= self.max_depth:
             reward = self.infeasible_reward
             self._update_value(cur_state_node, reward)
+            # self.render_state("cur_state", cur_state, close_gripper=False)
             print(f"{sc.WARNING}Exceeded the maximum depth!!{sc.ENDC}")
             return 0
 
@@ -194,9 +196,12 @@ class MCTS:
 
         #! [DEBUG]
         if self.debug_mode:
-            self.render_state("cur_state", cur_state)
-            self.render_state("next_state", next_state)
-        
+            if cur_logical_action[self.pick_action.info.TYPE] == "pick":
+                self.render_state("cur_state", cur_state, close_gripper=False)
+                # self.render_state("next_state", next_state, close_gripper=False)
+            if cur_logical_action[self.pick_action.info.TYPE] == "place":
+                self.render_state("cur_state", cur_state, close_gripper=True)
+                # self.render_state("next_state", next_state, close_gripper=True)
         #? Get reward
         #*======================================================================================================================== #
         reward = self._get_reward(cur_state, cur_logical_action, next_state, depth)
@@ -372,7 +377,6 @@ class MCTS:
             print(f"Terminal State! Reward is {self.goal_reward}")
             return self.goal_reward
 
-        inf_reward = self.infeasible_reward / (max(1, depth)) * 2
         if self.scene_mngr.scene.bench_num == 1:
             inf_reward = self.infeasible_reward / (max(1, depth)) * 10
         
@@ -797,13 +801,32 @@ class MCTS:
                 bbox=dict(facecolor="skyblue", edgecolor='black', boxstyle='round,pad=0.1'))
         plt.show()
 
-    def render_state(self, title, state):
+    def render_state(self, title, state:Scene, close_gripper=None):
         ax = None
         if self.scene_mngr.is_pyplot is True:
             fig, ax = p_utils.init_3d_figure(name=title)
 
+        if close_gripper is not None:
+            if close_gripper:
+                state.robot.close_gripper(0.01)
+                if "milk" in state.pick_obj_name:
+                    state.robot.close_gripper(0.04)
+                if "can" in state.pick_obj_name:
+                    state.robot.close_gripper(0.03)
+                if "disk" in state.pick_obj_name:
+                    state.robot.close_gripper(0.04)
         self.pick_action.scene_mngr.render_objects_and_gripper(ax, state)
         self.pick_action.show()
+        
+        if close_gripper is not None:
+            if close_gripper:
+                state.robot.open_gripper(0.01)
+                if "milk" in state.pick_obj_name:
+                    state.robot.open_gripper(0.04)
+                if "can" in state.pick_obj_name:
+                    state.robot.open_gripper(0.03)
+                if "disk" in state.pick_obj_name:
+                    state.robot.open_gripper(0.04)
 
     def render_action(self, title, scene, actions, is_holding):
         fig, ax = p_utils.init_3d_figure(name=title)
