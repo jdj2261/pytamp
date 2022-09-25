@@ -1,12 +1,15 @@
 import numpy as np
+import trimesh, io
 import matplotlib.animation as animation
 from collections import OrderedDict
 from copy import deepcopy
+from PIL import Image
 
 from pykin.utils import plot_utils as p_utils
 from pykin.robots.single_arm import SingleArm
 from pykin.collision.collision_manager import CollisionManager
 from pykin.utils.mesh_utils import get_relative_transform
+from pykin.utils.kin_utils import apply_robot_to_scene
 from pytamp.scene.scene import Scene
 from pytamp.scene.object import Object
 from pytamp.scene.render import RenderPyPlot, RenderTriMesh
@@ -525,7 +528,9 @@ class SceneManager:
         attach_idx:list = None,
         detach_idx:list = None,
         place_obj_pose=None,
-        is_save=False
+        is_save=False,
+        video_name="test",
+        fps=30
     ):
         self.is_pyplot = True       
         
@@ -592,11 +597,46 @@ class SceneManager:
                 print("Animation Finished..")
         ani = animation.FuncAnimation(fig, update, np.arange(len(joint_path)), interval=interval, repeat=repeat)
         if is_save:
-            ani.save('test.mp4', writer="ffmpeg")
+            video_name = video_name + '.mp4'
+            ani.save(video_name, writer="ffmpeg", fps=fps)
             print("Save finished..")
         else:
             self.show()
 
+    def show_scene(
+        self,
+        init_scene=None,
+        joint_path=[], 
+        pick_object=None,
+        attach_idx:list = None,
+        detach_idx:list = None,
+        place_obj_pose=None,
+        is_save=False,
+    ):   
+        # if init_scene is not None:
+        #     self._scene = deepcopy(init_scene)
+        
+        # if pick_object is None:
+        #     pick_object = self.attached_obj_name
+
+        # self.is_attach = False
+
+        for idx, joint in enumerate(joint_path):
+            print(joint)
+            trimesh_scene = trimesh.Scene()
+            
+            self.set_robot_eef_pose(joint)
+            trimesh_scene = apply_robot_to_scene(trimesh_scene=trimesh_scene, robot=self.scene.robot, geom="visual")
+            trimesh_scene.set_camera(np.array([np.pi/2, 0, np.pi/2]), 5, resolution=(640, 512))
+            # trimesh_scene.show()
+            # self.render_scene()
+            data = trimesh_scene.save_image(visible=True)
+            data_io = io.BytesIO(data)
+            # img = Image.open(data_io)
+            im = Image.open(data_io)
+            file_name = 'test'+str(idx)+'.png'
+            im.save(file_name)
+ 
     def show(self):
         self.render.show()
 

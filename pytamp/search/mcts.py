@@ -34,7 +34,7 @@ class MCTS:
         
         if bench_num == 1:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, n_directions=1)
-            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=3)
+            self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0, n_directions=1, release_distance=0.02, retreat_distance=0.15)
         elif bench_num == 2:
             self.pick_action = PickAction(scene_mngr, n_contacts=0, limit_angle_for_force_closure=0.02, n_directions=3)
             self.place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
@@ -82,6 +82,7 @@ class MCTS:
         self.history_level_1_optimal_nodes = []
         self.optimal_nodes = []
         self.only_optimize_1 = False
+        self.has_aleardy_level_1_optimal_nodes = False
 
     def _create_tree(self, state:Scene):
         tree = nx.DiGraph()
@@ -122,14 +123,14 @@ class MCTS:
             if self.level_wise_1_success:
                 success_level_1_sub_nodes = self.get_nodes_from_leaf_node(self.success_level_1_leaf_node)[::-1]
 
-                has_aleardy_level_1_optimal_nodes = False
+                self.has_aleardy_level_1_optimal_nodes = False
                 for level_1_optimal_nodes in self.history_level_1_optimal_nodes:
                     if set(success_level_1_sub_nodes).issubset(level_1_optimal_nodes):
                         print("Aleady has optimal nodes!!")
-                        has_aleardy_level_1_optimal_nodes = True
+                        self.has_aleardy_level_1_optimal_nodes = True
                         break
                         
-                if not has_aleardy_level_1_optimal_nodes:
+                if not self.has_aleardy_level_1_optimal_nodes:
                     self._level_wise_2_optimize(success_level_1_sub_nodes)
                     self._update_success_level_1_and_2(success_level_1_sub_nodes)
                     self.history_level_1_optimal_nodes.append(success_level_1_sub_nodes)

@@ -72,7 +72,8 @@ class RenderTriMesh(SceneRender):
         self.trimesh_scene.add_geometry(sphere_mesh, transform=pose)
 
     def show(self):
-        self.trimesh_scene.set_camera(np.array([np.pi/2, 0, np.pi/2]), 5, resolution=(640, 512))
+        # self.trimesh_scene.set_camera(np.array([-np.pi/2 - np.pi/6, np.pi, np.pi/6 + np.pi/2]), 3, resolution=(640, 480))
+        self.trimesh_scene.set_camera(np.array([-np.pi/2 - np.pi/3, np.pi, -np.pi/6]), 2.5, resolution=(640, 480))
         self.trimesh_scene.show('gl')
         self.trimesh_scene = None
 

@@ -407,9 +407,12 @@ class PlaceAction(ActivityBase):
         
         if obj_name == "table":
             if self.scene_mngr.scene.bench_num == 1:
-                n_sample_sup_obj = 3
+                n_sample_sup_obj = 40
             if self.scene_mngr.scene.bench_num == 3:
-                n_sample_sup_obj = 3
+                n_sample_sup_obj = 20
+        
+        if obj_name == "tray_red":
+            n_sample_sup_obj = 0
 
         sample_points, normals = self.get_surface_points_from_mesh(copied_mesh, n_sample_sup_obj, weights)
         normals = np.tile(np.array([0., 0., 1.]), (normals.shape[0],1))
@@ -533,9 +536,9 @@ class PlaceAction(ActivityBase):
 
                 if bench_num == 1:
                     if "table" in support_obj_name:
-                        if not (min_x + 0.1 <= center_point[0] <= max_x - 0.2):
+                        if not (min_x + 0.1 <= center_point[0] <= max_x - 0.3):
                             continue
-                        if not (min_y + 0.1 <= center_point[1] <= max_y - 0.1):
+                        if not (min_y + 0.1 <= center_point[1] <= max_y - 0.2):
                             continue
                 if bench_num == 2:
                     center_point = copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0])/2
@@ -556,9 +559,9 @@ class PlaceAction(ActivityBase):
                             continue
                 if bench_num == 3:
                     if "table" in support_obj_name:
-                        if not (min_x <= center_point[0] <= max_x - 0.2):
+                        if not (min_x+0.1 <= center_point[0] <= max_x - 0.2):
                             continue
-                        if not (min_y <= center_point[1] <= max_y - 0.1):
+                        if not (min_y <= center_point[1] <= max_y - 0.3):
                             continue
 
                 if eef_pose is not None:

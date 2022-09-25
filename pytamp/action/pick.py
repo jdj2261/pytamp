@@ -45,10 +45,16 @@ class PickAction(ActivityBase):
                         if self.scene_mngr.scene.bench_num == 2:
                             if placed_obj_name in ["shelf_8", "shelf_15"]:
                                 continue
+                        if self.scene_mngr.scene.bench_num == 3:
+                            if placed_obj_name in ["table"]:
+                                continue
                 else:
                     placed_obj_name = self.scene_mngr.scene.logical_states[obj_name].get(self.scene_mngr.scene.logical_state.on).name
                     if self.scene_mngr.scene.bench_num == 2:
                         if placed_obj_name in ["shelf_8", "shelf_15"]:
+                            continue
+                    if self.scene_mngr.scene.bench_num == 3:
+                        if placed_obj_name in ["table"]:
                             continue
             if not any(logical_state in self.scene_mngr.scene.logical_states[obj_name] for logical_state in self.filter_logical_states):
                 action_level_1 = self.get_action_level_1_for_single_object(obj_name=obj_name)
@@ -403,6 +409,6 @@ class PickAction(ActivityBase):
                 tcp_pose[:3,0] = x
                 tcp_pose[:3,1] = y
                 tcp_pose[:3,2] = z
-                tcp_pose[:3,3] = center_point
+                tcp_pose[:3,3] = center_point + [0, 0, 0.05]
 
                 yield tcp_pose

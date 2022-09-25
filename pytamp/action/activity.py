@@ -100,7 +100,7 @@ class ActivityBase(metaclass=ABCMeta):
             scene = self.scene_mngr.scene
         self.scene_mngr.scene = deepcopy(scene)
 
-    def get_cartesian_path(self, cur_q, goal_pose, n_step=500, collision_check=False):
+    def get_cartesian_path(self, cur_q, goal_pose, n_step=100, collision_check=False):
         self.cartesian_planner._n_step = n_step
         self.cartesian_planner.run(self.scene_mngr, cur_q, goal_pose, resolution=0.1, collision_check=collision_check)
         return self.cartesian_planner.get_joint_path()
@@ -118,8 +118,10 @@ class ActivityBase(metaclass=ABCMeta):
         fig=None,
         ax=None,
         is_save=False,
+        video_name="test",
+        fps=60
     ):
-        assert pnp_all_joint_path[0], f"Cannot simulate joint path"
+        # assert pnp_all_joint_path[0].any(), f"Cannot simulate joint path"
 
         self.scene_mngr.is_pyplot = True
         eef_poses = None
@@ -164,6 +166,7 @@ class ActivityBase(metaclass=ABCMeta):
 
             if ax is None and fig is None:
                 fig, ax = p_utils.init_3d_figure( name="Level wise 2")
+
             self.scene_mngr.animation(
                 ax,
                 fig,
@@ -171,15 +174,62 @@ class ActivityBase(metaclass=ABCMeta):
                 joint_path=result_joint,
                 eef_poses=eef_poses,
                 visible_gripper=True,
-                visible_text=True,
+                visible_text=False,
                 alpha=1.0,
-                interval=50, #ms
+                interval=1, #ms
                 repeat=False,
                 pick_object = pick_all_object,
                 attach_idx = attach_idxes,
                 detach_idx = detach_idxes,
                 place_obj_pose= place_all_object_pose,
-                is_save=is_save)
+                is_save=is_save,
+                video_name=video_name,
+                fps=fps)
+
+    def save_scene(
+        self,
+        pnp_all_joint_path, 
+        pick_all_objects, 
+        place_all_object_poses
+    ):
+        for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(pnp_all_joint_path, pick_all_objects, place_all_object_poses):
+            result_joint = []
+            attach_idxes = []
+            detach_idxes = []
+            attach_idx = 0
+            detach_idx = 0
+            grasp_task_idx = 0
+            post_grasp_task_idx = 0
+            release_task_idx = 0
+            post_release_task_idx = 0
+            idx = 0
+
+            for pnp_joint_path in pnp_joint_all_path:        
+                for _, (task, joint_path) in enumerate(pnp_joint_path.items()):
+                    for _, joint in enumerate(joint_path):
+                        idx += 1
+                        
+                        if task == self.move_data.MOVE_grasp:
+                            grasp_task_idx = idx
+                        if task == self.move_data.MOVE_post_grasp:
+                            post_grasp_task_idx = idx
+                        if post_grasp_task_idx - grasp_task_idx == 1:
+                            attach_idx = grasp_task_idx
+                            attach_idxes.append(attach_idx)
+
+                        if task == self.move_data.MOVE_release:
+                            release_task_idx = idx
+                        if task == self.move_data.MOVE_post_release:
+                            post_release_task_idx = idx
+                        if post_release_task_idx - release_task_idx == 1:
+                            detach_idx = release_task_idx
+                            detach_idxes.append(detach_idx)
+                        
+                        result_joint.append(joint)
+        
+        self.scene_mngr.show_scene(
+            init_scene=self.scene_mngr.init_scene,
+            joint_path=result_joint,)
 
     def show(self):
         self.scene_mngr.show()

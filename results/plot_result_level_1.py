@@ -26,13 +26,13 @@ def get_final_all_values(algo, budgets, start_seed, end_seed, end_num=0):
     
     for seed in range(start_seed, end_seed+1):
         if bench_num == 1:
-            filename = f'benchmark1_result/benchmark1_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
+            filename = f'benchmark1/benchmark1_result/benchmark1_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
         if bench_num == 2:
-            filename = f'benchmark2_result/benchmark2_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
+            filename = f'benchmark2/benchmark2_result/benchmark2_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
         if bench_num == 3:
-            filename = f'benchmark3_result/benchmark3_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
+            filename = f'benchmark3/benchmark3_result/benchmark3_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
         if bench_num == 4:
-            filename = f'benchmark4_result/benchmark4_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
+            filename = f'benchmark4/benchmark4_result/benchmark4_test_algo({algo})_budget({budgets})_seed({seed})_{end_num}.npy'
         with open(filename,'rb') as f:
             data_for_seed = np.load(f, allow_pickle=True)
             perturb_final_level_1_values.append(data_for_seed['level_1_values'])
