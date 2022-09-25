@@ -186,50 +186,5 @@ class ActivityBase(metaclass=ABCMeta):
                 video_name=video_name,
                 fps=fps)
 
-    def save_scene(
-        self,
-        pnp_all_joint_path, 
-        pick_all_objects, 
-        place_all_object_poses
-    ):
-        for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(pnp_all_joint_path, pick_all_objects, place_all_object_poses):
-            result_joint = []
-            attach_idxes = []
-            detach_idxes = []
-            attach_idx = 0
-            detach_idx = 0
-            grasp_task_idx = 0
-            post_grasp_task_idx = 0
-            release_task_idx = 0
-            post_release_task_idx = 0
-            idx = 0
-
-            for pnp_joint_path in pnp_joint_all_path:        
-                for _, (task, joint_path) in enumerate(pnp_joint_path.items()):
-                    for _, joint in enumerate(joint_path):
-                        idx += 1
-                        
-                        if task == self.move_data.MOVE_grasp:
-                            grasp_task_idx = idx
-                        if task == self.move_data.MOVE_post_grasp:
-                            post_grasp_task_idx = idx
-                        if post_grasp_task_idx - grasp_task_idx == 1:
-                            attach_idx = grasp_task_idx
-                            attach_idxes.append(attach_idx)
-
-                        if task == self.move_data.MOVE_release:
-                            release_task_idx = idx
-                        if task == self.move_data.MOVE_post_release:
-                            post_release_task_idx = idx
-                        if post_release_task_idx - release_task_idx == 1:
-                            detach_idx = release_task_idx
-                            detach_idxes.append(detach_idx)
-                        
-                        result_joint.append(joint)
-        
-        self.scene_mngr.show_scene(
-            init_scene=self.scene_mngr.init_scene,
-            joint_path=result_joint,)
-
     def show(self):
         self.scene_mngr.show()
