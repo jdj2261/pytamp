@@ -6,21 +6,15 @@ from pykin.utils.transform_utils import get_pose_from_homogeneous
 
 object_types = ("mesh", "sphere", "box", "cylinder")
 
+
 class Object:
-    def __init__(
-        self, 
-        name, 
-        gtype, 
-        gparam, 
-        h_mat=np.eye(4), 
-        color=[0., 1., 0.]
-    ):
+    def __init__(self, name, gtype, gparam, h_mat=np.eye(4), color=[0.0, 1.0, 0.0]):
         self.name = name
         self.gtype = gtype
         self.gparam = gparam
         self.h_mat = h_mat
         self.color = np.asarray(color, dtype=np.float32)
-        
+
         self._check_gtype(gtype)
         self._check_gparam(gtype, gparam)
 
@@ -30,7 +24,7 @@ class Object:
         return f"""{scolors.HEADER}Object{scolors.ENDC}(name={self.name}, pos={pos})"""
 
     def __eq__(self, other):
-        if (self.name == other.name):
+        if self.name == other.name:
             return True
         else:
             return False
@@ -42,11 +36,11 @@ class Object:
         """
         if gtype not in object_types:
             raise NotFoundError(f"'{gtype}' is not in {object_types}")
-    
+
     @staticmethod
     def _check_gparam(gtype, gparam):
         """
-        check object's geom param 
+        check object's geom param
         """
         if not isinstance(gparam, (tuple, list, np.ndarray)):
             gparam = [gparam]

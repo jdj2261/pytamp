@@ -27,9 +27,15 @@ grasp_poses.extend(list(pick.get_grasp_pose_from_heuristic("A_box")))
 fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 grasp_poses_for_only_gripper = list(pick.get_all_grasp_poses_not_collision(grasp_poses))
 for grasp_pose_for_only_gripper in grasp_poses_for_only_gripper:
-    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
-    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp])
-    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp])
+    pick.scene_mngr.render_axis(
+        ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp]
+    )
+    pick.scene_mngr.render_axis(
+        ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp]
+    )
+    pick.scene_mngr.render_axis(
+        ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp]
+    )
     # pick.scene_mngr.render_gripper(ax, alpha=0.7, pose=grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)

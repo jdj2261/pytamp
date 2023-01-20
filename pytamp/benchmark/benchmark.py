@@ -1,13 +1,14 @@
 from pytamp.scene.scene_manager import SceneManager
 
+
 class Benchmark:
     def __init__(
-        self, 
+        self,
         robot_name,
         geom="collision",
         is_pyplot=True,
         benchmark_config=None,
-        only_sim=False
+        only_sim=False,
     ):
         self.robot_name = robot_name
         self.geom = geom
@@ -20,17 +21,21 @@ class Benchmark:
         if self.robot_name == "doosan":
             urdf_file_name = "doosan_with_robotiq140"
             self.gripper_name = "robotiq140"
-        self.urdf_file = 'urdf/' + self.robot_name + '/' + urdf_file_name + '.urdf'
+        self.urdf_file = "urdf/" + self.robot_name + "/" + urdf_file_name + ".urdf"
 
-        self.scene_mngr = SceneManager(self.geom, is_pyplot=self.is_pyplot, benchmark=benchmark_config, debug_mode=True)
+        self.scene_mngr = SceneManager(
+            self.geom,
+            is_pyplot=self.is_pyplot,
+            benchmark=benchmark_config,
+            debug_mode=True,
+        )
         self.robot = None
-        
+
     def _load_robot(self):
         pass
 
     def _load_objects(self):
         pass
-        
+
     def _load_scene(self):
         pass
-        

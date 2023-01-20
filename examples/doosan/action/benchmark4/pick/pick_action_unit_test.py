@@ -3,7 +3,9 @@ from pytamp.action.pick import PickAction
 from pytamp.benchmark import Benchmark4
 
 benchmark4 = Benchmark4(robot_name="doosan", geom="visual", is_pyplot=True, disk_num=5)
-pick = PickAction(benchmark4.scene_mngr, n_contacts=3, n_directions=10, retreat_distance=0.1)
+pick = PickAction(
+    benchmark4.scene_mngr, n_contacts=3, n_directions=10, retreat_distance=0.1
+)
 
 ###### All Contact Points #######
 for obj in benchmark4.scene_mngr.scene.goal_objects:
@@ -27,12 +29,18 @@ for obj in benchmark4.scene_mngr.scene.goal_objects:
 
     # ###### Level wise - 1 #######
     fig, ax = p_utils.init_3d_figure(name="Level wise 1")
-    grasp_poses_for_only_gripper = list(pick.get_all_grasp_poses_not_collision(grasp_poses))
+    grasp_poses_for_only_gripper = list(
+        pick.get_all_grasp_poses_not_collision(grasp_poses)
+    )
     for grasp_pose_for_only_gripper in grasp_poses_for_only_gripper:
-        pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
+        pick.scene_mngr.render_axis(
+            ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp]
+        )
         # pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp])
         # pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp])
-        pick.scene_mngr.render_gripper(ax, alpha=0.7, pose=grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
+        pick.scene_mngr.render_gripper(
+            ax, alpha=0.7, pose=grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp]
+        )
     pick.scene_mngr.render_objects(ax)
     p_utils.plot_basis(ax)
     pick.show()

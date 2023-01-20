@@ -6,17 +6,20 @@ from pykin.utils.mesh_utils import get_object_mesh, get_mesh_bounds
 
 from pytamp.scene.scene_manager import SceneManager
 
-file_path = 'urdf/panda/panda.urdf'
+file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path, 
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), 
-    has_gripper=True)
+    f_name=file_path,
+    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
+    has_gripper=True,
+)
 robot.setup_link_name("panda_link_0", "right_hand")
-robot.init_qpos = np.array([0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi/4])
+robot.init_qpos = np.array(
+    [0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi / 4]
+)
 
-table_mesh = get_object_mesh('ben_table.stl')
-peg_mesh = get_object_mesh('hanoi_peg.stl', scale=[0.9, 0.9, 1.0])
-disk_mesh = get_object_mesh('hanoi_disk.stl')
+table_mesh = get_object_mesh("ben_table.stl")
+peg_mesh = get_object_mesh("hanoi_peg.stl", scale=[0.9, 0.9, 1.0])
+disk_mesh = get_object_mesh("hanoi_disk.stl")
 
 peg_mesh_bound = get_mesh_bounds(mesh=peg_mesh)
 disk_mesh_bound = get_mesh_bounds(mesh=disk_mesh)
@@ -29,26 +32,58 @@ peg2_pose = Transform(pos=np.array([0.6, 0, table_height + peg_mesh_bound[1][2]]
 peg3_pose = Transform(pos=np.array([0.6, 0.25, table_height + peg_mesh_bound[1][2]]))
 
 disk_num = 3
-disk_pose = [ Transform() for _ in range(disk_num)]
-disk_object = [ 0 for _ in range(disk_num)]
+disk_pose = [Transform() for _ in range(disk_num)]
+disk_object = [0 for _ in range(disk_num)]
 
-benchmark_config = {4 : None}
+benchmark_config = {4: None}
 scene_mngr = SceneManager("visual", is_pyplot=True, benchmark=benchmark_config)
 
 theta = np.linspace(-np.pi, np.pi, disk_num)
 for i in range(disk_num):
     for j in range(7):
-        disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh *i ])
+        disk_pos = np.array(
+            [0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh * i]
+        )
         disk_ori = Transform._to_quaternion([0, 0, theta[i]])
         disk_pose[i] = Transform(pos=disk_pos, rot=disk_ori)
         disk_name = "hanoi_disk_" + str(i) + "_" + str(j)
-        hanoi_mesh = get_object_mesh(f'hanoi_disk_{j}' + '.stl')
-        scene_mngr.add_object(name=disk_name, gtype="mesh", gparam=hanoi_mesh, h_mat=disk_pose[i].h_mat, color=[0., 1., 0.])
+        hanoi_mesh = get_object_mesh(f"hanoi_disk_{j}" + ".stl")
+        scene_mngr.add_object(
+            name=disk_name,
+            gtype="mesh",
+            gparam=hanoi_mesh,
+            h_mat=disk_pose[i].h_mat,
+            color=[0.0, 1.0, 0.0],
+        )
 
-scene_mngr.add_object(name="peg_1", gtype="mesh", gparam=peg_mesh, h_mat=peg1_pose.h_mat, color=[1, 0., 0.])
-scene_mngr.add_object(name="peg_2", gtype="mesh", gparam=peg_mesh, h_mat=peg2_pose.h_mat, color=[1, 0., 0.])
-scene_mngr.add_object(name="peg_3", gtype="mesh", gparam=peg_mesh, h_mat=peg3_pose.h_mat, color=[1, 0., 0.])
-scene_mngr.add_object(name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55])
+scene_mngr.add_object(
+    name="peg_1",
+    gtype="mesh",
+    gparam=peg_mesh,
+    h_mat=peg1_pose.h_mat,
+    color=[1, 0.0, 0.0],
+)
+scene_mngr.add_object(
+    name="peg_2",
+    gtype="mesh",
+    gparam=peg_mesh,
+    h_mat=peg2_pose.h_mat,
+    color=[1, 0.0, 0.0],
+)
+scene_mngr.add_object(
+    name="peg_3",
+    gtype="mesh",
+    gparam=peg_mesh,
+    h_mat=peg3_pose.h_mat,
+    color=[1, 0.0, 0.0],
+)
+scene_mngr.add_object(
+    name="table",
+    gtype="mesh",
+    gparam=table_mesh,
+    h_mat=table_pose.h_mat,
+    color=[0.823, 0.71, 0.55],
+)
 scene_mngr.add_robot(robot)
 
 test_pose = np.eye(4)
@@ -72,7 +107,6 @@ scene_mngr.show()
 # scene_mngr.show_logical_states()
 
 
-
 # pick = PickAction(scene_mngr, n_contacts=0, n_directions=0)
 
 
@@ -87,7 +121,7 @@ scene_mngr.show()
 # for grasp_pose in actions[pick.info.GRASP_POSES]:
 #     # pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
 #     pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
-    
+
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_pre_grasp])
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_grasp])
 
@@ -132,7 +166,7 @@ scene_mngr.show()
 # # for grasp_pose in actions[pick.info.GRASP_POSES]:
 # #     # pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
 # #     pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
-    
+
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_pre_grasp])
 # #     # pick.scene_mngr.render_gripper(ax, pose=grasp_pose[pick.move_data.MOVE_grasp])
 
@@ -161,7 +195,7 @@ scene_mngr.show()
 # #             pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
 # #             pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_pre_grasp])
 # #             pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_post_grasp])
-            
+
 # # pick.scene_mngr.render_objects(ax)
 # # p_utils.plot_basis(ax)
 # # pick.show()

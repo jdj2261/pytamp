@@ -7,14 +7,28 @@ from pytamp.benchmark import Benchmark1
 from pytamp.search.mcts import MCTS
 
 
-#? python3 benchmark1_test.py --budgets 1000 --max_depth 20 --seed 3 --algo bai_ucb
-parser = argparse.ArgumentParser(description='Test Benchmark 1.')
-parser.add_argument('--budgets', metavar='T', type=int, default=100, help='Horizon')
-parser.add_argument('--max_depth', metavar='H', type=int, default=16, help='Max depth')
-parser.add_argument('--seed', metavar='i', type=int, default=2, help='A random seed')
-parser.add_argument('--algo', metavar='alg', type=str, default='bai_perturb', choices=['bai_perturb', 'bai_ucb', 'uct', 'random', 'greedy'], help='Choose one (bai_perturb, bai_ucb, uct)')
-parser.add_argument('--debug_mode', default=False, type=lambda x: (str(x).lower() == 'true'), help='Debug mode')
-parser.add_argument('--box_number', metavar='N', type=int, default=6, help='Box Number(6 or less)')
+# ? python3 benchmark1_test.py --budgets 1000 --max_depth 20 --seed 3 --algo bai_ucb
+parser = argparse.ArgumentParser(description="Test Benchmark 1.")
+parser.add_argument("--budgets", metavar="T", type=int, default=100, help="Horizon")
+parser.add_argument("--max_depth", metavar="H", type=int, default=16, help="Max depth")
+parser.add_argument("--seed", metavar="i", type=int, default=2, help="A random seed")
+parser.add_argument(
+    "--algo",
+    metavar="alg",
+    type=str,
+    default="bai_perturb",
+    choices=["bai_perturb", "bai_ucb", "uct", "random", "greedy"],
+    help="Choose one (bai_perturb, bai_ucb, uct)",
+)
+parser.add_argument(
+    "--debug_mode",
+    default=False,
+    type=lambda x: (str(x).lower() == "true"),
+    help="Debug mode",
+)
+parser.add_argument(
+    "--box_number", metavar="N", type=int, default=6, help="Box Number(6 or less)"
+)
 args = parser.parse_args()
 
 debug_mode = args.debug_mode
@@ -29,7 +43,9 @@ seed = args.seed
 number = args.box_number
 # np.random.seed(seed)
 
-benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=number)
+benchmark1 = Benchmark1(
+    robot_name="doosan", geom="collision", is_pyplot=True, box_num=number
+)
 final_level_1_values = []
 final_level_2_values = []
 final_optimal_nodes = []
@@ -41,19 +57,22 @@ final_place_all_object_poses = []
 c_list = [4.64]
 cnt = 0
 n_seed = 100
-for seed in range(10, n_seed+1):
+for seed in range(10, n_seed + 1):
     np.random.seed(seed)
     for idx, c in enumerate(c_list):
         mcts = MCTS(
-            scene_mngr=benchmark1.scene_mngr, 
-            sampling_method=algo, 
-            budgets=budgets, 
-            max_depth=max_depth, 
+            scene_mngr=benchmark1.scene_mngr,
+            sampling_method=algo,
+            budgets=budgets,
+            max_depth=max_depth,
             c=c,
-            debug_mode=debug_mode)
+            debug_mode=debug_mode,
+        )
         mcts.only_optimize_1 = True
         for i in range(budgets):
-            print(f"\n[{idx+1}/{len(c_list)}] Benchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}")
+            print(
+                f"\n[{idx+1}/{len(c_list)}] Benchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, C: {c}, Seed: {seed}"
+            )
             mcts.do_planning(i)
             if mcts.level_wise_1_success:
                 break
@@ -77,7 +96,7 @@ for seed in range(10, n_seed+1):
         #     # final_optimal_trees.append(mcts.tree.nodes)
         del mcts
         # print(final_optimal_trees)
-        print('delete mcts')
+        print("delete mcts")
 
 print(cnt)
 

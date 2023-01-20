@@ -8,7 +8,8 @@ from pykin.utils.transform_utils import get_linear_interpoation
 from pytamp.planners.planner import NodeData, Planner
 from pytamp.scene.scene_manager import SceneManager
 
-logger = create_logger('RRT Star Planner', "debug")
+logger = create_logger("RRT Star Planner", "debug")
+
 
 class RRTStarPlanner(Planner):
     """
@@ -23,10 +24,10 @@ class RRTStarPlanner(Planner):
     """
 
     def __init__(
-        self, 
+        self,
         delta_distance=0.5,
         epsilon=0.4,
-        gamma_RRT_star=300, # At least gamma_RRT > delta_distance,
+        gamma_RRT_star=300,  # At least gamma_RRT > delta_distance,
         dimension=7,
     ):
         super(RRTStarPlanner, self).__init__(dimension)
@@ -36,25 +37,23 @@ class RRTStarPlanner(Planner):
         self.tree = None
 
     def __repr__(self):
-        return 'pykin.planners.rrt_star_planner.{}()'.format(type(self).__name__)
+        return "pykin.planners.rrt_star_planner.{}()".format(type(self).__name__)
 
     @staticmethod
     def _create_tree():
         tree = nx.DiGraph()
         tree.add_node(0)
-        tree.update(
-            nodes=[(0, {NodeData.COST: 0,
-                        NodeData.POINT: None})])
+        tree.update(nodes=[(0, {NodeData.COST: 0, NodeData.POINT: None})])
         return tree
 
     @logging_time
     def run(
         self,
-        scene_mngr:SceneManager,
+        scene_mngr: SceneManager,
         cur_q,
-        goal_pose=np.eye(4), 
+        goal_pose=np.eye(4),
         goal_q=None,
-        max_iter=1000
+        max_iter=1000,
     ):
         """
         Compute rrt-star path
@@ -80,7 +79,7 @@ class RRTStarPlanner(Planner):
 
         if not super()._check_robot_col_mngr():
             logger.warning(f"This Planner does not do collision checking")
-        
+
         cnt = 0
         total_cnt = 5
         init_q = self._cur_qpos
@@ -92,7 +91,9 @@ class RRTStarPlanner(Planner):
 
             if goal_q is not None:
                 self.goal_q = goal_q
-                self._goal_pose = self._scene_mngr.scene.robot.forward_kin(self.goal_q)[self._scene_mngr.scene.robot.eef_name].h_mat
+                self._goal_pose = self._scene_mngr.scene.robot.forward_kin(self.goal_q)[
+                    self._scene_mngr.scene.robot.eef_name
+                ].h_mat
                 success_check_limit = True
             else:
                 while not success_check_limit:
@@ -100,38 +101,47 @@ class RRTStarPlanner(Planner):
 
                     if limit_cnt > 50:
                         break
-                    
+
                     self.goal_q = self._scene_mngr.scene.robot.inverse_kin(
-                        init_q, self._goal_pose, max_iter=100)
-                    
+                        init_q, self._goal_pose, max_iter=100
+                    )
+
                     if not self._check_q_in_limits(self.goal_q):
                         init_q = np.random.randn(self._scene_mngr.scene.robot.arm_dof)
                         continue
-                    
+
                     self._scene_mngr.set_robot_eef_pose(self.goal_q)
                     grasp_pose_from_ik = self._scene_mngr.get_robot_eef_pose()
-                    pose_error = self._scene_mngr.scene.robot.get_pose_error(self._goal_pose, grasp_pose_from_ik)
+                    pose_error = self._scene_mngr.scene.robot.get_pose_error(
+                        self._goal_pose, grasp_pose_from_ik
+                    )
 
                     if pose_error < 0.02:
                         success_check_limit = True
-                        logger.info(f"The joint limit has been successfully checked. Pose error is {pose_error:6f}")
-                    
+                        logger.info(
+                            f"The joint limit has been successfully checked. Pose error is {pose_error:6f}"
+                        )
+
                         result, names = self._collide(self.goal_q, visible_name=True)
                         if result:
                             print(names)
                             logger.warning("Occur Collision for goal joints")
                             success_check_limit = False
-                                    
+
                             self._scene_mngr.show_scene_info()
                             self._scene_mngr.robot_collision_mngr.show_collision_info()
-                            self._scene_mngr.obj_collision_mngr.show_collision_info("Object")
+                            self._scene_mngr.obj_collision_mngr.show_collision_info(
+                                "Object"
+                            )
 
                             # ![DEBUG]
                             if self._scene_mngr.is_debug_mode:
                                 self._scene_mngr.render_debug(title="Collision Fail")
                     else:
                         if limit_cnt > 1:
-                            print(f"{sc.WARNING}Retry compute IK.. Pose error is {pose_error:6f}{sc.ENDC} ")
+                            print(
+                                f"{sc.WARNING}Retry compute IK.. Pose error is {pose_error:6f}{sc.ENDC} "
+                            )
                     init_q = np.random.randn(self._scene_mngr.scene.robot.arm_dof)
 
             if not success_check_limit:
@@ -148,13 +158,13 @@ class RRTStarPlanner(Planner):
             self.tree.nodes[0][NodeData.POINT] = self._cur_qpos
 
             for step in range(self._max_iter):
-                if step % 500 == 0 and step !=0:
+                if step % 500 == 0 and step != 0:
                     logger.info(f"iter : {step}")
-                    
+
                 q_rand = self._sample_free()
                 if self._collide(q_rand):
                     continue
-                
+
                 nearest_node, q_nearest = self._nearest(q_rand)
                 q_new = self._steer(q_nearest, q_rand)
 
@@ -163,8 +173,10 @@ class RRTStarPlanner(Planner):
 
                     new_node = self.tree.number_of_nodes()
                     self.tree.add_node(new_node)
-                    
-                    c_min = self.tree.nodes[nearest_node][NodeData.COST] + self._get_distance(q_nearest, q_new)
+
+                    c_min = self.tree.nodes[nearest_node][
+                        NodeData.COST
+                    ] + self._get_distance(q_nearest, q_new)
                     min_node = nearest_node
 
                     for near_node in near_nodes:
@@ -174,8 +186,11 @@ class RRTStarPlanner(Planner):
                             c_min = near_cost + self._get_distance(q_near, q_new)
                             min_node = near_node
 
-                    self.tree.update(nodes=[(new_node, {NodeData.COST: c_min,
-                                                     NodeData.POINT: q_new})])
+                    self.tree.update(
+                        nodes=[
+                            (new_node, {NodeData.COST: c_min, NodeData.POINT: q_new})
+                        ]
+                    )
                     self.tree.add_edge(min_node, new_node)
 
                     new_cost = self.tree.nodes[new_node][NodeData.COST]
@@ -185,24 +200,30 @@ class RRTStarPlanner(Planner):
                     for near_node in near_nodes:
                         q_near = self.tree.nodes[near_node][NodeData.POINT]
                         near_cost = self.tree.nodes[near_node][NodeData.COST]
-                        
+
                         if (new_cost + self._get_distance(q_near, q_new)) < near_cost:
-                            parent_node = [node for node in self.tree.predecessors(near_node)][0]
+                            parent_node = [
+                                node for node in self.tree.predecessors(near_node)
+                            ][0]
                             self.tree.remove_edge(parent_node, near_node)
                             self.tree.add_edge(new_node, near_node)
                             print("rewire")
-                    
+
                     if self._reach_to_goal(q_new):
                         self.goal_node = new_node
 
             if self.goal_node:
-                self.goal_node_cost = round(self.tree.nodes[self.goal_node][NodeData.COST], 3)
+                self.goal_node_cost = round(
+                    self.tree.nodes[self.goal_node][NodeData.COST], 3
+                )
                 print(f"Cost is {self.goal_node_cost}")
-                logger.info(f"Generate Path Successfully!!")  
-                break 
+                logger.info(f"Generate Path Successfully!!")
+                break
 
             if cnt > total_cnt:
-                logger.error(f"Failed Generate Path.. The number of retries of {cnt} exceeded")    
+                logger.error(
+                    f"Failed Generate Path.. The number of retries of {cnt} exceeded"
+                )
                 self.tree = None
 
                 # ![DEBUG]
@@ -212,7 +233,9 @@ class RRTStarPlanner(Planner):
             self._max_iter += 200
 
             logger.error(f"Failed Generate Path..")
-            print(f"{sc.BOLD}Retry Generate Path, the number of retries is {cnt}/{total_cnt} {sc.ENDC}\n")
+            print(
+                f"{sc.BOLD}Retry Generate Path, the number of retries is {cnt}/{total_cnt} {sc.ENDC}\n"
+            )
 
     def get_joint_path(self, goal_node=None, n_step=10):
         """
@@ -221,12 +244,12 @@ class RRTStarPlanner(Planner):
         Args:
             goal_node(int): goal node in rrt path
             n_step(int): number for n equal divisions between waypoints
-    
+
         Returns:
             interpolate_paths(list) : interpoated paths from start joint pose to goal joint
         """
         if self.tree is None:
-            return 
+            return
 
         path = [self.goal_q]
         if goal_node is None:
@@ -236,13 +259,16 @@ class RRTStarPlanner(Planner):
         while parent_node:
             path.append(self.tree.nodes[parent_node][NodeData.POINT])
             parent_node = [node for node in self.tree.predecessors(parent_node)][0]
-        
+
         path.append(self._cur_qpos)
         path.reverse()
 
         unique_path = []
         for joints in path:
-            if not any(np.array_equal(np.round(joints, 2), np.round(unique_joints, 2)) for unique_joints in unique_path):
+            if not any(
+                np.array_equal(np.round(joints, 2), np.round(unique_joints, 2))
+                for unique_joints in unique_path
+            ):
                 unique_path.append(joints)
 
         if n_step == 1:
@@ -251,8 +277,15 @@ class RRTStarPlanner(Planner):
 
         interpolate_path = []
         interpolate_paths = []
-        for i in range(len(unique_path)-1):
-            interpolate_path = np.array([unique_path.tolist() for unique_path in self._get_linear_path(unique_path[i], unique_path[i+1], n_step)])
+        for i in range(len(unique_path) - 1):
+            interpolate_path = np.array(
+                [
+                    unique_path.tolist()
+                    for unique_path in self._get_linear_path(
+                        unique_path[i], unique_path[i + 1], n_step
+                    )
+                ]
+            )
             interpolate_paths.extend(interpolate_path)
         logger.info(f"Path length {len(unique_path)} --> {len(interpolate_paths)}")
         self.joint_path = interpolate_paths
@@ -274,7 +307,7 @@ class RRTStarPlanner(Planner):
 
     def _sample_free(self):
         """
-        sampling joints in q space within joint limits 
+        sampling joints in q space within joint limits
         If random probability is greater than the epsilon, return random joint angles
         oterwise, return goal joint angles
 
@@ -284,7 +317,9 @@ class RRTStarPlanner(Planner):
         q_outs = np.zeros(self._dimension)
         random_value = np.random.random()
         if random_value > self.epsilon:
-            for i, (q_min, q_max) in enumerate(zip(self.q_limits_lower, self.q_limits_upper)):
+            for i, (q_min, q_max) in enumerate(
+                zip(self.q_limits_lower, self.q_limits_upper)
+            ):
                 q_outs[i] = np.random.uniform(q_min, q_max)
         else:
             q_outs = self.goal_q
@@ -296,13 +331,16 @@ class RRTStarPlanner(Planner):
         Find nearest neighbor point and index from q_rand
 
         Args:
-            q_rand(np.array): sampled random joint angles 
+            q_rand(np.array): sampled random joint angles
 
         Returns:
             nearest_node(int): nearest node
             nearest_point(np.array): nearest point(joint angles)
         """
-        distances = [self._get_distance(self.tree.nodes[node][NodeData.POINT], q_rand) for node in self.tree.nodes]
+        distances = [
+            self._get_distance(self.tree.nodes[node][NodeData.POINT], q_rand)
+            for node in self.tree.nodes
+        ]
         nearest_node = np.argmin(distances)
         nearest_point = self.tree.nodes[nearest_node][NodeData.POINT]
         return nearest_node, nearest_point
@@ -314,20 +352,20 @@ class RRTStarPlanner(Planner):
         Args:
             p1(np.array)
             p2(np.array)
-            
+
         Returns:
             Norm(float or ndarray)
         """
 
-        return np.linalg.norm(p2-p1)
-    
+        return np.linalg.norm(p2 - p1)
+
     def _steer(self, q_nearest, q_random):
         """
         Get new point between nearest point and random point
 
         Args:
-            q_nearest(np.array): nearest joint angles 
-            q_random(np.array): sampled random joint angles 
+            q_nearest(np.array): nearest joint angles
+            q_random(np.array): sampled random joint angles
 
         Returns:
             q_new(np.array): new joint angles
@@ -349,16 +387,19 @@ class RRTStarPlanner(Planner):
         Returns all neighbor nodes within the search radius from the new point
 
         Args:
-            q_rand(np.array): new joint angles 
+            q_rand(np.array): new joint angles
 
         Returns:
             near_nodes(list): all neighbor nodes
         """
         card_V = len(self.tree.nodes) + 1
-        r = self.gamma_RRTs * ((math.log(card_V) / card_V) ** (1/self._dimension))
+        r = self.gamma_RRTs * ((math.log(card_V) / card_V) ** (1 / self._dimension))
         search_radius = min(r, self.gamma_RRTs)
-        distances = [self._get_distance(self.tree.nodes[node][NodeData.POINT], q_rand) for node in self.tree.nodes]
-                              
+        distances = [
+            self._get_distance(self.tree.nodes[node][NodeData.POINT], q_rand)
+            for node in self.tree.nodes
+        ]
+
         near_nodes = []
         for node, dist in enumerate(distances):
             if dist <= search_radius:
@@ -387,9 +428,9 @@ class RRTStarPlanner(Planner):
 
         Args:
             init_pose (np.array): init robots' eef pose
-            goal_pose (np.array): goal robots' eef pose  
+            goal_pose (np.array): goal robots' eef pose
             n_step(int): number for n equal divisions between waypoints
-        
+
         Return:
             pos (np.array): position
         """
