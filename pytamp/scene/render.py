@@ -187,6 +187,10 @@ class RenderPyPlot(SceneRender):
         p_utils.render_axis(ax, pose, axis, scale)
 
     @staticmethod
+    def render_obj_axis(ax, pose, axis=[1, 1, 1], scale=0.15):
+        p_utils.render_axis(ax, pose, axis, scale)
+        
+    @staticmethod
     def render_points(ax, points, s=5, c="r"):
         if isinstance(points, list):
             points = np.array(points).reshape(-1, 3)

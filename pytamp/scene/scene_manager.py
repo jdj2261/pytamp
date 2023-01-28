@@ -62,12 +62,14 @@ class SceneManager:
 
         if h_mat is None:
             h_mat = np.eye(4, dtype=np.float32)
-
-        self._scene.objs[name] = Object(name, gtype, gparam, h_mat, color)
+        try:
+            self._scene.objs[name] = Object(name, gtype, gparam, h_mat, color)
+        except:
+            "{} aleady exist in the scene ".format(name)
         self.obj_collision_mngr.add_object(name, gtype, gparam, h_mat)
 
         self.init_objects[name] = deepcopy(self._scene.objs[name])
-
+        
     def add_robot(self, robot: SingleArm, thetas=[]):
         if self._scene.robot is not None:
             raise ValueError("robot {} already exists".format(robot.robot_name))

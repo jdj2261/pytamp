@@ -34,7 +34,7 @@ class Benchmark1(Benchmark):
                 [
                     0,
                     np.pi / 16.0,
-                    0.00,
+                    -np.pi / 2.0,
                     -np.pi / 2.0 - np.pi / 3.0,
                     0.00,
                     np.pi - 0.2,
@@ -44,8 +44,7 @@ class Benchmark1(Benchmark):
         if self.robot_name == "doosan":
             self.robot.setup_link_name("base_0", "right_hand")
             # self.robot.init_qpos = np.array([ 0, 0, np.pi/2, 0, np.pi/2, 0])
-            self.robot.init_qpos = np.array([0, -np.pi / 6, np.pi / 2, 0, np.pi / 2, 0])
-
+            self.robot.init_qpos = np.array([0, 0, np.pi / 2, 0, np.pi / 2, 0])
         self.scene_mngr.add_robot(self.robot, self.robot.init_qpos)
 
     def _load_objects(self):
@@ -61,7 +60,9 @@ class Benchmark1(Benchmark):
         )
 
         self.box_poses = []
-        rotataion = get_quaternion_from_axis_angle(np.array([0, 1, 0]), np.pi / 6)
+        rot_axis = np.array([1, 1, -1])
+        unit_rot_axis = rot_axis / np.linalg.norm(rot_axis)
+        rotataion = get_quaternion_from_axis_angle(unit_rot_axis, np.pi / 6)
         A_box_pose = Transform(
             pos=np.array(
                 [0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 * 2]
@@ -147,6 +148,7 @@ class Benchmark1(Benchmark):
                 H_box_pose,
             ]
         )
+        print("box_pose",self.box_poses)
         self.box_colors = []
         A_box_color = np.array([1.0, 0.0, 0.0])
         B_box_color = np.array([0.0, 1.0, 0.0])
@@ -172,7 +174,9 @@ class Benchmark1(Benchmark):
         self.table_pose = Transform(pos=np.array([1.0, -0.6, 0.043]))
         # self.table_pose = Transform(pos=np.array([2.025, -0.4, -0.03]))
         self.ceiling_pose = Transform(pos=np.array([1.1, -0.4, 1.7]))
-        self.tray_red_pose = Transform(pos=np.array([0.7, -0.6, 0.807]))
+        
+        # The top of the table and tray must be separated! otherwise collision occurs
+        self.tray_red_pose = Transform(pos=np.array([0.7, -0.6, 0.822]))
 
     def _load_scene(self):
         self.scene_mngr.add_object(

@@ -4,6 +4,7 @@ from copy import deepcopy
 from trimesh import Trimesh, proximity
 
 from pykin.utils import mesh_utils as m_utils
+from pykin.utils import transform_utils as t_utils
 from pykin.utils.log_utils import create_logger
 from pytamp.action.activity import ActivityBase
 from pytamp.scene.scene import Scene
@@ -38,13 +39,17 @@ class PlaceAction(ActivityBase):
         self.deepcopy_scene(scene)
         held_obj = self.scene_mngr.scene.robot.gripper.attached_obj_name
         eef_pose = self.scene_mngr.scene.robot.gripper.grasp_pose
-        self.scene_mngr.scene.objs[
-            held_obj
-        ].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
+        # self.scene_mngr.scene.objs[
+        #     held_obj
+        # ].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
 
         for sup_obj in deepcopy(self.scene_mngr.scene.objs):
             # print(f"place : {sup_obj}")
             if sup_obj == held_obj:
+                continue
+            
+            # when sup_obj is rotated, not eligible to be a support object. 
+            if np.sum(np.abs(np.cross(np.eye(3)[:3,2],self.scene_mngr.scene.objs[sup_obj].h_mat[:3,2]))) > 0.1:
                 continue
 
             if "ceiling" in sup_obj:
@@ -195,7 +200,7 @@ class PlaceAction(ActivityBase):
                         self.scene_mngr.scene.robot.gripper.attached_obj_name
                     ].color,
                 )
-
+                print("init_object ? ?", self.scene_mngr.init_objects)
                 # release_pose -> post_release_pose (cartesian)
                 post_release_joint_path = self.get_cartesian_path(
                     release_joint_path[-1], post_release_pose
@@ -406,10 +411,9 @@ class PlaceAction(ActivityBase):
                 if name == self.move_data.MOVE_release:
                     self.scene_mngr.set_gripper_pose(pose)
                     for name in self.scene_mngr.scene.objs:
-                        # self.scene_mngr.obj_collision_mngr.set_transform(name, self.scene_mngr.scene.objs[name].h_mat)
                         self.scene_mngr.obj_collision_mngr.set_transform(
-                            name, self.scene_mngr.scene.robot.gripper.pick_obj_pose
-                        )
+                            name, self.scene_mngr.scene.objs[name].h_mat
+                            )
                     if self._collide(is_only_gripper=True):
                         is_collision = True
                         break
@@ -678,6 +682,7 @@ class PlaceAction(ActivityBase):
                 copied_mesh, self.n_samples_held_obj, weights
             )
 
+
             # heuristic
             sample_points = np.append(
                 sample_points, np.array([center_lower_point]), axis=0
@@ -725,11 +730,14 @@ class PlaceAction(ActivityBase):
 
         # weight from the face of the desired normal
         # weights = self._get_weights_for_want_normal(copied_mesh, normals[0])
+
         weights = self._get_weights_for_held_obj(copied_mesh)
 
         sample_points, sampled_normals = self.get_surface_points_from_mesh(
             copied_mesh, self.n_samples_held_obj, weights
         )
+
+        # print(self.scene_mngr.scene.robot.gripper.grasp_pose[:3,1])
 
         normals = np.vstack([normals, sampled_normals])
         points = np.vstack([points, sample_points])
@@ -768,15 +776,17 @@ class PlaceAction(ActivityBase):
         elif bench_num == 4:
             alpha = 0.3
 
+        # pick action 후 default_robot_theta에 잡혀있는 object의 위치
         held_obj_pose = deepcopy(self.scene_mngr.scene.objs[held_obj_name].h_mat)
         # held_obj_pose = deepcopy(self.scene_mngr.scene.robot.gripper.pick_obj_pose)
+
         surface_points_for_sup_obj = list(
             self.get_surface_points_for_support_obj(support_obj_name, alpha=alpha)
         )
 
         # surface_points_for_sup_obj = list(self.get_current_surface_points_from_support_obj(support_obj_name, alpha=alpha))
         # surface_points_for_held_obj = list(self.get_surface_points_for_held_obj(held_obj_name))
-        # chaned
+        # changed
         surface_points_for_held_obj = list(
             self.get_current_surface_points_for_held_obj(held_obj_name)
         )
@@ -787,27 +797,27 @@ class PlaceAction(ActivityBase):
             (min_x, max_x, min_y, max_y),
         ) in surface_points_for_sup_obj:
             for held_obj_point, held_obj_normal in surface_points_for_held_obj:
-                # print('normals',support_obj_normal, held_obj_normal)
                 # rot_mat : held_obj_normal에서 얼마나 돌아야 -support_obj_normal 이 나오는지!
                 rot_mat = m_utils.get_rotation_from_vectors(
                     held_obj_normal, -support_obj_normal
                 )
-                # print(rot_mat,'rotmat')
-                # object 중심으로부터 sample_point까지 떨어진 xyz 좌표값
+
+                # object 중심으로부터 sample_point까지 떨어진 xyz 좌표값에서 rot_mat 고려해서 계산한 position!
+                # rot_matrix 고려해서 sample point가 항상 바닥에 오도록 되어있어서 translation_z값이 0.5로 항상 나온다!! 
                 held_obj_point_transformed = np.dot(
                     held_obj_point - held_obj_pose[:3, 3], rot_mat
                 )
+
+                # print("object~point translate position : ",held_obj_point_transformed)
                 # place 해야할 위치 얻어줌!! object가 기울어진 평면 위에 있을 경우 잘못 된 결과 나옴...
-                (
-                    held_obj_pose_transformed,
-                    held_obj_point_transformed,
-                ) = self._get_obj_pose_transformed(
+                # >> 고쳐서 제대로 잘 나옴
+
+                held_obj_pose_transformed = self._get_obj_pose_transformed(
                     held_obj_pose,
                     support_obj_point,
                     held_obj_point_transformed,
-                    rot_mat,
+                    rot_mat
                 )
-
                 # heuristic
                 copied_mesh = deepcopy(
                     self.scene_mngr.init_objects[held_obj_name].gparam
@@ -849,15 +859,11 @@ class PlaceAction(ActivityBase):
                             continue
 
                 if eef_pose is not None:
-                    # ? 얘는 진짜 무슨 역할하는지 몰겠음 'ㅡ'
-                    # T_obj_pose_and_obj_pose_transformed = np.dot(held_obj_pose, np.linalg.inv(held_obj_pose_rotated))
-                    # T_obj_pose_and_obj_pose_transformed = np.eye(4)
-                    # T_obj_pose_and_obj_pose_transformed[:3,:3] = deepcopy(held_obj_pose_transformed[:3,:3])
                     # object를 place하기 위한 eef 위치
                     eef_pose_transformed = self._get_eef_pose_transformed(
                         held_obj_pose_transformed
                     )
-
+                    # print("held_obj_pose_transformed",np.round(held_obj_pose_transformed[:3,:3],4))
                     yield eef_pose_transformed, held_obj_pose_transformed
                 else:
                     yield None, held_obj_pose_transformed
@@ -866,22 +872,24 @@ class PlaceAction(ActivityBase):
     def _get_obj_pose_transformed(
         held_obj_pose, sup_obj_point, held_obj_point_transformed, rot_mat
     ):
-        # 뭐하는 변수지 rotation matrix로 내적 해주나마나 똑같은데? object 기울어진 채로  시작할때 사용되나 ;;
-        obj_pose_rotated = np.eye(4)
-        obj_pose_rotated[:3, :3] = np.dot(rot_mat, held_obj_pose[:3, :3])
-        obj_pose_rotated[:3, 3] = held_obj_pose[:3, 3]
-
-        # held object가 sub object 위에 place 될 위치 !!
+        # held object가 sub object 위에 place 될 위치 >> obj_pose_transformed !!
         obj_pose_transformed = np.eye(4)
-        # 궂이 계산 안하고 바로 support_obj_normal으로 대입해도 되는데 !!??!?
-        obj_pose_transformed[:3, :3] = np.dot(
-            held_obj_pose[:3, :3], np.linalg.inv(rot_mat)
-        )
-        # obj_pose_transformed[:3, :3] =np.dot(np.linalg.inv(rot_mat),held_obj_pose[:3, :3])
-        # object가 place되어야 할 위치 !! 여기서 sampled point의 translatio을 고려해줌
+        # 궂이 계산 안하고 바로 support_obj_normal으로 대입해도 되는데 ? 
+        # >> 일단 계산 해주자.. held_obj_pose * (rot_mat).inv = sup_obj_pose
+        # obj_pose_transformed[:3, :3] = np.dot(
+        #     held_obj_pose[:3, :3], np.linalg.inv(rot_mat)
+        # )
+        # obj_pose_transformed[:3,:3] = t_utils.get_matrix_from_axis_angle(sub_obj_normal,0)
+        obj_pose_transformed[:3, :3] =np.dot(np.linalg.inv(rot_mat),held_obj_pose[:3, :3])
+        # object가 place되어야 할 위치 !! 여기서 sampled point의 translation을 고려해줌
+        # held obj sample point가 항상 sup point에 딱 맞도록 x,y,z를 더하고 뺴줌.
         obj_pose_transformed[:2, 3] = sup_obj_point[:2] + held_obj_point_transformed[:2]
         obj_pose_transformed[2, 3] = sup_obj_point[2] - held_obj_point_transformed[2]
-        return obj_pose_transformed, obj_pose_rotated
+
+        # print("obj placed pose : ", obj_pose_transformed[:3,:3])
+        # print("rotation axis : ", np.dot(obj_pose_transformed[:3,:3],-np.array([0,0,1])))
+
+        return obj_pose_transformed
 
     def _get_eef_pose_transformed(self, held_obj_pose_transformed):
         g_T_o = self.scene_mngr.scene.robot.gripper.transform_bet_gripper_n_obj

@@ -219,9 +219,11 @@ class PickAction(ActivityBase):
         self.deepcopy_scene(scene)
 
         pick_obj = self.scene_mngr.scene.robot.gripper.attached_obj_name
-        self.scene_mngr.scene.objs[
-            pick_obj
-        ].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
+        # self.scene_mngr.scene.objs[
+        #     pick_obj
+        # ].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
+
+        # planning 시작에 앞서 collision manager의 scene을 scene을 transition 이전의 상태로 돌리고 planning 한다.
         for obj_name in self.scene_mngr.scene.objs:
             obj_pose = self.scene_mngr.scene.objs[obj_name].h_mat
             if obj_name == pick_obj:
@@ -256,6 +258,7 @@ class PickAction(ActivityBase):
                 self.scene_mngr.attach_object_on_gripper(
                     self.scene_mngr.scene.robot.gripper.attached_obj_name
                 )
+
                 post_grasp_joint_path = self.get_cartesian_path(
                     grasp_joint_path[-1], post_grasp_pose
                 )
@@ -289,6 +292,7 @@ class PickAction(ActivityBase):
             return result_all_joint_path
 
         if default_joint_path:
+
             self.cost += self.rrt_planner.goal_node_cost
             result_joint_path.update(
                 {self.move_data.MOVE_pre_grasp: pre_grasp_joint_path}
