@@ -200,7 +200,6 @@ class PlaceAction(ActivityBase):
                         self.scene_mngr.scene.robot.gripper.attached_obj_name
                     ].color,
                 )
-                print("init_object ? ?", self.scene_mngr.init_objects)
                 # release_pose -> post_release_pose (cartesian)
                 post_release_joint_path = self.get_cartesian_path(
                     release_joint_path[-1], post_release_pose

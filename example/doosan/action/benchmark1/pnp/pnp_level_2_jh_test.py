@@ -37,7 +37,6 @@ for pick_action in pick_actions:
                     scene=pick_scene, action=place_action
                 ):
                     place_joint_path=None
-                    print(place_scene.robot.gripper.release_pose)
                     if place_scene.robot.gripper.release_pose[2,3] > 0.97:
                         place_joint_path = place.get_possible_joint_path_level_2(
                             scene=place_scene,
