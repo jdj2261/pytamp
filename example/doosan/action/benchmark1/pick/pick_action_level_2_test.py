@@ -3,7 +3,7 @@ from pytamp.benchmark import Benchmark1
 # from pykin.utils import plot_utils as p_utils
 from pytamp.action.pick import PickAction
 
-benchmark1 = Benchmark1(robot_name="doosan", geom="visual", is_pyplot=True)
+benchmark1 = Benchmark1(robot_name="doosan", geom="visual", is_pyplot=False)
 pick = PickAction(benchmark1.scene_mngr, n_contacts=0, n_directions=0)
 
 ################# Action Test ##################
@@ -41,3 +41,6 @@ pick_all_objects.append(pick_objects)
 pick_all_object_poses.append(pick_object_poses)
 
 pick.simulate_path(pick_all_joint_path, pick_all_objects, pick_all_object_poses)
+
+pick.scene_mngr.robot_collision_mngr.show_collision_info()
+pick.scene_mngr.obj_collision_mngr.show_collision_info("object")

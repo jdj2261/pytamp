@@ -218,12 +218,11 @@ class PickAction(ActivityBase):
     ):
         self.deepcopy_scene(scene)
 
-        pick_obj = self.scene_mngr.scene.robot.gripper.attached_obj_name
-        # self.scene_mngr.scene.objs[
-        #     pick_obj
-        # ].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
-
         # planning 시작에 앞서 collision manager의 scene을 scene을 transition 이전의 상태로 돌리고 planning 한다.
+        pick_obj = self.scene_mngr.scene.robot.gripper.attached_obj_name
+        self.scene_mngr.scene.objs[
+            pick_obj
+        ].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
         for obj_name in self.scene_mngr.scene.objs:
             obj_pose = self.scene_mngr.scene.objs[obj_name].h_mat
             if obj_name == pick_obj:
@@ -269,6 +268,7 @@ class PickAction(ActivityBase):
                     )
                 else:
                     success_joint_path = False
+                    self.scene_mngr.scene[pick_obj].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
                 self.scene_mngr.detach_object_from_gripper()
                 self.scene_mngr.add_object(
                     self.scene_mngr.scene.robot.gripper.attached_obj_name,
@@ -292,7 +292,6 @@ class PickAction(ActivityBase):
             return result_all_joint_path
 
         if default_joint_path:
-
             self.cost += self.rrt_planner.goal_node_cost
             result_joint_path.update(
                 {self.move_data.MOVE_pre_grasp: pre_grasp_joint_path}
@@ -463,11 +462,7 @@ class PickAction(ActivityBase):
                         self.scene_mngr.obj_collision_mngr.set_transform(
                             name, self.scene_mngr.scene.objs[name].h_mat
                         )
-                    # fig, ax = p_utils.init_3d_figure("test")
-                    # self.scene_mngr.render_gripper(ax)
-                    # self.scene_mngr.render_objects(ax)
-                    # self.scene_mngr.show()
-                    # print("test")
+
                     if self._collide(is_only_gripper=True):
                         is_collision = True
                         break

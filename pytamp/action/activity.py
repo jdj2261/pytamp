@@ -183,6 +183,7 @@ class ActivityBase(metaclass=ABCMeta):
         is_save=False,
         video_name="test",
         fps=60,
+        gif=False
     ):
         # assert pnp_all_joint_path[0].any(), f"Cannot simulate joint path"
 
@@ -234,6 +235,8 @@ class ActivityBase(metaclass=ABCMeta):
             if ax is None and fig is None:
                 fig, ax = p_utils.init_3d_figure(name="Level wise 2")
 
+            ax.view_init(50, 50, "y")
+
             self.scene_mngr.animation(
                 ax,
                 fig,
@@ -252,6 +255,7 @@ class ActivityBase(metaclass=ABCMeta):
                 is_save=is_save,
                 video_name=video_name,
                 fps=fps,
+                gif=gif,
             )
 
     def show(self):

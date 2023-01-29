@@ -53,19 +53,34 @@ class Benchmark1(Benchmark):
         self.tray_red_mesh = get_object_mesh("ben_tray_red.stl")
         self.box_mesh = get_object_mesh("ben_cube.stl", 0.1)
 
+
+        # add slope_mesh 
+        self.slope_mesh = get_object_mesh('slope_for_pytamp.STL',0.001)
+
         box_height = self.box_mesh.bounds[1][2] - self.box_mesh.bounds[0][2]
         table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
+        # slope
+        # slope_height = self.slope_mesh.bounds[1][2] - self.slope_mesh.bounds[0][2]
+
+        rot_axis = np.array([1, 0, 0])
+        unit_rot_axis = rot_axis / np.linalg.norm(rot_axis)
+        rotataion = get_quaternion_from_axis_angle(unit_rot_axis, np.pi / 2)
+        # self.slope_pose = Transform(pos=np.array([0.6, 0,  table_height + slope_height + 0]),
+        #                             rot = rotataion)
+
+
         self.table_pose = Transform(
-            pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]])
+            pos=np.array([1.0, -1, -self.table_mesh.bounds[0][2]])
         )
 
         self.box_poses = []
-        rot_axis = np.array([1, 1, -1])
+
+        rot_axis = np.array([1, 1, 0])
         unit_rot_axis = rot_axis / np.linalg.norm(rot_axis)
         rotataion = get_quaternion_from_axis_angle(unit_rot_axis, np.pi / 6)
         A_box_pose = Transform(
             pos=np.array(
-                [0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 * 2]
+                [0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 * 2 ] 
             ),
             rot=rotataion,
         )
@@ -176,7 +191,7 @@ class Benchmark1(Benchmark):
         self.ceiling_pose = Transform(pos=np.array([1.1, -0.4, 1.7]))
         
         # The top of the table and tray must be separated! otherwise collision occurs
-        self.tray_red_pose = Transform(pos=np.array([0.7, -0.6, 0.822]))
+        self.tray_red_pose = Transform(pos=np.array([0.7, -0.6, 0.812]))
 
     def _load_scene(self):
         self.scene_mngr.add_object(
@@ -211,6 +226,15 @@ class Benchmark1(Benchmark):
                 logical_states[i][0], logical_states[i][1]
             )
         # self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.823, 0.71, 0.55])
+
+        # self.scene_mngr.add_object(
+        #     name="slope",
+        #     gtype="mesh",
+        #     gparam=self.slope_mesh,
+        #     h_mat=self.slope_pose.h_mat,
+        #     color=[0.1 , 0, 0],
+        # )
+
         self.scene_mngr.add_object(
             name="tray_red",
             gtype="mesh",
@@ -225,6 +249,11 @@ class Benchmark1(Benchmark):
         self.scene_mngr.set_logical_state(
             "table", (self.scene_mngr.scene.logical_state.static, True)
         )
+
+        # self.scene_mngr.set_logical_state(
+        #     "slope", (self.scene_mngr.scene.logical_state.static, True)
+        # )
+
         self.scene_mngr.set_logical_state(
             self.scene_mngr.gripper_name,
             (self.scene_mngr.scene.logical_state.holding, None),

@@ -50,7 +50,7 @@ class RenderTriMesh(SceneRender):
             trimesh_scene=self.trimesh_scene, objs=objs
         )
 
-    def render_object(self, obj, pose=None):
+    def render_object(self, _, obj, pose=None):
         o_type = obj.gtype
         mesh = obj.gparam
         if o_type == "mesh":
@@ -70,11 +70,16 @@ class RenderTriMesh(SceneRender):
 
     def render_axis(
         self,
+        ax,
         pose,
     ):
         axis = trimesh.creation.axis(origin_size=0.01, transform=pose)
         self.trimesh_scene.add_geometry(axis)
 
+    def render_obj_axis(self, ax, pose, axis=[1, 1, 1], scale=0.15):
+        axis = trimesh.creation.axis(origin_size=0.01, transform=pose)
+        self.trimesh_scene.add_geometry(axis)
+        
     def render_point(
         self, ax=None, point=np.zeros(3), radius=0.001, color=[1.0, 0.0, 0.0]
     ):

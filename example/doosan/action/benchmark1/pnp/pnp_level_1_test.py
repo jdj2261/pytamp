@@ -35,3 +35,5 @@ for pick_action in pick_actions:
                 place_scene.show_logical_states()
                 place.scene_mngr.render_objects(ax, place_scene)
                 place.scene_mngr.show()
+
+  

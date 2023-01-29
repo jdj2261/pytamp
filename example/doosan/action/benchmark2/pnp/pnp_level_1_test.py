@@ -7,10 +7,10 @@ benchmark2 = Benchmark2(
     robot_name="doosan", geom="visual", is_pyplot=True, bottle_num=1
 )
 pick = PickAction(
-    benchmark2.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1
+    benchmark2.scene_mngr, n_contacts=10, n_directions=0, retreat_distance=0.1
 )
 place = PlaceAction(
-    benchmark2.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10
+    benchmark2.scene_mngr, n_samples_held_obj=10, n_samples_support_obj=10
 )
 
 pick_actions = list(pick.get_possible_actions_level_1())

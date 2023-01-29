@@ -128,8 +128,19 @@ def get_heuristic_tcp_pose(
 def get_heuristic_release_eef_pose(obj_pose_transformed, eef_pose, n_directions=10):
     for theta in np.linspace(0, np.pi, n_directions):
         # oTg >> object to gripper Transformation matrix
+        
+        sup_normal = np.array([0,0, 1])
+        dot_value = np.dot(obj_pose_transformed[:3,:3],sup_normal)
         T = m_utils.get_relative_transform(obj_pose_transformed, eef_pose)
-        obj_r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta])
+        
+        # added
+        should_rotate_axis = np.where(np.max(dot_value) > 0.98, np.argmax(dot_value), np.argmin(dot_value))
+        rpy_ = np.zeros(3)
+        rpy_[should_rotate_axis] = theta
+    
+        # original version 
+        # obj_r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta])
+        obj_r_mat_z = t_utils.get_matrix_from_rpy(rpy=rpy_)
         obj_h_mat_z = np.eye(4)
         obj_h_mat_z[:3, :3] = obj_r_mat_z
         obj_pose_transformed_ = np.dot(obj_pose_transformed, obj_h_mat_z)

@@ -3,9 +3,9 @@ from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="visual", is_pyplot=True, box_num=3)
-pick = PickAction(benchmark1.scene_mngr, n_contacts=20, n_directions=0)
+pick = PickAction(benchmark1.scene_mngr, n_contacts=30, n_directions=10)
 place = PlaceAction(
-    benchmark1.scene_mngr, n_samples_held_obj=20, n_samples_support_obj=0
+    benchmark1.scene_mngr, n_samples_held_obj=10, n_samples_support_obj=0
 )
 pick_actions = list(pick.get_possible_actions_level_1())
 
@@ -36,13 +36,16 @@ for pick_action in pick_actions:
                 for place_scene in place.get_possible_transitions(
                     scene=pick_scene, action=place_action
                 ):
-                    place_joint_path = place.get_possible_joint_path_level_2(
-                        scene=place_scene,
-                        release_poses=place_scene.release_poses,
-                        init_thetas=pick_joint_path[-1][
-                            place.move_data.MOVE_default_grasp
-                        ][-1],
-                    )
+                    place_joint_path=None
+                    print(place_scene.robot.gripper.release_pose)
+                    if place_scene.robot.gripper.release_pose[2,3] > 0.97:
+                        place_joint_path = place.get_possible_joint_path_level_2(
+                            scene=place_scene,
+                            release_poses=place_scene.release_poses,
+                            init_thetas=pick_joint_path[-1][
+                                place.move_data.MOVE_default_grasp
+                            ][-1],
+                        )
                     if place_joint_path:
                         success_joint_path = True
                         pnp_path += pick_joint_path + place_joint_path
@@ -51,6 +54,9 @@ for pick_action in pick_actions:
                             place_scene.objs[place_scene.pick_obj_name].h_mat
                         )
                         break
+                    else:
+                        failed_n += 1
+
                 if success_joint_path:
                     break
         if success_joint_path:
@@ -60,5 +66,6 @@ for pick_action in pick_actions:
 pnp_all_joint_path.append(pnp_path)
 pick_all_objects.append(pick_objects)
 place_all_object_poses.append(place_object_poses)
+print("search planning ! : ", failed_n)
 place.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses, 
                      is_save=True, video_name = "pnp_level_2_jh_test_4",gif=False)
