@@ -47,9 +47,19 @@ class PlaceAction(ActivityBase):
             # print(f"place : {sup_obj}")
             if sup_obj == held_obj:
                 continue
-            
-            # when sup_obj is rotated, not eligible to be a support object. 
-            if np.sum(np.abs(np.cross(np.eye(3)[:3,2],self.scene_mngr.scene.objs[sup_obj].h_mat[:3,2]))) > 0.1:
+
+            # when sup_obj is rotated, not eligible to be a support object.
+            if (
+                np.sum(
+                    np.abs(
+                        np.cross(
+                            np.eye(3)[:3, 2],
+                            self.scene_mngr.scene.objs[sup_obj].h_mat[:3, 2],
+                        )
+                    )
+                )
+                > 0.1
+            ):
                 continue
 
             if "ceiling" in sup_obj:
@@ -412,7 +422,7 @@ class PlaceAction(ActivityBase):
                     for name in self.scene_mngr.scene.objs:
                         self.scene_mngr.obj_collision_mngr.set_transform(
                             name, self.scene_mngr.scene.objs[name].h_mat
-                            )
+                        )
                     if self._collide(is_only_gripper=True):
                         is_collision = True
                         break
@@ -681,7 +691,6 @@ class PlaceAction(ActivityBase):
                 copied_mesh, self.n_samples_held_obj, weights
             )
 
-
             # heuristic
             sample_points = np.append(
                 sample_points, np.array([center_lower_point]), axis=0
@@ -732,7 +741,6 @@ class PlaceAction(ActivityBase):
 
         weights = self._get_weights_for_held_obj(copied_mesh)
 
-        
         sample_points, sampled_normals = self.get_surface_points_from_mesh(
             copied_mesh, self.n_samples_held_obj, weights
         )
@@ -803,7 +811,7 @@ class PlaceAction(ActivityBase):
                 )
 
                 # object 중심으로부터 sample_point까지 떨어진 xyz 좌표값에서 rot_mat 고려해서 계산한 position!
-                # rot_matrix 고려해서 sample point가 항상 바닥에 오도록 되어있어서 translation_z값이 0.5로 항상 나온다!! 
+                # rot_matrix 고려해서 sample point가 항상 바닥에 오도록 되어있어서 translation_z값이 0.5로 항상 나온다!!
                 held_obj_point_transformed = np.dot(
                     held_obj_point - held_obj_pose[:3, 3], rot_mat
                 )
@@ -816,7 +824,7 @@ class PlaceAction(ActivityBase):
                     held_obj_pose,
                     support_obj_point,
                     held_obj_point_transformed,
-                    rot_mat
+                    rot_mat,
                 )
                 # heuristic
                 copied_mesh = deepcopy(
@@ -874,13 +882,15 @@ class PlaceAction(ActivityBase):
     ):
         # held object가 sub object 위에 place 될 위치 >> obj_pose_transformed !!
         obj_pose_transformed = np.eye(4)
-        # 궂이 계산 안하고 바로 support_obj_normal으로 대입해도 되는데 ? 
+        # 궂이 계산 안하고 바로 support_obj_normal으로 대입해도 되는데 ?
         # >> 일단 계산 해주자.. held_obj_pose * (rot_mat).inv = sup_obj_pose
         # obj_pose_transformed[:3, :3] = np.dot(
         #     held_obj_pose[:3, :3], np.linalg.inv(rot_mat)
         # )
         # obj_pose_transformed[:3,:3] = t_utils.get_matrix_from_axis_angle(sub_obj_normal,0)
-        obj_pose_transformed[:3, :3] =np.dot(np.linalg.inv(rot_mat),held_obj_pose[:3, :3])
+        obj_pose_transformed[:3, :3] = np.dot(
+            np.linalg.inv(rot_mat), held_obj_pose[:3, :3]
+        )
         # print("obj_pose_transformed : ",obj_pose_transformed)
         # object가 place되어야 할 위치 !! 여기서 sampled point의 translation을 고려해줌
         # held obj sample point가 항상 sup point에 딱 맞도록 x,y,z를 더하고 뺴줌.

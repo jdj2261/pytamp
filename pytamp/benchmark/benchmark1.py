@@ -53,9 +53,8 @@ class Benchmark1(Benchmark):
         self.tray_red_mesh = get_object_mesh("ben_tray_red.stl")
         self.box_mesh = get_object_mesh("ben_cube.stl", 0.1)
 
-
-        # add slope_mesh 
-        self.slope_mesh = get_object_mesh('slope_for_pytamp.STL',0.001)
+        # add slope_mesh
+        self.slope_mesh = get_object_mesh("slope_for_pytamp.STL", 0.001)
 
         box_height = self.box_mesh.bounds[1][2] - self.box_mesh.bounds[0][2]
         table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
@@ -68,7 +67,6 @@ class Benchmark1(Benchmark):
         # self.slope_pose = Transform(pos=np.array([0.6, 0,  table_height + slope_height + 0]),
         #                             rot = rotataion)
 
-
         self.table_pose = Transform(
             pos=np.array([1.0, -1, -self.table_mesh.bounds[0][2]])
         )
@@ -80,7 +78,7 @@ class Benchmark1(Benchmark):
         rotataion = get_quaternion_from_axis_angle(unit_rot_axis, np.pi / 6)
         A_box_pose = Transform(
             pos=np.array(
-                [0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 * 2 ] 
+                [0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 * 2]
             ),
             rot=rotataion,
         )
@@ -163,7 +161,7 @@ class Benchmark1(Benchmark):
                 H_box_pose,
             ]
         )
-        print("box_pose",self.box_poses)
+        print("box_pose", self.box_poses)
         self.box_colors = []
         A_box_color = np.array([1.0, 0.0, 0.0])
         B_box_color = np.array([0.0, 1.0, 0.0])
@@ -189,7 +187,7 @@ class Benchmark1(Benchmark):
         self.table_pose = Transform(pos=np.array([1.0, -0.6, 0.043]))
         # self.table_pose = Transform(pos=np.array([2.025, -0.4, -0.03]))
         self.ceiling_pose = Transform(pos=np.array([1.1, -0.4, 1.7]))
-        
+
         # The top of the table and tray must be separated! otherwise collision occurs
         self.tray_red_pose = Transform(pos=np.array([0.7, -0.6, 0.812]))
 

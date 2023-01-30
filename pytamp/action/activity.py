@@ -183,7 +183,7 @@ class ActivityBase(metaclass=ABCMeta):
         is_save=False,
         video_name="test",
         fps=60,
-        gif=False
+        gif=False,
     ):
         # assert pnp_all_joint_path[0].any(), f"Cannot simulate joint path"
 

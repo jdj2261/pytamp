@@ -11,10 +11,7 @@ from pykin.utils.kin_utils import ShellColors as sc
 
 
 class Planner:
-    def __init__(
-        self,
-        scene_mngr: SceneManager,
-    ):
+    def __init__(self, scene_mngr: SceneManager):
         self.node_data = NodeData
         self.scene_mngr = scene_mngr
         self.scene_mngr.is_debug_mode = False

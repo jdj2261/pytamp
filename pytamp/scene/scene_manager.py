@@ -69,7 +69,7 @@ class SceneManager:
         self.obj_collision_mngr.add_object(name, gtype, gparam, h_mat)
 
         self.init_objects[name] = deepcopy(self._scene.objs[name])
-        
+
     def add_robot(self, robot: SingleArm, thetas=[]):
         if self._scene.robot is not None:
             raise ValueError("robot {} already exists".format(robot.robot_name))
@@ -561,7 +561,7 @@ class SceneManager:
         else:
             if not self.render.trimesh_scene:
                 self.render = RenderTriMesh()
-            self.render.render_axis(ax,pose)
+            self.render.render_axis(ax, pose)
 
     def animation(
         self,
@@ -607,9 +607,19 @@ class SceneManager:
             if self.attached_obj_name:
                 self.render.render_objects(ax, self._scene.objs, alpha)
                 try:
-                    self.render.render_obj_axis(ax, self.obj_collision_mngr.get_collision_info()[self.attached_obj_name])
+                    self.render.render_obj_axis(
+                        ax,
+                        self.obj_collision_mngr.get_collision_info()[
+                            self.attached_obj_name
+                        ],
+                    )
                 except:
-                    self.render.render_obj_axis(ax, self.robot_collision_mngr.get_collision_info()[self.attached_obj_name])
+                    self.render.render_obj_axis(
+                        ax,
+                        self.robot_collision_mngr.get_collision_info()[
+                            self.attached_obj_name
+                        ],
+                    )
 
             if attach_idx is not None:
                 if i in attach_idx:
@@ -660,9 +670,10 @@ class SceneManager:
             fig, update, np.arange(len(joint_path)), interval=interval, repeat=repeat
         )
         if is_save:
-            import os 
+            import os
+
             print("PWD : ", os.getcwd())
-            writergif = animation.PillowWriter(fps=30) 
+            writergif = animation.PillowWriter(fps=30)
             writervideo = animation.FFMpegWriter(fps=30)
             if gif:
                 video_name = video_name + ".gif"

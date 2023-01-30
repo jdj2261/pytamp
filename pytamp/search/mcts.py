@@ -718,12 +718,10 @@ class MCTS:
                         f"{sc.COLOR_YELLOW}place {place_scene.pick_obj_name} on {place_scene.cur_place_obj_name}{sc.ENDC}"
                     )
 
-                    place_joint_path = (
-                        self.place_action.get_possible_joint_path_level_2(
-                            scene=place_scene,
-                            release_poses=place_scene.release_poses,
-                            init_thetas=init_theta,
-                        )
+                    place_joint_path = self.place_action.get_possible_joint_path_level_2(
+                        scene=place_scene,
+                        release_poses=place_scene.release_poses,
+                        init_thetas=init_theta,
                     )
                     if place_joint_path:
                         success_place = True
@@ -772,11 +770,9 @@ class MCTS:
                     f"{sc.COLOR_YELLOW}move {pick_scene.pick_obj_name} to bin{sc.ENDC}"
                 )
                 if not self.scene_mngr.scene.has_already_final_path:
-                    self.scene_mngr.scene.ben_2_final_path = (
-                        self.place_action.get_rrt_star_path(
-                            self.scene_mngr.scene.robot.init_qpos,
-                            goal_q=self.scene_mngr.scene.goal_q,
-                        )
+                    self.scene_mngr.scene.ben_2_final_path = self.place_action.get_rrt_star_path(
+                        self.scene_mngr.scene.robot.init_qpos,
+                        goal_q=self.scene_mngr.scene.goal_q,
                     )
                     self.scene_mngr.scene.has_already_final_path = True
             self.level_wise_2_success = True
@@ -1077,10 +1073,7 @@ class MCTS:
                     }
                 )
 
-        plt.figure(
-            title,
-            figsize=(14, 10),
-        )
+        plt.figure(title, figsize=(14, 10))
         pos = graphviz_layout(tree, prog="dot")
         nx.draw(
             tree,

@@ -268,7 +268,9 @@ class PickAction(ActivityBase):
                     )
                 else:
                     success_joint_path = False
-                    self.scene_mngr.scene[pick_obj].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
+                    self.scene_mngr.scene[
+                        pick_obj
+                    ].h_mat = self.scene_mngr.scene.robot.gripper.pick_obj_pose
                 self.scene_mngr.detach_object_from_gripper()
                 self.scene_mngr.add_object(
                     self.scene_mngr.scene.robot.gripper.attached_obj_name,

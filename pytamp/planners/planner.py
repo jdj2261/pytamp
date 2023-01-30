@@ -6,10 +6,7 @@ from pykin.utils.log_utils import create_logger
 from pykin.utils.error_utils import CollisionError, NotFoundError
 from pytamp.scene.scene_manager import SceneManager
 
-logger = create_logger(
-    "Cartesian Planner",
-    "debug",
-)
+logger = create_logger("Cartesian Planner", "debug")
 
 
 @dataclass
