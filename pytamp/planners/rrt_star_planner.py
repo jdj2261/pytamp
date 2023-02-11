@@ -102,7 +102,6 @@ class RRTStarPlanner(Planner):
                     if limit_cnt > 50:
                         break
 
-                    # check goal_q is possible ? 이게 왜 while 문 안에 필요한것일까 ?
                     self.goal_q = self._scene_mngr.scene.robot.inverse_kin(
                         init_q, self._goal_pose, max_iter=100
                     )

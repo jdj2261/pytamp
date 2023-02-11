@@ -54,7 +54,7 @@ class Benchmark1(Benchmark):
         self.box_mesh = get_object_mesh("ben_cube.stl", 0.1)
 
         # add slope_mesh
-        self.slope_mesh = get_object_mesh("slope_for_pytamp.STL", 0.001)
+        # self.slope_mesh = get_object_mesh("slope_for_pytamp.STL", 0.001)
 
         box_height = self.box_mesh.bounds[1][2] - self.box_mesh.bounds[0][2]
         table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]

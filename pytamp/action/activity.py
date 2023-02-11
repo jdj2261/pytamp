@@ -6,6 +6,8 @@ from pykin.utils.mesh_utils import surface_sampling
 from pykin.utils import plot_utils as p_utils
 from pytamp.planners.cartesian_planner import CartesianPlanner
 from pytamp.planners.rrt_star_planner import RRTStarPlanner
+from pytamp.planners.prm_star_planner import PRMStarPlanner
+
 from pytamp.scene.scene_manager import SceneManager
 
 
@@ -60,6 +62,9 @@ class ActivityBase(metaclass=ABCMeta):
                 epsilon=0.2,
                 gamma_RRT_star=2.0,
                 dimension=self.scene_mngr.scene.robot.arm_dof,
+            )
+            self.prm_planner = PRMStarPlanner(
+                dimension=self.scene_mngr.scene.robot.arm_dof
             )
 
     def __repr__(self) -> str:
@@ -157,6 +162,14 @@ class ActivityBase(metaclass=ABCMeta):
         )
         return self.rrt_planner.get_joint_path(n_step=n_step)
 
+    def get_prm_star_path(
+        self, cur_q, goal_pose=None, goal_q=None, max_iter=500, n_step=10
+    ):
+        self.prm_planner.run(
+            self.scene_mngr, cur_q, goal_pose, goal_q=goal_q, max_iter=max_iter
+        )
+        return self.prm_planner.get_joint_path(n_step=n_step)
+
     def animation_path(
         self,
         pnp_all_joint_path,
@@ -234,8 +247,6 @@ class ActivityBase(metaclass=ABCMeta):
 
             if ax is None and fig is None:
                 fig, ax = p_utils.init_3d_figure(name="Level wise 2")
-
-            ax.view_init(50, 50, "y")
 
             self.scene_mngr.animation(
                 ax,

@@ -244,9 +244,13 @@ class PickAction(ActivityBase):
 
         # default pose -> pre_grasp_pose (rrt)
         pre_grasp_joint_path = self.get_rrt_star_path(default_thetas, pre_grasp_pose)
+        # pre_grasp_joint_path = self.get_prm_star_path(default_thetas, pre_grasp_pose)
+
         self.cost = 0
         if pre_grasp_joint_path:
             self.cost += self.rrt_planner.goal_node_cost
+            # self.cost += self.prm_planner.goal_node_cost
+
             # pre_grasp_pose -> grasp_pose (cartesian)
             grasp_joint_path = self.get_cartesian_path(
                 pre_grasp_joint_path[-1], grasp_pose
