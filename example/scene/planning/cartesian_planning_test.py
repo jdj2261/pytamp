@@ -96,10 +96,7 @@ scene_mngr.attach_object_on_gripper("green_box", False)
 
 
 ############################ Show collision info #############################
-planner = CartesianPlanner(
-    n_step=500,
-    dimension=7,
-)
+planner = CartesianPlanner(n_step=500, dimension=7)
 
 planner.run(scene_mngr=scene_mngr, cur_q=target_thetas, goal_pose=init_pose)
 

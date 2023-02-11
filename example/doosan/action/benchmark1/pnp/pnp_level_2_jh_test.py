@@ -19,25 +19,25 @@ place_object_poses = []
 
 success_joint_path = False
 cnt = 0
-cnt_place=0
+cnt_place = 0
 
 failed_n = 0
 for pick_action in pick_actions:
     for pick_scene in pick.get_possible_transitions(
         pick.scene_mngr.init_scene, action=pick_action
-    ):  
+    ):
         pick_joint_path = pick.get_possible_joint_path_level_2(
             scene=pick_scene, grasp_poses=pick_scene.grasp_poses
         )
-        
+
         if pick_joint_path:
             place_actions = list(place.get_possible_actions_level_1(pick_scene))
             for place_action in place_actions:
                 for place_scene in place.get_possible_transitions(
                     scene=pick_scene, action=place_action
                 ):
-                    place_joint_path=None
-                    if place_scene.robot.gripper.release_pose[2,3] > 0.97:
+                    place_joint_path = None
+                    if place_scene.robot.gripper.release_pose[2, 3] > 0.97:
                         place_joint_path = place.get_possible_joint_path_level_2(
                             scene=place_scene,
                             release_poses=place_scene.release_poses,
@@ -66,5 +66,11 @@ pnp_all_joint_path.append(pnp_path)
 pick_all_objects.append(pick_objects)
 place_all_object_poses.append(place_object_poses)
 print("search planning ! : ", failed_n)
-place.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses, 
-                     is_save=True, video_name = "pnp_level_2_jh_test_4",gif=False)
+place.simulate_path(
+    pnp_all_joint_path,
+    pick_all_objects,
+    place_all_object_poses,
+    is_save=True,
+    video_name="pnp_level_2_jh_test_4",
+    gif=False,
+)
