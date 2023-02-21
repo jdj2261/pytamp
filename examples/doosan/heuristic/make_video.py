@@ -3,8 +3,8 @@ import os
 from tqdm import tqdm
 import natsort
 
-image_folder = "benchmark1/bench1_scene/"
-video_name = "benchmark1/bench1_test.mp4"
+image_folder = "benchmark4/bench4_scene/uct"
+video_name = "benchmark4/bench1_test.mp4"
 
 folders = os.listdir(image_folder)
 folders = natsort.natsorted(folders)
