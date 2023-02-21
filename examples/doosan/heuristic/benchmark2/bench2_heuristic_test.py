@@ -20,35 +20,21 @@ bottle_meshes = []
 for i in range(3):
     bottle_meshes.append(get_object_mesh("bottle.stl"))
 
-bottle_pose1 = Transform(
-    pos=np.array([0.6, 0.2, 0.74 + abs(bottle_meshes[0].bounds[0][2])])
-)
-bottle_pose2 = Transform(
-    pos=np.array([0.6, 0.35, 0.74 + abs(bottle_meshes[0].bounds[0][2])])
-)
-bottle_pose3 = Transform(
-    pos=np.array([0.6, 0.05, 0.74 + abs(bottle_meshes[0].bounds[0][2])])
-)
+bottle_pose1 = Transform(pos=np.array([0.6, 0.2, 0.74 + abs(bottle_meshes[0].bounds[0][2])]))
+bottle_pose2 = Transform(pos=np.array([0.6, 0.35, 0.74 + abs(bottle_meshes[0].bounds[0][2])]))
+bottle_pose3 = Transform(pos=np.array([0.6, 0.05, 0.74 + abs(bottle_meshes[0].bounds[0][2])]))
 
-support_box_pose = Transform(
-    pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0])
-)
+support_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0]))
 table_pose = Transform(pos=np.array([0.4, 0.24, 0.0]))
 
 goal_box_mesh = get_object_mesh("goal_box.stl", 0.001)
 table_mesh = get_object_mesh("custom_table.stl", 0.01)
 
 scene_mngr = SceneManager(
-    "visual",
-    is_pyplot=False,
-    benchmark={2: {"bottle_num": 3, "goal_object": "goal_bottle"}},
+    "visual", is_pyplot=False, benchmark={2: {"bottle_num": 3, "goal_object": "goal_bottle"}}
 )
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_object(
     name="bottle1",

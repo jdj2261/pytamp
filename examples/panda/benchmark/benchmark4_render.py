@@ -9,9 +9,7 @@ from pytamp.scene.scene_manager import SceneManager
 
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array(
@@ -41,9 +39,7 @@ scene_mngr = SceneManager("collision", is_pyplot=False, benchmark=benchmark_conf
 
 theta = np.linspace(-np.pi, np.pi, disk_num)
 for i in range(disk_num):
-    disk_pos = np.array(
-        [0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh * i]
-    )
+    disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh * i])
     disk_ori = Transform._to_quaternion([0, 0, theta[i]])
     disk_pose[i] = Transform(pos=disk_pos, rot=disk_ori)
     disk_name = "hanoi_disk_" + str(i + 1)
@@ -57,32 +53,16 @@ for i in range(disk_num):
     )
 
 scene_mngr.add_object(
-    name="peg_1",
-    gtype="mesh",
-    gparam=peg_mesh,
-    h_mat=peg1_pose.h_mat,
-    color=[1, 0.0, 0.0],
+    name="peg_1", gtype="mesh", gparam=peg_mesh, h_mat=peg1_pose.h_mat, color=[1, 0.0, 0.0]
 )
 scene_mngr.add_object(
-    name="peg_2",
-    gtype="mesh",
-    gparam=peg_mesh,
-    h_mat=peg2_pose.h_mat,
-    color=[1, 0.0, 0.0],
+    name="peg_2", gtype="mesh", gparam=peg_mesh, h_mat=peg2_pose.h_mat, color=[1, 0.0, 0.0]
 )
 scene_mngr.add_object(
-    name="peg_3",
-    gtype="mesh",
-    gparam=peg_mesh,
-    h_mat=peg3_pose.h_mat,
-    color=[1, 0.0, 0.0],
+    name="peg_3", gtype="mesh", gparam=peg_mesh, h_mat=peg3_pose.h_mat, color=[1, 0.0, 0.0]
 )
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_robot(robot)
 

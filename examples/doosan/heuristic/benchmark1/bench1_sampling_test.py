@@ -39,13 +39,11 @@ surface_points_for_support_obj = list(
 fig, ax = p_utils.init_3d_figure(figsize=(10, 6), dpi=120, name="Sampling Object")
 p_utils.plot_basis(ax)
 place_action.scene_mngr.render_objects(ax, alpha=0.1)
-for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, normal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
     if not (min_x <= point[0] <= max_x):
         continue
     if not (min_y <= point[1] <= max_y):
         continue
-    place_action.scene_mngr.render.render_point(
-        ax, point, color=[0.0, 1.0, 0.0], radius=0.005
-    )
+    place_action.scene_mngr.render.render_point(ax, point, color=[0.0, 1.0, 0.0], radius=0.005)
 
 place_action.show()

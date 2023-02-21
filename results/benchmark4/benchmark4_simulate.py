@@ -19,13 +19,9 @@ def get_final_all_values(algo, budgets, n_seed, end_num=0):
             data_for_seed = np.load(f, allow_pickle=True)
             perturb_final_level_1_values.append(data_for_seed["level_1_values"])
             perturb_final_level_2_values.append(data_for_seed["level_2_values"])
-            perturb_final_pnp_all_joint_paths.append(
-                data_for_seed["pnp_all_joint_paths"]
-            )
+            perturb_final_pnp_all_joint_paths.append(data_for_seed["pnp_all_joint_paths"])
             perturb_final_pick_all_objects.append(data_for_seed["pick_all_objects"])
-            perturb_final_place_all_object_poses.append(
-                data_for_seed["place_all_object_poses"]
-            )
+            perturb_final_place_all_object_poses.append(data_for_seed["place_all_object_poses"])
 
     perturb_final_level_1_values = np.asarray(perturb_final_level_1_values)
     perturb_final_level_2_values = np.asarray(perturb_final_level_2_values)
@@ -45,19 +41,11 @@ idx = np.unravel_index(
     bai_perturb_result_all_values["level_2_values"].argmax(),
     bai_perturb_result_all_values["level_2_values"].shape,
 )
-pnp_all_joint_path = bai_perturb_result_all_values["pnp_all_joint_paths"][idx[0]][
-    idx[1]
-]
+pnp_all_joint_path = bai_perturb_result_all_values["pnp_all_joint_paths"][idx[0]][idx[1]]
 pick_all_objects = bai_perturb_result_all_values["pick_all_objects"][idx[0]][idx[1]]
-place_all_object_poses = bai_perturb_result_all_values["place_all_object_poses"][
-    idx[0]
-][idx[1]]
+place_all_object_poses = bai_perturb_result_all_values["place_all_object_poses"][idx[0]][idx[1]]
 
-benchmark4 = Benchmark4(
-    robot_name="doosan", geom="collision", is_pyplot=True, disk_num=3
-)
-place = PlaceAction(
-    benchmark4.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0
-)
+benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True, disk_num=3)
+place = PlaceAction(benchmark4.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
 place.simulate_path(pnp_all_joint_path, pick_all_objects, place_all_object_poses)

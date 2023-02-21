@@ -7,9 +7,7 @@ from pytamp.search.node_data import NodeData
 def find_best_idx_from_random(tree, children):
     # eps = self._config["eps"]
     # if eps > np.random.uniform():
-    best_node_idx = np.random.choice(
-        len([tree.nodes[child][NodeData.VALUE] for child in children])
-    )
+    best_node_idx = np.random.choice(len([tree.nodes[child][NodeData.VALUE] for child in children]))
     return best_node_idx
 
 
@@ -41,9 +39,7 @@ def find_idx_from_uct(tree, children, c):
     # selected_values[np.isinf(selected_values)] = 0.
     selected_values[np.where(np.asarray(selected_visits) == 0)] = sys.maxsize  #! 0
 
-    ucts = selected_values + c * np.sqrt(
-        total_visits / np.maximum(1.0, selected_visits)
-    )
+    ucts = selected_values + c * np.sqrt(total_visits / np.maximum(1.0, selected_visits))
     # print(ucts, selected_values , c * np.sqrt(total_visits / np.maximum(1., selected_visits)))
     best_node_idx = np.argmax(ucts)
 
@@ -62,12 +58,8 @@ def find_idx_from_bai_ucb(tree: nx.DiGraph, children, c):
     if len(selected_visits) == 1:
         best_node_idx = 0
     else:
-        upper_bounds = selected_values + c * np.sqrt(
-            1.0 / np.maximum(1.0, selected_visits)
-        )
-        lower_bounds = selected_values - c * np.sqrt(
-            1.0 / np.maximum(1.0, selected_visits)
-        )
+        upper_bounds = selected_values + c * np.sqrt(1.0 / np.maximum(1.0, selected_visits))
+        lower_bounds = selected_values - c * np.sqrt(1.0 / np.maximum(1.0, selected_visits))
         B_k = [
             np.max(
                 [
@@ -101,12 +93,8 @@ def find_idx_from_bai_perturb(tree, children, c):
         best_node_idx = 0
     else:
         g = np.random.normal(size=(len(selected_visits)))
-        upper_bounds = (
-            selected_values + c * np.sqrt(1.0 / np.maximum(1.0, selected_visits)) * g
-        )
-        lower_bounds = (
-            selected_values - c * np.sqrt(1.0 / np.maximum(1.0, selected_visits)) * g
-        )
+        upper_bounds = selected_values + c * np.sqrt(1.0 / np.maximum(1.0, selected_visits)) * g
+        lower_bounds = selected_values - c * np.sqrt(1.0 / np.maximum(1.0, selected_visits)) * g
         B_k = np.array(
             [
                 np.max(

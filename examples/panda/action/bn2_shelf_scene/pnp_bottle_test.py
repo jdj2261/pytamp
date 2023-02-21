@@ -11,9 +11,7 @@ from pytamp.action.place import PlaceAction
 
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array(
@@ -25,19 +23,11 @@ bottle_meshes = []
 for i in range(3):
     bottle_meshes.append(get_object_mesh("bottle.stl"))
 
-bottle_pose1 = Transform(
-    pos=np.array([0.6, 0.2, 0.74 + abs(bottle_meshes[0].bounds[0][2])])
-)
-bottle_pose2 = Transform(
-    pos=np.array([0.6, 0.35, 0.74 + abs(bottle_meshes[0].bounds[0][2])])
-)
-bottle_pose3 = Transform(
-    pos=np.array([0.6, 0.05, 0.74 + abs(bottle_meshes[0].bounds[0][2])])
-)
+bottle_pose1 = Transform(pos=np.array([0.6, 0.2, 0.74 + abs(bottle_meshes[0].bounds[0][2])]))
+bottle_pose2 = Transform(pos=np.array([0.6, 0.35, 0.74 + abs(bottle_meshes[0].bounds[0][2])]))
+bottle_pose3 = Transform(pos=np.array([0.6, 0.05, 0.74 + abs(bottle_meshes[0].bounds[0][2])]))
 
-support_box_pose = Transform(
-    pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0])
-)
+support_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0]))
 table_pose = Transform(pos=np.array([0.4, 0.24, 0.0]))
 
 goal_box_mesh = get_object_mesh("goal_box.stl", 0.001)
@@ -45,11 +35,7 @@ table_mesh = get_object_mesh("custom_table.stl", 0.01)
 
 scene_mngr = SceneManager("collision", is_pyplot=True)
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_object(
     name="bottle1",
@@ -121,9 +107,7 @@ for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
         place_action = place.get_action_level_1_for_single_object(
             "goal_box", "bottle1", pick_scene.robot.gripper.grasp_pose, scene=pick_scene
         )
-        for place_scene in place.get_possible_transitions(
-            scene=pick_scene, action=place_action
-        ):
+        for place_scene in place.get_possible_transitions(scene=pick_scene, action=place_action):
             ik_solve, release_poses = place.get_possible_ik_solve_level_2(
                 scene=place_scene, release_poses=place_scene.release_poses
             )
@@ -131,18 +115,14 @@ for pick_scene in pick.get_possible_transitions(scene_mngr.scene, pick_action):
                 place_joint_path = place.get_possible_joint_path_level_2(
                     scene=place_scene,
                     release_poses=release_poses,
-                    init_thetas=pick_joint_path[-1][place.move_data.MOVE_default_grasp][
-                        -1
-                    ],
+                    init_thetas=pick_joint_path[-1][place.move_data.MOVE_default_grasp][-1],
                 )
                 if place_joint_path:
                     success_joint_path = True
                     cnt += 1
                     # pick_path = deepcopy(pick_joint_path)
                     pnp_joint_all_pathes.append((pick_joint_path + place_joint_path))
-                    pick_all_objects.append(
-                        [pick_scene.robot.gripper.attached_obj_name]
-                    )
+                    pick_all_objects.append([pick_scene.robot.gripper.attached_obj_name])
                     place_all_object_poses.append(
                         [place_scene.objs[place_scene.pick_obj_name].h_mat]
                     )

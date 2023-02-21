@@ -53,11 +53,7 @@ scene_mngr.add_object(
     color=[0.0, 1.0, 0.0],
 )
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_robot(robot)
 
@@ -85,9 +81,7 @@ for theta in np.linspace(0, np.pi * 2, 10):
 
     test_pose = np.dot(test, tcp_pose)
 
-    grasp_pose = scene_mngr.scene.robot.gripper.compute_eef_pose_from_tcp_pose(
-        test_pose
-    )
+    grasp_pose = scene_mngr.scene.robot.gripper.compute_eef_pose_from_tcp_pose(test_pose)
     scene_mngr.render.render_axis(ax, grasp_pose)
     scene_mngr.render.render_gripper(ax, robot, pose=grasp_pose)
 

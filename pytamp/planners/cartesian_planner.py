@@ -85,9 +85,7 @@ class CartesianPlanner(Planner):
             logger.warning(f"This Planner does not do collision checking")
 
         waypoints = self.generate_waypoints()
-        joint_path = self._compute_paths_and_target_positions(
-            waypoints, collision_check
-        )
+        joint_path = self._compute_paths_and_target_positions(waypoints, collision_check)
 
         self.joint_path = joint_path
 
@@ -129,16 +127,13 @@ class CartesianPlanner(Planner):
                     self._scene_mngr.scene.robot.desired_frames, cur_fk, self._dimension
                 )
                 J_dls = np.dot(
-                    J.T,
-                    np.linalg.inv(np.dot(J, J.T) + self._damping ** 2 * np.identity(6)),
+                    J.T, np.linalg.inv(np.dot(J, J.T) + self._damping ** 2 * np.identity(6))
                 )
 
                 dq = np.dot(J_dls, err_pose)
                 cur_qpos = np.array(
                     [(cur_qpos[i] + dq[i]) for i in range(self._dimension)]
-                ).reshape(
-                    self._dimension,
-                )
+                ).reshape(self._dimension)
 
                 if not self._check_q_in_limits(cur_qpos):
                     success_limit_check = False
@@ -146,10 +141,7 @@ class CartesianPlanner(Planner):
                 if collision_check:
                     is_collide, col_name = self._collide(cur_qpos, visible_name=True)
                     if is_collide:
-                        collision_pose[step] = (
-                            col_name,
-                            np.round(target_transform[:3, 3], 6),
-                        )
+                        collision_pose[step] = (col_name, np.round(target_transform[:3, 3], 6))
                         continue
 
                 cur_fk = self._scene_mngr.scene.robot.kin.forward_kinematics(
@@ -163,8 +155,7 @@ class CartesianPlanner(Planner):
                 success_limit_check = True
 
             err = t_utils.compute_pose_error(
-                self._goal_pose[:3, 3],
-                cur_fk[self._scene_mngr.scene.robot.eef_name].pos,
+                self._goal_pose[:3, 3], cur_fk[self._scene_mngr.scene.robot.eef_name].pos
             )
 
             if collision_pose.keys() and collision_check:
@@ -175,9 +166,7 @@ class CartesianPlanner(Planner):
                 break
 
             if cnt > total_cnt:
-                logger.error(
-                    f"Failed Generate Path.. The number of retries of {cnt} exceeded"
-                )
+                logger.error(f"Failed Generate Path.. The number of retries of {cnt} exceeded")
                 joint_path = []
 
                 # ![DEBUG]
@@ -209,9 +198,7 @@ class CartesianPlanner(Planner):
         if self.waypoint_type == "Linear":
             waypoints = [
                 path
-                for path in self._get_linear_path(
-                    self._cur_pose, self._goal_pose, self._is_slerp
-                )
+                for path in self._get_linear_path(self._cur_pose, self._goal_pose, self._is_slerp)
             ]
         if self.waypoint_type == "Cubic":
             pass

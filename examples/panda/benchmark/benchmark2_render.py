@@ -9,18 +9,14 @@ from pytamp.scene.scene_manager import SceneManager
 
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array(
     [0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi / 4]
 )
 
-shelf_pose = Transform(
-    pos=np.array([0.9, 0, 1.41725156]), rot=np.array([0, 0, np.pi / 2])
-)
+shelf_pose = Transform(pos=np.array([0.9, 0, 1.41725156]), rot=np.array([0, 0, np.pi / 2]))
 bin_pose = Transform(pos=np.array([0.0, 1.0, 0.3864222]))
 
 bottle_meshes = []
@@ -117,12 +113,8 @@ scene_mngr.set_logical_state("bottle_5", ("on", "shelf_9"))
 scene_mngr.set_logical_state("bottle_6", ("on", "shelf_9"))
 
 for i in range(20):
-    scene_mngr.set_logical_state(
-        f"shelf_" + str(i), (scene_mngr.scene.logical_state.static, True)
-    )
-    scene_mngr.set_logical_state(
-        f"bin_" + str(i), (scene_mngr.scene.logical_state.static, True)
-    )
+    scene_mngr.set_logical_state(f"shelf_" + str(i), (scene_mngr.scene.logical_state.static, True))
+    scene_mngr.set_logical_state(f"bin_" + str(i), (scene_mngr.scene.logical_state.static, True))
 scene_mngr.set_logical_state(
     scene_mngr.gripper_name, (scene_mngr.scene.logical_state.holding, None)
 )

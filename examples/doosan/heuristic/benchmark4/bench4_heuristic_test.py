@@ -12,9 +12,7 @@ from pytamp.action.pick import PickAction
 
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array(
@@ -45,9 +43,7 @@ scene_mngr = SceneManager("collision", is_pyplot=True, benchmark=benchmark_confi
 
 theta = np.linspace(-np.pi, np.pi, disk_num)
 for i in range(disk_num):
-    disk_pos = np.array(
-        [0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh * i]
-    )
+    disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh * i])
     disk_ori = Transform._to_quaternion([0, 0, i])
     disk_pose[i] = Transform(pos=disk_mesh.center_mass + disk_pos, rot=disk_ori)
     disk_name = "hanoi_disk_" + str(i)
@@ -67,13 +63,7 @@ fig, ax = p_utils.init_3d_figure(name="Get contact points")
 
 pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)
-for obj in [
-    "hanoi_disk_0",
-    "hanoi_disk_1",
-    "hanoi_disk_2",
-    "hanoi_disk_3",
-    "hanoi_disk_4",
-]:
+for obj in ["hanoi_disk_0", "hanoi_disk_1", "hanoi_disk_2", "hanoi_disk_3", "hanoi_disk_4"]:
     pose = list(pick.get_grasp_pose_from_heuristic(obj_name=obj))
     for i in range(len(pose)):
         pick.scene_mngr.render_axis(ax, pose[i][pick.move_data.MOVE_grasp])

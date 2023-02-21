@@ -5,19 +5,17 @@ from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark1
 from pytamp.search.planner import Planner
 
-algo = "bai_ucb"
+algo = "bai_perturb"
 budgets = 100
 directory_name = "bench1_planner"
 p_utils.createDirectory(directory_name)
 
 for seed in range(10, 14):
     # for seed in range(10, 13):
-    benchmark1 = Benchmark1(
-        robot_name="doosan", geom="visual", is_pyplot=True, box_num=6
-    )
+    benchmark1 = Benchmark1(robot_name="doosan", geom="visual", is_pyplot=True, box_num=6)
 
     # bai_ucb num 2
-    planner = [
+    plan = [
         ("pick", "F_box"),
         ("place", "tray_red"),
         ("pick", "E_box"),
@@ -40,17 +38,11 @@ for seed in range(10, 14):
         ("place", "D_box"),
     ]
 
-    print(
-        f"Benchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, Seed: {seed}"
-    )
+    print(f"Benchmark: {benchmark1.scene_mngr.scene.bench_num}, Algo: {algo}, Seed: {seed}")
     np.random.seed(seed)
     try:
         planner = Planner(benchmark1.scene_mngr)
-        (
-            pnp_all_joint_path,
-            pick_all_objects,
-            place_all_object_poses,
-        ) = planner.do_planning(planner)
+        (pnp_all_joint_path, pick_all_objects, place_all_object_poses) = planner.do_planning(plan)
 
         num = 2
         filename = (

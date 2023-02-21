@@ -3,9 +3,7 @@ from pytamp.action.pick import PickAction
 from pytamp.benchmark import Benchmark4
 
 benchmark4 = Benchmark4(robot_name="doosan", geom="visual", is_pyplot=False, disk_num=5)
-pick = PickAction(
-    benchmark4.scene_mngr, n_contacts=0, n_directions=3, retreat_distance=0.1
-)
+pick = PickAction(benchmark4.scene_mngr, n_contacts=0, n_directions=3, retreat_distance=0.1)
 
 ################# Action Test ##################
 fig, ax = p_utils.init_3d_figure(name="Heuristic")

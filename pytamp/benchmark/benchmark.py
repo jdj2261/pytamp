@@ -3,12 +3,7 @@ from pytamp.scene.scene_manager import SceneManager
 
 class Benchmark:
     def __init__(
-        self,
-        robot_name,
-        geom="collision",
-        is_pyplot=True,
-        benchmark_config=None,
-        only_sim=False,
+        self, robot_name, geom="collision", is_pyplot=True, benchmark_config=None, only_sim=False
     ):
         self.robot_name = robot_name
         self.geom = geom
@@ -24,10 +19,7 @@ class Benchmark:
         self.urdf_file = "urdf/" + self.robot_name + "/" + urdf_file_name + ".urdf"
 
         self.scene_mngr = SceneManager(
-            self.geom,
-            is_pyplot=self.is_pyplot,
-            benchmark=benchmark_config,
-            debug_mode=True,
+            self.geom, is_pyplot=self.is_pyplot, benchmark=benchmark_config, debug_mode=True
         )
         self.robot = None
 

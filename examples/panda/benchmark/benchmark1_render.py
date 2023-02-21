@@ -10,9 +10,7 @@ from pytamp.scene.scene_manager import SceneManager
 
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array(
@@ -25,9 +23,7 @@ C_box_pose = Transform(pos=np.array([0.6, 0.25, 0.77]))
 D_box_pose = Transform(pos=np.array([0.5, 0.05, 0.77]))
 E_box_pose = Transform(pos=np.array([0.5, 0.15, 0.77]))
 F_box_pose = Transform(pos=np.array([0.5, 0.25, 0.77]))
-goal_box_pose = Transform(
-    pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0])
-)
+goal_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0]))
 table_pose = Transform(pos=np.array([1.0, -0.4, -0.03]))
 ceiling_pose = Transform(pos=np.array([1.0, -0.4, 1.5]))
 tray_red_pose = Transform(pos=np.array([0.6, -0.5 - 0.3, 0.8]))
@@ -47,54 +43,26 @@ benchmark_config = {1: param}
 
 scene_mngr = SceneManager("visual", is_pyplot=False, benchmark=benchmark_config)
 scene_mngr.add_object(
-    name="A_box",
-    gtype="mesh",
-    gparam=box_meshes[0],
-    h_mat=A_box_pose.h_mat,
-    color=[1.0, 0.0, 0.0],
+    name="A_box", gtype="mesh", gparam=box_meshes[0], h_mat=A_box_pose.h_mat, color=[1.0, 0.0, 0.0]
 )
 scene_mngr.add_object(
-    name="B_box",
-    gtype="mesh",
-    gparam=box_meshes[1],
-    h_mat=B_box_pose.h_mat,
-    color=[0.0, 1.0, 0.0],
+    name="B_box", gtype="mesh", gparam=box_meshes[1], h_mat=B_box_pose.h_mat, color=[0.0, 1.0, 0.0]
 )
 scene_mngr.add_object(
-    name="C_box",
-    gtype="mesh",
-    gparam=box_meshes[2],
-    h_mat=C_box_pose.h_mat,
-    color=[0.0, 0.0, 1.0],
+    name="C_box", gtype="mesh", gparam=box_meshes[2], h_mat=C_box_pose.h_mat, color=[0.0, 0.0, 1.0]
 )
 scene_mngr.add_object(
-    name="D_box",
-    gtype="mesh",
-    gparam=box_meshes[3],
-    h_mat=D_box_pose.h_mat,
-    color=[1.0, 1.0, 0.0],
+    name="D_box", gtype="mesh", gparam=box_meshes[3], h_mat=D_box_pose.h_mat, color=[1.0, 1.0, 0.0]
 )
 scene_mngr.add_object(
-    name="E_box",
-    gtype="mesh",
-    gparam=box_meshes[4],
-    h_mat=E_box_pose.h_mat,
-    color=[0.0, 1.0, 1.0],
+    name="E_box", gtype="mesh", gparam=box_meshes[4], h_mat=E_box_pose.h_mat, color=[0.0, 1.0, 1.0]
 )
 scene_mngr.add_object(
-    name="F_box",
-    gtype="mesh",
-    gparam=box_meshes[5],
-    h_mat=F_box_pose.h_mat,
-    color=[1.0, 0.0, 1.0],
+    name="F_box", gtype="mesh", gparam=box_meshes[5], h_mat=F_box_pose.h_mat, color=[1.0, 0.0, 1.0]
 )
 # scene_mngr.add_object(name="goal_box", gtype="mesh", gparam=goal_box_mesh, h_mat=goal_box_pose.h_mat, color=[1.0, 1.0, 1.0])
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_object(
     name="ceiling",

@@ -5,18 +5,14 @@ from pytamp.action.place import PlaceAction
 
 benchmark1 = Benchmark1(robot_name="doosan", geom="visual", is_pyplot=True, box_num=3)
 pick = PickAction(benchmark1.scene_mngr, n_contacts=0, n_directions=0)
-place = PlaceAction(
-    benchmark1.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0
-)
+place = PlaceAction(benchmark1.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
 ################# Action Test ##################
 actions = list(pick.get_possible_actions_level_1())
 
 ###### Surface sampling held and support obj#######
 fig, ax = p_utils.init_3d_figure(figsize=(10, 6), dpi=120, name="Sampling Object")
-surface_points_for_support_obj = list(
-    place.get_surface_points_for_support_obj("tray_red")
-)
+surface_points_for_support_obj = list(place.get_surface_points_for_support_obj("tray_red"))
 for point, normal, _ in surface_points_for_support_obj:
     place.scene_mngr.render.render_point(ax, point)
 surface_points_for_held_obj = list(place.get_surface_points_for_held_obj("A_box"))
@@ -44,17 +40,13 @@ for eef_pose in eef_poses:
     )
     for release_pose, obj_pose in release_poses:
         all_release_poses.append((release_pose, obj_pose))
-        place.scene_mngr.render.render_axis(
-            ax, release_pose[place.move_data.MOVE_release]
-        )
+        place.scene_mngr.render.render_axis(ax, release_pose[place.move_data.MOVE_release])
         place.scene_mngr.render.render_gripper(
             ax, benchmark1.robot, pose=release_pose[place.move_data.MOVE_release]
         )
         # pick.scene_mngr.render_axis(ax, release_pose[place.move_data.MOVE_pre_release])
         # pick.scene_mngr.render_axis(ax, release_pose[place.move_data.MOVE_post_release])
-        place.scene_mngr.render.render_object(
-            ax, place.scene_mngr.scene.objs["A_box"], obj_pose
-        )
+        place.scene_mngr.render.render_object(ax, place.scene_mngr.scene.objs["A_box"], obj_pose)
 p_utils.plot_basis(ax)
 place.scene_mngr.render_objects(ax)
 
@@ -68,14 +60,10 @@ for release_pose_for_only_gripper, obj_pose in release_poses_for_only_gripper:
         ax, release_pose_for_only_gripper[place.move_data.MOVE_release], scale=0.05
     )
     pick.scene_mngr.render.render_gripper(
-        ax,
-        benchmark1.robot,
-        pose=release_pose_for_only_gripper[place.move_data.MOVE_release],
+        ax, benchmark1.robot, pose=release_pose_for_only_gripper[place.move_data.MOVE_release]
     )
     # place.scene_mngr.render_gripper(ax, pose=release_pose_for_only_gripper[place.move_data.MOVE_release])
-    place.scene_mngr.render.render_object(
-        ax, place.scene_mngr.scene.objs["A_box"], obj_pose
-    )
+    place.scene_mngr.render.render_object(ax, place.scene_mngr.scene.objs["A_box"], obj_pose)
 p_utils.plot_basis(ax)
 place.scene_mngr.render_objects(ax)
 place.show()

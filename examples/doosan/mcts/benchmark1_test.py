@@ -21,14 +21,9 @@ parser.add_argument(
     help="Choose one (bai_perturb, bai_ucb, uct)",
 )
 parser.add_argument(
-    "--debug_mode",
-    default=False,
-    type=lambda x: (str(x).lower() == "true"),
-    help="Debug mode",
+    "--debug_mode", default=False, type=lambda x: (str(x).lower() == "true"), help="Debug mode"
 )
-parser.add_argument(
-    "--box_number", metavar="N", type=int, default=6, help="Box Number(6 or less)"
-)
+parser.add_argument("--box_number", metavar="N", type=int, default=6, help="Box Number(6 or less)")
 args = parser.parse_args()
 
 debug_mode = args.debug_mode
@@ -39,9 +34,7 @@ seed = args.seed
 number = args.box_number
 np.random.seed(seed)
 
-benchmark1 = Benchmark1(
-    robot_name="doosan", geom="collision", is_pyplot=True, box_num=number
-)
+benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=number)
 final_level_1_values = []
 final_level_2_values = []
 final_optimal_nodes = []
@@ -49,7 +42,7 @@ final_pnp_all_joint_paths = []
 final_pick_all_objects = []
 final_place_all_object_poses = []
 # final_optimal_trees = []
-c_list = 10 ** np.linspace(-2, 2.0, 10)
+c_list = 10 ** np.linspace(-2, 2.0, 1)
 
 for idx, c in enumerate(c_list):
     mcts = MCTS(
@@ -70,11 +63,9 @@ for idx, c in enumerate(c_list):
     final_level_2_values.append(mcts.values_for_level_2)
 
     if mcts.level_wise_2_success:
-        (
-            pnp_all_joint_paths,
-            pick_all_objects,
-            place_all_object_poses,
-        ) = mcts.get_all_joint_path(mcts.optimal_nodes)
+        (pnp_all_joint_paths, pick_all_objects, place_all_object_poses) = mcts.get_all_joint_path(
+            mcts.optimal_nodes
+        )
         final_pnp_all_joint_paths.append(pnp_all_joint_paths)
         final_pick_all_objects.append(pick_all_objects)
         final_place_all_object_poses.append(place_all_object_poses)
@@ -89,26 +80,19 @@ for idx, c in enumerate(c_list):
     # print(final_optimal_trees)
     print("delete mcts")
 
-
 #### File Save ####
-pytamp_path = os.path.abspath(os.path.dirname(__file__) + "/../../../")
-directory_name = pytamp_path + "/results" + "/benchmark1_result"
+pytamp_path = os.path.abspath(os.path.abspath(os.path.dirname(__file__)) + "/../../../")
+directory_name = pytamp_path + "/results" + "/benchmark1" + "/benchmark1_result"
 p_utils.createDirectory(directory_name)
 
 num = 0
-filename = (
-    directory_name
-    + "/benchmark1_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
-        algo, budgets, seed, num
-    )
+filename = directory_name + "/benchmark1_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
+    algo, budgets, seed, num
 )
 
 while os.path.exists(filename):
-    filename = (
-        directory_name
-        + "/benchmark1_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
-            algo, budgets, seed, num
-        )
+    filename = directory_name + "/benchmark1_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
+        algo, budgets, seed, num
     )
     num += 1
 

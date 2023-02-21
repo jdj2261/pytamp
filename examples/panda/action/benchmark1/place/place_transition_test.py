@@ -11,9 +11,7 @@ from pytamp.scene.scene_manager import SceneManager
 
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array(
@@ -24,9 +22,7 @@ robot.init_qpos = np.array(
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
 blue_box_pose = Transform(pos=np.array([0.6, 0.35, 0.77]))
 green_box_pose = Transform(pos=np.array([0.6, 0.05, 0.77]))
-support_box_pose = Transform(
-    pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0])
-)
+support_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0]))
 table_pose = Transform(pos=np.array([0.4, 0.24, 0.0]))
 
 red_cube_mesh = get_object_mesh("ben_cube.stl", 0.06)
@@ -37,11 +33,7 @@ table_mesh = get_object_mesh("custom_table.stl", 0.01)
 
 scene_mngr = SceneManager("collision", is_pyplot=True)
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_object(
     name="red_box",
@@ -88,9 +80,7 @@ place = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=1)
 pick_actions = list(pick.get_possible_actions_level_1())
 # fig, ax = p_utils.init_3d_figure(name="Level wise 1")
 for pick_action in pick_actions:
-    for pick_scene in pick.get_possible_transitions(
-        scene_mngr.scene, action=pick_action
-    ):
+    for pick_scene in pick.get_possible_transitions(scene_mngr.scene, action=pick_action):
         place_actions = list(place.get_possible_actions_level_1(pick_scene))
         for place_action in place_actions:
             print(place_action[pick.info.HELD_OBJ_NAME])
@@ -98,9 +88,7 @@ for pick_action in pick_actions:
                 place.get_possible_transitions(scene=pick_scene, action=place_action)
             ):
                 fig, ax = p_utils.init_3d_figure(name="all possible transitions")
-                place.scene_mngr.render_gripper(
-                    ax, place_scene, alpha=0.9, only_visible_axis=False
-                )
+                place.scene_mngr.render_gripper(ax, place_scene, alpha=0.9, only_visible_axis=False)
                 place_scene.show_logical_states()
 
                 place.scene_mngr.render_objects(ax, place_scene)

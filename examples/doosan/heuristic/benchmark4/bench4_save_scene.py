@@ -26,11 +26,11 @@ if len(sys.argv) > 1:
 
 seed = 17
 end_num = 0
-filename = f"./bench4_planner/benchmark4_test_algo({method})_budget({budgets})_seed({seed})_{end_num}.npy"
-benchmark4 = Benchmark4(robot_name="doosan", geom="visual", is_pyplot=False)
-place = PlaceAction(
-    benchmark4.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0
+filename = (
+    f"./bench4_planner/benchmark4_test_algo({method})_budget({budgets})_seed({seed})_{end_num}.npy"
 )
+benchmark4 = Benchmark4(robot_name="doosan", geom="visual", is_pyplot=False)
+place = PlaceAction(benchmark4.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
 with open(filename, "rb") as f:
     data_for_seed = np.load(f, allow_pickle=True)
@@ -83,9 +83,7 @@ for pnp_joint_all_path, pick_all_object, place_all_object_pose in zip(
                     detach_idx = release_task_idx
                     detach_count += 1
                     is_attach = False
-                    place.scene_mngr.detach_object_from_gripper(
-                        pick_all_object[detach_count - 1]
-                    )
+                    place.scene_mngr.detach_object_from_gripper(pick_all_object[detach_count - 1])
                     place.scene_mngr.add_object(
                         name=pick_all_object[detach_count - 1],
                         gtype=place.scene_mngr.init_objects[

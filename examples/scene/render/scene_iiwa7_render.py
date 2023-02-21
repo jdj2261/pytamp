@@ -15,17 +15,13 @@ asset_file_path = os.path.abspath(assets.__file__ + "/../")
 fig, ax = p_utils.init_3d_figure()
 
 urdf_path = "urdf/iiwa7/iiwa7.urdf"
-robot = SingleArm(
-    f_name=urdf_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913])
-)
+robot = SingleArm(f_name=urdf_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]))
 robot.setup_link_name("iiwa7_link_0", "iiwa7_right_hand")
 
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
 blue_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.06]))
 green_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.12]))
-support_box_pose = Transform(
-    pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0])
-)
+support_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0]))
 table_pose = Transform(pos=np.array([0.4, 0.24, 0.0]))
 
 red_cube_mesh = get_object_mesh("ben_cube.stl", 0.06)
@@ -36,11 +32,7 @@ table_mesh = get_object_mesh("custom_table.stl", 0.01)
 
 scene_mngr = SceneManager("visual", is_pyplot=True)
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_object(
     name="red_box",

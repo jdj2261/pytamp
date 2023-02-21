@@ -47,14 +47,7 @@ class RRTStarPlanner(Planner):
         return tree
 
     @logging_time
-    def run(
-        self,
-        scene_mngr: SceneManager,
-        cur_q,
-        goal_pose=np.eye(4),
-        goal_q=None,
-        max_iter=1000,
-    ):
+    def run(self, scene_mngr: SceneManager, cur_q, goal_pose=np.eye(4), goal_q=None, max_iter=1000):
         """
         Compute rrt-star path
 
@@ -130,9 +123,7 @@ class RRTStarPlanner(Planner):
 
                             self._scene_mngr.show_scene_info()
                             self._scene_mngr.robot_collision_mngr.show_collision_info()
-                            self._scene_mngr.obj_collision_mngr.show_collision_info(
-                                "Object"
-                            )
+                            self._scene_mngr.obj_collision_mngr.show_collision_info("Object")
 
                             # ![DEBUG]
                             if self._scene_mngr.is_debug_mode:
@@ -174,9 +165,9 @@ class RRTStarPlanner(Planner):
                     new_node = self.tree.number_of_nodes()
                     self.tree.add_node(new_node)
 
-                    c_min = self.tree.nodes[nearest_node][
-                        NodeData.COST
-                    ] + self._get_distance(q_nearest, q_new)
+                    c_min = self.tree.nodes[nearest_node][NodeData.COST] + self._get_distance(
+                        q_nearest, q_new
+                    )
                     min_node = nearest_node
 
                     for near_node in near_nodes:
@@ -187,9 +178,7 @@ class RRTStarPlanner(Planner):
                             min_node = near_node
 
                     self.tree.update(
-                        nodes=[
-                            (new_node, {NodeData.COST: c_min, NodeData.POINT: q_new})
-                        ]
+                        nodes=[(new_node, {NodeData.COST: c_min, NodeData.POINT: q_new})]
                     )
                     self.tree.add_edge(min_node, new_node)
 
@@ -202,9 +191,7 @@ class RRTStarPlanner(Planner):
                         near_cost = self.tree.nodes[near_node][NodeData.COST]
 
                         if (new_cost + self._get_distance(q_near, q_new)) < near_cost:
-                            parent_node = [
-                                node for node in self.tree.predecessors(near_node)
-                            ][0]
+                            parent_node = [node for node in self.tree.predecessors(near_node)][0]
                             self.tree.remove_edge(parent_node, near_node)
                             self.tree.add_edge(new_node, near_node)
                             print("rewire")
@@ -213,17 +200,13 @@ class RRTStarPlanner(Planner):
                         self.goal_node = new_node
 
             if self.goal_node:
-                self.goal_node_cost = round(
-                    self.tree.nodes[self.goal_node][NodeData.COST], 3
-                )
+                self.goal_node_cost = round(self.tree.nodes[self.goal_node][NodeData.COST], 3)
                 print(f"Cost is {self.goal_node_cost}")
                 logger.info(f"Generate Path Successfully!!")
                 break
 
             if cnt > total_cnt:
-                logger.error(
-                    f"Failed Generate Path.. The number of retries of {cnt} exceeded"
-                )
+                logger.error(f"Failed Generate Path.. The number of retries of {cnt} exceeded")
                 self.tree = None
 
                 # ![DEBUG]
@@ -317,9 +300,7 @@ class RRTStarPlanner(Planner):
         q_outs = np.zeros(self._dimension)
         random_value = np.random.random()
         if random_value > self.epsilon:
-            for i, (q_min, q_max) in enumerate(
-                zip(self.q_limits_lower, self.q_limits_upper)
-            ):
+            for i, (q_min, q_max) in enumerate(zip(self.q_limits_lower, self.q_limits_upper)):
                 q_outs[i] = np.random.uniform(q_min, q_max)
         else:
             q_outs = self.goal_q

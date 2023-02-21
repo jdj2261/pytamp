@@ -208,8 +208,7 @@ class SceneManager:
 
         if pose.shape != (4, 4):
             raise ValueError(
-                "Expecting the shape of the pose to be (4,4), instead got: "
-                "{}".format(pose.shape)
+                "Expecting the shape of the pose to be (4,4), instead got: " "{}".format(pose.shape)
             )
 
         self._scene.objs[name].h_mat = pose
@@ -222,8 +221,7 @@ class SceneManager:
         pose = np.asarray(pose)
         if pose.shape != (4, 4):
             raise ValueError(
-                "Expecting the shape of the pose to be (4,4), instead got: "
-                "{}".format(pose.shape)
+                "Expecting the shape of the pose to be (4,4), instead got: " "{}".format(pose.shape)
             )
 
         return self._scene.robot.inverse_kin(
@@ -253,21 +251,11 @@ class SceneManager:
                     self.gripper_collision_mngr.set_transform(link, info[3])
 
         if self.is_attached:
-            attached_obj_pose = np.dot(
-                self.get_gripper_pose(), self._transform_bet_gripper_n_obj
-            )
-            self._scene.robot.info["collision"][self.attached_obj_name][
-                3
-            ] = attached_obj_pose
-            self._scene.robot.info["visual"][self.attached_obj_name][
-                3
-            ] = attached_obj_pose
-            self._scene.robot.gripper.info[self.attached_obj_name][
-                3
-            ] = attached_obj_pose
-            self.robot_collision_mngr.set_transform(
-                self.attached_obj_name, attached_obj_pose
-            )
+            attached_obj_pose = np.dot(self.get_gripper_pose(), self._transform_bet_gripper_n_obj)
+            self._scene.robot.info["collision"][self.attached_obj_name][3] = attached_obj_pose
+            self._scene.robot.info["visual"][self.attached_obj_name][3] = attached_obj_pose
+            self._scene.robot.gripper.info[self.attached_obj_name][3] = attached_obj_pose
+            self.robot_collision_mngr.set_transform(self.attached_obj_name, attached_obj_pose)
 
     def get_gripper_pose(self):
         if not self._scene.robot.has_gripper:
@@ -285,15 +273,9 @@ class SceneManager:
                 self.gripper_collision_mngr.set_transform(link, info[3])
 
         if self.is_attached:
-            attached_obj_pose = np.dot(
-                self.get_gripper_pose(), self._transform_bet_gripper_n_obj
-            )
-            self._scene.robot.gripper.info[self.attached_obj_name][
-                3
-            ] = attached_obj_pose
-            self.gripper_collision_mngr.set_transform(
-                self.attached_obj_name, attached_obj_pose
-            )
+            attached_obj_pose = np.dot(self.get_gripper_pose(), self._transform_bet_gripper_n_obj)
+            self._scene.robot.gripper.info[self.attached_obj_name][3] = attached_obj_pose
+            self.gripper_collision_mngr.set_transform(self.attached_obj_name, attached_obj_pose)
 
     def get_gripper_tcp_pose(self):
         if not self._scene.robot.has_gripper:
@@ -355,9 +337,7 @@ class SceneManager:
     def collide_objs_and_robot(self, return_names=False):
         if self._scene.robot is None:
             raise ValueError("Robot needs to be added first")
-        return self.robot_collision_mngr.in_collision_other(
-            self.obj_collision_mngr, return_names
-        )
+        return self.robot_collision_mngr.in_collision_other(self.obj_collision_mngr, return_names)
 
     def collide_self_robot(self, return_names=False):
         if self._scene.robot is None:
@@ -367,9 +347,7 @@ class SceneManager:
     def collide_objs_and_gripper(self, return_names=False):
         if not self._scene.robot.has_gripper:
             raise ValueError("Robot doesn't have a gripper")
-        return self.gripper_collision_mngr.in_collision_other(
-            self.obj_collision_mngr, return_names
-        )
+        return self.gripper_collision_mngr.in_collision_other(self.obj_collision_mngr, return_names)
 
     def update_logical_states(self, is_init=False):
         self._scene.update_logical_states()
@@ -445,6 +423,7 @@ class SceneManager:
         else:
             if not self.render.trimesh_scene:
                 self.render = RenderTriMesh()
+            print(scene.objs)
             self.render.render_scene(objs=scene.objs, robot=scene.robot, geom=geom)
 
     def render_objects_and_gripper(
@@ -506,13 +485,7 @@ class SceneManager:
 
         if self.is_pyplot:
             self.render.render_robot(
-                ax,
-                scene.robot,
-                alpha,
-                robot_color,
-                self.geom,
-                only_visible_geom,
-                visible_text,
+                ax, scene.robot, alpha, robot_color, self.geom, only_visible_geom, visible_text
             )
         else:
             if not self.render.trimesh_scene:
@@ -549,7 +522,7 @@ class SceneManager:
         else:
             if not self.render.trimesh_scene:
                 self.render = RenderTriMesh()
-            self.render.render_gripper(scene.robot)
+            self.render.render_gripper(scene.robot, self.geom)
 
     def render_axis(self, ax, pose, scale=0.05):
         if self.is_pyplot:
@@ -683,9 +656,7 @@ class SceneManager:
             trimesh_scene = apply_robot_to_scene(
                 trimesh_scene=trimesh_scene, robot=self.scene.robot, geom="visual"
             )
-            trimesh_scene.set_camera(
-                np.array([np.pi / 2, 0, np.pi / 2]), 5, resolution=(640, 512)
-            )
+            trimesh_scene.set_camera(np.array([np.pi / 2, 0, np.pi / 2]), 5, resolution=(640, 512))
             # trimesh_scene.show()
             # self.render_scene()
             data = trimesh_scene.save_image(visible=True)

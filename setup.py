@@ -24,6 +24,8 @@ setup(
         "python-fcl",
         "networkx",
         "pygraphviz",
+        "opencv-python",
+        "natsort",
     ],
     eager_resources=["*"],
     include_package_data=True,

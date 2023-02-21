@@ -37,9 +37,7 @@ def get_heuristic_tcp_pose(
             obj_pose = np.eye(4)
             obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
             obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, -0.005]
-            for theta in np.linspace(
-                np.pi + np.pi / 24, np.pi - np.pi / 24, n_directions
-            ):
+            for theta in np.linspace(np.pi + np.pi / 24, np.pi - np.pi / 24, n_directions):
                 r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
                 tcp_pose = np.eye(4)
                 tcp_pose[:3, :3] = r_mat_y
@@ -49,17 +47,14 @@ def get_heuristic_tcp_pose(
     if bench_num == 2:
         if "bottle" in object_name:
             center_point = (
-                object_mesh.bounds[0]
-                + (object_mesh.bounds[1] - object_mesh.bounds[0]) / 2
+                object_mesh.bounds[0] + (object_mesh.bounds[1] - object_mesh.bounds[0]) / 2
             )
             obj_pose = np.eye(4)
             obj_pose[:3, :3] = scene_mngr.scene.objs[object_name].h_mat[:3, :3]
             obj_pose[:3, 3] = center_point + [0, 0, -0.005]
 
             if "goal_bottle" not in object_name:
-                for theta in np.linspace(
-                    -np.pi + np.pi / 4, -np.pi + np.pi / 2, n_directions
-                ):
+                for theta in np.linspace(-np.pi + np.pi / 4, -np.pi + np.pi / 2, n_directions):
                     r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
                     for theta2 in np.linspace(-np.pi / 8, np.pi / 8, 5):
                         r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta2])
@@ -68,9 +63,7 @@ def get_heuristic_tcp_pose(
                         tcp_pose = np.dot(obj_pose, tcp_pose)
                         yield tcp_pose
             else:
-                for theta in np.linspace(
-                    -np.pi + np.pi / 12, -np.pi + np.pi / 2, n_directions
-                ):
+                for theta in np.linspace(-np.pi + np.pi / 12, -np.pi + np.pi / 2, n_directions):
                     r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
                     for theta2 in np.linspace(-np.pi / 6, np.pi / 6, 5):
                         r_mat_z = t_utils.get_matrix_from_rpy(rpy=[0, 0, theta2])
@@ -111,13 +104,9 @@ def get_heuristic_tcp_pose(
             obj_pose[:3, 3] = object_mesh.center_mass + [0, 0, -0.005]
             heuristic_pose = np.dot(
                 obj_pose,
-                t_utils.get_h_mat(
-                    position=np.array([0.08 + 0.01 * int(5 - split_num), 0, 0])
-                ),
+                t_utils.get_h_mat(position=np.array([0.08 + 0.01 * int(5 - split_num), 0, 0])),
             )
-            for theta in np.linspace(
-                np.pi - np.pi / 24, np.pi - np.pi / 12, n_directions
-            ):
+            for theta in np.linspace(np.pi - np.pi / 24, np.pi - np.pi / 12, n_directions):
                 r_mat_y = t_utils.get_matrix_from_rpy(rpy=[0, -theta, 0])
                 tcp_pose = np.eye(4)
                 tcp_pose[:3, :3] = r_mat_y

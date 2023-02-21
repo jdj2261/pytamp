@@ -21,10 +21,7 @@ parser.add_argument(
     help="Choose one (bai_perturb, bai_ucb, uct)",
 )
 parser.add_argument(
-    "--debug_mode",
-    default=False,
-    type=lambda x: (str(x).lower() == "true"),
-    help="Debug mode",
+    "--debug_mode", default=False, type=lambda x: (str(x).lower() == "true"), help="Debug mode"
 )
 parser.add_argument(
     "--disk_number", metavar="N", type=int, default=3, help="Disk Number(5 or less.)"
@@ -39,9 +36,7 @@ seed = args.seed
 number = args.disk_number
 np.random.seed(seed)
 
-benchmark4 = Benchmark4(
-    robot_name="doosan", geom="collision", is_pyplot=True, disk_num=number
-)
+benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True, disk_num=number)
 final_level_1_values = []
 final_level_2_values = []
 final_optimal_nodes = []
@@ -70,11 +65,9 @@ for idx, c in enumerate(c_list):
     final_level_2_values.append(mcts.values_for_level_2)
 
     if mcts.level_wise_2_success:
-        (
-            pnp_all_joint_paths,
-            pick_all_objects,
-            place_all_object_poses,
-        ) = mcts.get_all_joint_path(mcts.optimal_nodes)
+        (pnp_all_joint_paths, pick_all_objects, place_all_object_poses) = mcts.get_all_joint_path(
+            mcts.optimal_nodes
+        )
         final_pnp_all_joint_paths.append(pnp_all_joint_paths)
         final_pick_all_objects.append(pick_all_objects)
         final_place_all_object_poses.append(place_all_object_poses)
@@ -91,24 +84,18 @@ for idx, c in enumerate(c_list):
 
 
 #### File Save ####
-pytamp_path = os.path.abspath(os.path.dirname(__file__) + "/../../../")
-directory_name = pytamp_path + "/results" + "/benchmark4_result"
+pytamp_path = os.path.abspath(os.path.abspath(os.path.dirname(__file__)) + "/../../../")
+directory_name = pytamp_path + "/results" + "benchmark4" + "/benchmark4_result"
 p_utils.createDirectory(directory_name)
 
 num = 0
-filename = (
-    directory_name
-    + "/benchmark4_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
-        algo, budgets, seed, num
-    )
+filename = directory_name + "/benchmark4_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
+    algo, budgets, seed, num
 )
 
 while os.path.exists(filename):
-    filename = (
-        directory_name
-        + "/benchmark4_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
-            algo, budgets, seed, num
-        )
+    filename = directory_name + "/benchmark4_test_algo({:})_budget({:})_seed({:})_{}.npy".format(
+        algo, budgets, seed, num
     )
     num += 1
 

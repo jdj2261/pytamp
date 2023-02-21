@@ -12,9 +12,7 @@ for action in actions:
         pick.get_possible_transitions(pick.scene_mngr.scene, action=action)
     ):
         fig, ax = p_utils.init_3d_figure(name="all possible transitions")
-        pick.scene_mngr.render_gripper(
-            ax, pick_scene, alpha=0.9, only_visible_axis=False
-        )
+        pick.scene_mngr.render_gripper(ax, pick_scene, alpha=0.9, only_visible_axis=False)
         pick.scene_mngr.render_objects(ax, pick_scene)
         pick_scene.show_logical_states()
         pick.scene_mngr.show()

@@ -2,19 +2,11 @@ from pytamp.action.pick import PickAction
 from pytamp.action.place import PlaceAction
 from pytamp.benchmark import Benchmark2
 
-benchmark2 = Benchmark2(
-    robot_name="doosan", geom="visual", is_pyplot=True, bottle_num=1
-)
-pick = PickAction(
-    benchmark2.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1
-)
-place = PlaceAction(
-    benchmark2.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10
-)
+benchmark2 = Benchmark2(robot_name="doosan", geom="visual", is_pyplot=True, bottle_num=1)
+pick = PickAction(benchmark2.scene_mngr, n_contacts=0, n_directions=3, retreat_distance=0.1)
+place = PlaceAction(benchmark2.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=10)
 
-pick_action = pick.get_action_level_1_for_single_object(
-    pick.scene_mngr.scene, "goal_bottle"
-)
+pick_action = pick.get_action_level_1_for_single_object(pick.scene_mngr.scene, "goal_bottle")
 
 pnp_all_joint_path = []
 pick_all_objects = []
@@ -31,14 +23,9 @@ for pick_scene in pick.get_possible_transitions(pick.scene_mngr.scene, pick_acti
     )
     if pick_joint_path:
         place_action = place.get_action_level_1_for_single_object(
-            "shelf_9",
-            "goal_bottle",
-            pick_scene.robot.gripper.grasp_pose,
-            scene=pick_scene,
+            "shelf_9", "goal_bottle", pick_scene.robot.gripper.grasp_pose, scene=pick_scene
         )
-        for place_scene in place.get_possible_transitions(
-            scene=pick_scene, action=place_action
-        ):
+        for place_scene in place.get_possible_transitions(scene=pick_scene, action=place_action):
             place_joint_path = place.get_possible_joint_path_level_2(
                 scene=place_scene,
                 release_poses=place_scene.release_poses,
@@ -48,9 +35,7 @@ for pick_scene in pick.get_possible_transitions(pick.scene_mngr.scene, pick_acti
                 success_joint_path = True
                 pnp_path = pick_joint_path + place_joint_path
                 pick_objects.append(pick_scene.robot.gripper.attached_obj_name)
-                place_object_poses.append(
-                    place_scene.objs[place_scene.pick_obj_name].h_mat
-                )
+                place_object_poses.append(place_scene.objs[place_scene.pick_obj_name].h_mat)
                 break
     if success_joint_path:
         break

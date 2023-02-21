@@ -52,9 +52,7 @@ class ActivityBase(metaclass=ABCMeta):
         self.move_data = MoveData
 
         if self.scene_mngr.scene.robot is not None:
-            self.cartesian_planner = CartesianPlanner(
-                dimension=self.scene_mngr.scene.robot.arm_dof
-            )
+            self.cartesian_planner = CartesianPlanner(dimension=self.scene_mngr.scene.robot.arm_dof)
             self.rrt_planner = RRTStarPlanner(
                 delta_distance=0.05,
                 epsilon=0.2,
@@ -111,20 +109,12 @@ class ActivityBase(metaclass=ABCMeta):
     def get_cartesian_path(self, cur_q, goal_pose, n_step=100, collision_check=False):
         self.cartesian_planner._n_step = n_step
         self.cartesian_planner.run(
-            self.scene_mngr,
-            cur_q,
-            goal_pose,
-            resolution=0.1,
-            collision_check=collision_check,
+            self.scene_mngr, cur_q, goal_pose, resolution=0.1, collision_check=collision_check
         )
         return self.cartesian_planner.get_joint_path()
 
-    def get_rrt_star_path(
-        self, cur_q, goal_pose=None, goal_q=None, max_iter=500, n_step=10
-    ):
-        self.rrt_planner.run(
-            self.scene_mngr, cur_q, goal_pose, goal_q=goal_q, max_iter=max_iter
-        )
+    def get_rrt_star_path(self, cur_q, goal_pose=None, goal_q=None, max_iter=500, n_step=10):
+        self.rrt_planner.run(self.scene_mngr, cur_q, goal_pose, goal_q=goal_q, max_iter=max_iter)
         return self.rrt_planner.get_joint_path(n_step=n_step)
 
     def simulate_path(
@@ -182,9 +172,7 @@ class ActivityBase(metaclass=ABCMeta):
                         result_joint.append(joint)
                         fk = self.scene_mngr.scene.robot.forward_kin(joint)
                         if visible_path:
-                            eef_poses.append(
-                                fk[self.scene_mngr.scene.robot.eef_name].pos
-                            )
+                            eef_poses.append(fk[self.scene_mngr.scene.robot.eef_name].pos)
 
             if ax is None and fig is None:
                 fig, ax = p_utils.init_3d_figure(name="Level wise 2")

@@ -12,12 +12,10 @@ p_utils.createDirectory(directory_name)
 
 for seed in range(20, 50):
     # for seed in range(10, 13):
-    benchmark3 = Benchmark3(
-        robot_name="doosan", geom="visual", is_pyplot=True, bottle_num=6
-    )
+    benchmark3 = Benchmark3(robot_name="doosan", geom="visual", is_pyplot=True, bottle_num=6)
 
     # bai_ucb num 2
-    planner = [
+    plan = [
         ("pick", "bottle_1"),
         ("place", "shelf_9"),
         ("pick", "bottle_2"),
@@ -34,17 +32,11 @@ for seed in range(20, 50):
         ("place", "shelf_9"),
     ]
 
-    print(
-        f"Benchmark: {benchmark3.scene_mngr.scene.bench_num}, Algo: {algo}, Seed: {seed}"
-    )
+    print(f"Benchmark: {benchmark3.scene_mngr.scene.bench_num}, Algo: {algo}, Seed: {seed}")
     np.random.seed(seed)
     try:
         planner = Planner(benchmark3.scene_mngr)
-        (
-            pnp_all_joint_path,
-            pick_all_objects,
-            place_all_object_poses,
-        ) = planner.do_planning(planner)
+        (pnp_all_joint_path, pick_all_objects, place_all_object_poses) = planner.do_planning(plan)
 
         num = 2
         filename = (

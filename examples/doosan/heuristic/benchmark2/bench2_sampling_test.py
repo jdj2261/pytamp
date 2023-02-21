@@ -7,9 +7,7 @@ from pykin.utils.mesh_utils import get_object_mesh, get_mesh_bounds
 from pytamp.scene.scene_manager import SceneManager
 from pytamp.action.place import PlaceAction
 
-shelf_pose = Transform(
-    pos=np.array([0.9, 0, 1.41725156]), rot=np.array([0, 0, np.pi / 2])
-)
+shelf_pose = Transform(pos=np.array([0.9, 0, 1.41725156]), rot=np.array([0, 0, np.pi / 2]))
 bottle_meshes = []
 for i in range(6):
     bottle_meshes.append(get_object_mesh("bottle.stl"))
@@ -104,7 +102,7 @@ surface_points_for_support_obj = list(
 fig, ax = p_utils.init_3d_figure(figsize=(10, 6), dpi=120, name="Sampling Object")
 p_utils.plot_basis(ax)
 place_action.scene_mngr.render_objects(ax, alpha=0.1)
-for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, normal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
 
     if not (min_x + 0.02 <= point[0] <= max_x - 0.1):
         continue
@@ -115,7 +113,7 @@ for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_ob
 surface_points_for_support_obj = list(
     place_action.get_surface_points_for_support_obj("shelf_15", alpha=1)
 )
-for point, noormal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, noormal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
     print(min_x, max_x)
     if not (min_x + 0.05 <= point[0] <= max_x - 0.2):
         continue
@@ -126,7 +124,7 @@ for point, noormal, (min_x, max_x, min_y, max_y) in surface_points_for_support_o
 surface_points_for_support_obj = list(
     place_action.get_surface_points_for_support_obj("shelf_8", alpha=1)
 )
-for point, noormal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, noormal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
     if not (min_x + 0.05 <= point[0] <= max_x - 0.2):
         continue
     if not (min_y + 0.1 <= point[1] <= max_y - 0.1):

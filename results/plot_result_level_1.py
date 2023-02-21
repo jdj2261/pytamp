@@ -10,20 +10,12 @@ if len(sys.argv) > 1:
     bench_num = int(sys.argv[1])
 
 
-def linearplot_with_confidence(
-    x_list, mean_list, std_list, label, marker="", color="r"
-):
+def linearplot_with_confidence(x_list, mean_list, std_list, label, marker="", color="r"):
     a = 0.1
     plt.fill_between(
-        x_list,
-        mean_list - a * std_list,
-        mean_list + a * std_list,
-        alpha=0.13,
-        color=color,
+        x_list, mean_list - a * std_list, mean_list + a * std_list, alpha=0.13, color=color
     )
-    plt.plot(
-        x_list, mean_list, label=label, marker=marker, ms=11, c=color, markevery=15
-    )
+    plt.plot(x_list, mean_list, label=label, marker=marker, ms=11, c=color, markevery=15)
 
 
 def get_final_all_values(algo, budgets, start_seed, end_seed, end_num=0):
@@ -49,13 +41,9 @@ def get_final_all_values(algo, budgets, start_seed, end_seed, end_num=0):
             data_for_seed = np.load(f, allow_pickle=True)
             perturb_final_level_1_values.append(data_for_seed["level_1_values"])
             perturb_final_level_2_values.append(data_for_seed["level_2_values"])
-            perturb_final_pnp_all_joint_paths.append(
-                data_for_seed["pnp_all_joint_paths"]
-            )
+            perturb_final_pnp_all_joint_paths.append(data_for_seed["pnp_all_joint_paths"])
             perturb_final_pick_all_objects.append(data_for_seed["pick_all_objects"])
-            perturb_final_place_all_object_poses.append(
-                data_for_seed["place_all_object_poses"]
-            )
+            perturb_final_place_all_object_poses.append(data_for_seed["place_all_object_poses"])
             c_list = data_for_seed["c"]
 
     perturb_final_level_1_values = np.asarray(perturb_final_level_1_values)
@@ -100,9 +88,7 @@ perturb_mean_level_2_values, perturb_std_level_2_values = get_mean_std_values(
     bai_perturb_result_all_values, level=2
 )
 
-uct_result_all_values = get_final_all_values(
-    "uct", budgets, start_seed, end_seed, end_num
-)
+uct_result_all_values = get_final_all_values("uct", budgets, start_seed, end_seed, end_num)
 uct_mean_level_1_values, uct_std_level_1_values = get_mean_std_values(
     uct_result_all_values, level=1
 )
@@ -110,9 +96,7 @@ uct_mean_level_2_values, uct_std_level_2_values = get_mean_std_values(
     uct_result_all_values, level=2
 )
 
-random_result_all_values = get_final_all_values(
-    "random", budgets, start_seed, end_seed, end_num
-)
+random_result_all_values = get_final_all_values("random", budgets, start_seed, end_seed, end_num)
 random_mean_level_1_values, random_std_level_1_values = get_mean_std_values(
     random_result_all_values, level=1
 )
@@ -120,9 +104,7 @@ random_mean_level_2_values, random_std_level_2_values = get_mean_std_values(
     random_result_all_values, level=2
 )
 
-bai_ucb_result_all_values = get_final_all_values(
-    "bai_ucb", budgets, start_seed, end_seed, end_num
-)
+bai_ucb_result_all_values = get_final_all_values("bai_ucb", budgets, start_seed, end_seed, end_num)
 bai_ucb_mean_level_1_values, bai_ucb_std_level_1_values = get_mean_std_values(
     bai_ucb_result_all_values, level=1
 )
@@ -160,31 +142,16 @@ if bench_num == 4:
 plt.figure(figsize=(8, 6))
 
 linearplot_with_confidence(
-    x_list[:-1],
-    perturb_level_1_mean_list[:-1],
-    perturb_level_1_std_list[:-1],
-    "PBAI",
-    ">",
-    "m",
+    x_list[:-1], perturb_level_1_mean_list[:-1], perturb_level_1_std_list[:-1], "PBAI", ">", "m"
 )
 linearplot_with_confidence(
     x_list[:-1], uct_level_1_mean_list[:-1], uct_level_1_std_list[:-1], "UCT", "v", "c"
 )
 linearplot_with_confidence(
-    x_list[:-1],
-    bai_ucb_level_1_mean_list[:-1],
-    bai_ucb_level_1_std_list[:-1],
-    "BAI-UCB",
-    "o",
-    "g",
+    x_list[:-1], bai_ucb_level_1_mean_list[:-1], bai_ucb_level_1_std_list[:-1], "BAI-UCB", "o", "g"
 )
 linearplot_with_confidence(
-    x_list[:-1],
-    random_level_1_mean_list[:-1],
-    random_level_1_std_list[:-1],
-    "Random",
-    "^",
-    "r",
+    x_list[:-1], random_level_1_mean_list[:-1], random_level_1_std_list[:-1], "Random", "^", "r"
 )
 
 leg = plt.legend(prop={"size": 20})

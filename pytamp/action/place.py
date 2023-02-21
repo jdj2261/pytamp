@@ -119,28 +119,18 @@ class PlaceAction(ActivityBase):
             self.deepcopy_scene(scene)
 
         release_poses = list(
-            self.get_all_release_poses_and_obj_pose(
-                sup_obj_name, held_obj_name, eef_pose
-            )
+            self.get_all_release_poses_and_obj_pose(sup_obj_name, held_obj_name, eef_pose)
         )
-        release_poses_not_collision = list(
-            self.get_release_poses_not_collision(release_poses)
-        )
-        action_level_1 = self.get_action(
-            held_obj_name, sup_obj_name, release_poses_not_collision
-        )
+        release_poses_not_collision = list(self.get_release_poses_not_collision(release_poses))
+        action_level_1 = self.get_action(held_obj_name, sup_obj_name, release_poses_not_collision)
         return action_level_1
 
     # Not Expand, only check possible action using ik
     #! It will be removed !!
-    def get_possible_ik_solve_level_2(
-        self, scene: Scene = None, release_poses: dict = {}
-    ):
+    def get_possible_ik_solve_level_2(self, scene: Scene = None, release_poses: dict = {}):
         self.deepcopy_scene(scene)
 
-        ik_solve, release_poses_filtered = self.compute_ik_solve_for_robot(
-            release_poses
-        )
+        ik_solve, release_poses_filtered = self.compute_ik_solve_for_robot(release_poses)
         return ik_solve, release_poses_filtered
 
     def get_possible_joint_path_level_2(
@@ -162,23 +152,17 @@ class PlaceAction(ActivityBase):
         success_joint_path = True
 
         self.scene_mngr.set_robot_eef_pose(default_thetas)
-        self.scene_mngr.set_object_pose(
-            scene.pick_obj_name, scene.pick_obj_default_pose
-        )
+        self.scene_mngr.set_object_pose(scene.pick_obj_name, scene.pick_obj_default_pose)
         self.scene_mngr.attach_object_on_gripper(
             self.scene_mngr.scene.robot.gripper.attached_obj_name, True
         )
 
-        pre_release_joint_path = self.get_rrt_star_path(
-            default_thetas, pre_release_pose
-        )
+        pre_release_joint_path = self.get_rrt_star_path(default_thetas, pre_release_pose)
         self.cost = 0
         if pre_release_joint_path:
             self.cost += self.rrt_planner.goal_node_cost
             # pre_release_pose -> release_pose (cartesian)
-            release_joint_path = self.get_cartesian_path(
-                pre_release_joint_path[-1], release_pose
-            )
+            release_joint_path = self.get_cartesian_path(pre_release_joint_path[-1], release_pose)
             if release_joint_path:
                 self.scene_mngr.detach_object_from_gripper()
                 self.scene_mngr.add_object(
@@ -234,16 +218,10 @@ class PlaceAction(ActivityBase):
 
         if default_joint_path:
             self.cost += self.rrt_planner.goal_node_cost
-            result_joint_path.update(
-                {self.move_data.MOVE_pre_release: pre_release_joint_path}
-            )
+            result_joint_path.update({self.move_data.MOVE_pre_release: pre_release_joint_path})
             result_joint_path.update({self.move_data.MOVE_release: release_joint_path})
-            result_joint_path.update(
-                {self.move_data.MOVE_post_release: post_release_joint_path}
-            )
-            result_joint_path.update(
-                {self.move_data.MOVE_default_release: default_joint_path}
-            )
+            result_joint_path.update({self.move_data.MOVE_post_release: post_release_joint_path})
+            result_joint_path.update({self.move_data.MOVE_default_release: default_joint_path})
             result_all_joint_path.append(result_joint_path)
 
             return result_all_joint_path
@@ -269,9 +247,7 @@ class PlaceAction(ActivityBase):
             ## Change transition
             next_scene.release_poses = release_poses
             next_scene.robot.gripper.place_obj_pose = obj_pose_transformed
-            next_scene.robot.gripper.release_pose = release_poses[
-                self.move_data.MOVE_release
-            ]
+            next_scene.robot.gripper.release_pose = release_poses[self.move_data.MOVE_release]
 
             default_thetas = self.scene_mngr.scene.robot.init_qpos
             default_pose = self.scene_mngr.scene.robot.forward_kin(default_thetas)[
@@ -282,9 +258,7 @@ class PlaceAction(ActivityBase):
 
             # Move pick object on support obj
             next_scene.objs[held_obj_name].h_mat = obj_pose_transformed
-            self.scene_mngr.obj_collision_mngr.set_transform(
-                held_obj_name, obj_pose_transformed
-            )
+            self.scene_mngr.obj_collision_mngr.set_transform(held_obj_name, obj_pose_transformed)
             next_scene.cur_place_obj_name = place_obj_name
 
             ## Change Logical State
@@ -297,9 +271,9 @@ class PlaceAction(ActivityBase):
             ] = None
 
             # Add logical_state of held obj : {'on' : place_obj}
-            next_scene.logical_states[held_obj_name][
-                next_scene.logical_state.on
-            ] = next_scene.objs[place_obj_name]
+            next_scene.logical_states[held_obj_name][next_scene.logical_state.on] = next_scene.objs[
+                place_obj_name
+            ]
 
             if self.scene_mngr.scene.bench_num == 4:
                 y_pose = obj_pose_transformed[1, 3]
@@ -323,9 +297,7 @@ class PlaceAction(ActivityBase):
             yield next_scene
 
     # Not consider collision
-    def get_all_release_poses_and_obj_pose(
-        self, support_obj_name, held_obj_name, eef_pose=None
-    ):
+    def get_all_release_poses_and_obj_pose(self, support_obj_name, held_obj_name, eef_pose=None):
         # gripper = self.scene_mngr.scene.robot.gripper
         transformed_eef_poses = list(
             self.get_transformed_eef_poses(support_obj_name, held_obj_name, eef_pose)
@@ -333,9 +305,7 @@ class PlaceAction(ActivityBase):
 
         for eef_pose, obj_pose_transformed in transformed_eef_poses:
             if self.scene_mngr._scene.bench_num == 1:
-                if not self._check_support(
-                    support_obj_name, held_obj_name, obj_pose_transformed
-                ):
+                if not self._check_support(support_obj_name, held_obj_name, obj_pose_transformed):
                     continue
             if self.scene_mngr._scene.bench_num == 4:
                 if support_obj_name == "table":
@@ -358,20 +328,14 @@ class PlaceAction(ActivityBase):
     def get_all_release_poses(self, eef_pose):
         release_pose = {}
         release_pose[self.move_data.MOVE_release] = eef_pose
-        release_pose[self.move_data.MOVE_pre_release] = self.get_pre_release_pose(
-            eef_pose
-        )
-        release_pose[self.move_data.MOVE_post_release] = self.get_post_release_pose(
-            eef_pose
-        )
+        release_pose[self.move_data.MOVE_pre_release] = self.get_pre_release_pose(eef_pose)
+        release_pose[self.move_data.MOVE_post_release] = self.get_post_release_pose(eef_pose)
         return release_pose
 
     def get_pre_release_pose(self, release_pose):
         pre_release_pose = np.eye(4)
         pre_release_pose[:3, :3] = release_pose[:3, :3]
-        pre_release_pose[:3, 3] = release_pose[:3, 3] + np.array(
-            [0, 0, self.retreat_distance]
-        )
+        pre_release_pose[:3, 3] = release_pose[:3, 3] + np.array([0, 0, self.retreat_distance])
         return pre_release_pose
 
     def get_post_release_pose(self, release_pose):
@@ -382,9 +346,7 @@ class PlaceAction(ActivityBase):
                 release_pose[:3, 3] - self.retreat_distance * release_pose[:3, 2]
             )
         else:
-            post_release_pose[:3, 3] = release_pose[:3, 3] + np.array(
-                [0, 0, self.retreat_distance]
-            )
+            post_release_pose[:3, 3] = release_pose[:3, 3] + np.array([0, 0, self.retreat_distance])
         return post_release_pose
 
     # for level wise - 1 (Consider gripper collision)
@@ -472,9 +434,9 @@ class PlaceAction(ActivityBase):
                 thetas = self.scene_mngr.compute_ik(pose=pose, max_iter=100)
                 self.scene_mngr.set_robot_eef_pose(thetas)
                 post_release_pose_from_ik = self.scene_mngr.get_robot_eef_pose()
-                if self._solve_ik(
-                    pose, post_release_pose_from_ik
-                ) and not self._collide(is_only_gripper=False):
+                if self._solve_ik(pose, post_release_pose_from_ik) and not self._collide(
+                    is_only_gripper=False
+                ):
                     ik_solve[name] = thetas
                     release_pose_for_ik[name] = pose
 
@@ -535,16 +497,10 @@ class PlaceAction(ActivityBase):
         if self.scene_mngr.scene.bench_num != 4:
             if obj_name not in ["shelf_8", "shelf_9", "shelf_15"]:
                 center_upper_point = np.zeros(3)
-                center_upper_point[0] = center_point[0] + np.random.uniform(
-                    -0.002, 0.002
-                )
-                center_upper_point[1] = center_point[1] + np.random.uniform(
-                    -0.002, 0.002
-                )
+                center_upper_point[0] = center_point[0] + np.random.uniform(-0.002, 0.002)
+                center_upper_point[1] = center_point[1] + np.random.uniform(-0.002, 0.002)
                 center_upper_point[2] = copied_mesh.bounds[1, 2]
-                sample_points = np.append(
-                    sample_points, np.array([center_upper_point]), axis=0
-                )
+                sample_points = np.append(sample_points, np.array([center_upper_point]), axis=0)
                 normals = np.append(normals, np.array([[0, 0, 1]]), axis=0)
             for point, normal_vector in zip(sample_points, normals):
                 yield point, normal_vector, margin
@@ -571,11 +527,7 @@ class PlaceAction(ActivityBase):
                 sample_points = np.array([np.array(support_obj.h_mat[:3, 3])])
                 hanoi_disk_height = (
                     support_obj.h_mat[2, 3]
-                    + (
-                        support_obj.gparam.bounds[1][2]
-                        - support_obj.gparam.bounds[0][2]
-                    )
-                    / 2
+                    + (support_obj.gparam.bounds[1][2] - support_obj.gparam.bounds[0][2]) / 2
                 )
                 sample_points[:3, 2] = hanoi_disk_height
                 normals = np.array([[0, 0, 1]])
@@ -625,9 +577,7 @@ class PlaceAction(ActivityBase):
             )
 
             # heuristic
-            sample_points = np.append(
-                sample_points, np.array([center_lower_point]), axis=0
-            )
+            sample_points = np.append(sample_points, np.array([center_lower_point]), axis=0)
             normals = np.append(normals, np.array([[0, 0, -1]]), axis=0)
 
             for point, normal_vector in zip(sample_points, normals):
@@ -660,9 +610,7 @@ class PlaceAction(ActivityBase):
         surface_points_for_sup_obj = list(
             self.get_surface_points_for_support_obj(support_obj_name, alpha=alpha)
         )
-        surface_points_for_held_obj = list(
-            self.get_surface_points_for_held_obj(held_obj_name)
-        )
+        surface_points_for_held_obj = list(self.get_surface_points_for_held_obj(held_obj_name))
 
         for (
             support_obj_point,
@@ -670,28 +618,17 @@ class PlaceAction(ActivityBase):
             (min_x, max_x, min_y, max_y),
         ) in surface_points_for_sup_obj:
             for held_obj_point, held_obj_normal in surface_points_for_held_obj:
-                rot_mat = m_utils.get_rotation_from_vectors(
-                    held_obj_normal, -support_obj_normal
-                )
+                rot_mat = m_utils.get_rotation_from_vectors(held_obj_normal, -support_obj_normal)
                 held_obj_point_transformed = (
-                    np.dot(held_obj_point - held_obj_pose[:3, 3], rot_mat)
-                    + held_obj_pose[:3, 3]
+                    np.dot(held_obj_point - held_obj_pose[:3, 3], rot_mat) + held_obj_pose[:3, 3]
                 )
 
-                (
-                    held_obj_pose_transformed,
-                    held_obj_pose_rotated,
-                ) = self._get_obj_pose_transformed(
-                    held_obj_pose,
-                    support_obj_point,
-                    held_obj_point_transformed,
-                    rot_mat,
+                (held_obj_pose_transformed, held_obj_pose_rotated) = self._get_obj_pose_transformed(
+                    held_obj_pose, support_obj_point, held_obj_point_transformed, rot_mat
                 )
 
                 # heuristic
-                copied_mesh = deepcopy(
-                    self.scene_mngr.init_objects[held_obj_name].gparam
-                )
+                copied_mesh = deepcopy(self.scene_mngr.init_objects[held_obj_name].gparam)
                 copied_mesh.apply_transform(held_obj_pose_transformed)
                 center_point = copied_mesh.center_mass
 
@@ -703,8 +640,7 @@ class PlaceAction(ActivityBase):
                             continue
                 if bench_num == 2:
                     center_point = (
-                        copied_mesh.bounds[0]
-                        + (copied_mesh.bounds[1] - copied_mesh.bounds[0]) / 2
+                        copied_mesh.bounds[0] + (copied_mesh.bounds[1] - copied_mesh.bounds[0]) / 2
                     )
                     if "shelf_8" in support_obj_name:
                         if not (min_x + 0.05 <= center_point[0] <= max_x - 0.2):
@@ -757,9 +693,7 @@ class PlaceAction(ActivityBase):
         )
         return obj_pose_transformed, obj_pose_rotated
 
-    def _get_eef_pose_transformed(
-        self, T, eef_pose, sup_obj_point, held_obj_point_transformed
-    ):
+    def _get_eef_pose_transformed(self, T, eef_pose, sup_obj_point, held_obj_point_transformed):
         eef_pose_transformed = np.dot(T, eef_pose)
 
         result_eef_pose_transformed = np.eye(4)
@@ -772,15 +706,9 @@ class PlaceAction(ActivityBase):
         return result_eef_pose_transformed
 
     @staticmethod
-    def _check_stability(
-        copied_scene: Scene, held_obj_name: str, com: np.ndarray
-    ) -> bool:
-        if copied_scene.logical_state.on in list(
-            copied_scene.logical_states[held_obj_name].keys()
-        ):
-            support_obj = copied_scene.logical_states[held_obj_name][
-                copied_scene.logical_state.on
-            ]
+    def _check_stability(copied_scene: Scene, held_obj_name: str, com: np.ndarray) -> bool:
+        if copied_scene.logical_state.on in list(copied_scene.logical_states[held_obj_name].keys()):
+            support_obj = copied_scene.logical_states[held_obj_name][copied_scene.logical_state.on]
             support_obj_mesh: Trimesh = deepcopy(support_obj.gparam)
             support_obj_mesh.apply_transform(support_obj.h_mat)
 

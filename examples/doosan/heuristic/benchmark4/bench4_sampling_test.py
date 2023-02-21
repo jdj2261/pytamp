@@ -19,15 +19,11 @@ scene_mngr = SceneManager("visual", is_pyplot=False, benchmark=benchmark_config)
 disk_pose = [Transform() for _ in range(3)]
 
 for i in range(3):
-    disk_pos = np.array(
-        [0.69, 0.3, table_height + disk_mesh_bound[1][2] + disk_heigh * i]
-    )
+    disk_pos = np.array([0.69, 0.3, table_height + disk_mesh_bound[1][2] + disk_heigh * i])
     disk_pose[i] = Transform(pos=disk_mesh.center_mass + disk_pos)
     disk_name = "hanoi_disk_" + str(i)
     print(disk_name)
-    hanoi_mesh = get_object_mesh(
-        f"hanoi_disk.stl", scale=[2.0 - 0.2 * i, 2.0 - 0.2 * i, 2.0]
-    )
+    hanoi_mesh = get_object_mesh(f"hanoi_disk.stl", scale=[2.0 - 0.2 * i, 2.0 - 0.2 * i, 2.0])
     scene_mngr.add_object(
         name=disk_name,
         gtype="mesh",
@@ -44,13 +40,13 @@ fig, ax = p_utils.init_3d_figure(figsize=(10, 6), dpi=120, name="Sampling Object
 # p_utils.plot_basis(ax)
 place_action.scene_mngr.render_objects(ax, alpha=0.5)
 
-for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, normal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
     place_action.scene_mngr.render.render_point(ax, point, radius=0.01)
 
 surface_points_for_support_obj = list(
     place_action.get_surface_points_for_support_obj("hanoi_disk_2")
 )
-for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, normal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
     place_action.scene_mngr.render.render_point(ax, point, radius=0.01)
 
 place_action.show()

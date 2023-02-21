@@ -23,12 +23,8 @@ parser.add_argument(
     choices=["bai_perturb", "bai_ucb", "uct"],
     help="Sampler Name",
 )
-parser.add_argument(
-    "--debug_mode", metavar="debug", type=bool, default=False, help="Debug mode"
-)
-parser.add_argument(
-    "--benchmark", metavar="N", type=int, default=2, help="Benchmark Number"
-)
+parser.add_argument("--debug_mode", metavar="debug", type=bool, default=False, help="Debug mode")
+parser.add_argument("--benchmark", metavar="N", type=int, default=2, help="Benchmark Number")
 args = parser.parse_args()
 
 debug_mode = args.debug_mode

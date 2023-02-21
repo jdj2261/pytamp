@@ -9,9 +9,7 @@ from pytamp.scene.scene_manager import SceneManager
 
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 robot.init_qpos = np.array(
@@ -42,9 +40,7 @@ scene_mngr = SceneManager("collision", is_pyplot=True, benchmark=benchmark_confi
 theta = np.linspace(-np.pi, np.pi, disk_num)
 for i in range(disk_num):
     for j in range(7):
-        disk_pos = np.array(
-            [0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh * i]
-        )
+        disk_pos = np.array([0.6, 0.25, table_height + disk_mesh_bound[1][2] + disk_heigh * i])
         disk_ori = Transform._to_quaternion([0, 0, theta[i]])
         disk_pose[i] = Transform(pos=disk_pos, rot=disk_ori)
         disk_name = "hanoi_disk_" + str(i) + "_" + str(j)
@@ -58,32 +54,16 @@ for i in range(disk_num):
         )
 
 scene_mngr.add_object(
-    name="peg_1",
-    gtype="mesh",
-    gparam=peg_mesh,
-    h_mat=peg1_pose.h_mat,
-    color=[1, 0.0, 0.0],
+    name="peg_1", gtype="mesh", gparam=peg_mesh, h_mat=peg1_pose.h_mat, color=[1, 0.0, 0.0]
 )
 scene_mngr.add_object(
-    name="peg_2",
-    gtype="mesh",
-    gparam=peg_mesh,
-    h_mat=peg2_pose.h_mat,
-    color=[1, 0.0, 0.0],
+    name="peg_2", gtype="mesh", gparam=peg_mesh, h_mat=peg2_pose.h_mat, color=[1, 0.0, 0.0]
 )
 scene_mngr.add_object(
-    name="peg_3",
-    gtype="mesh",
-    gparam=peg_mesh,
-    h_mat=peg3_pose.h_mat,
-    color=[1, 0.0, 0.0],
+    name="peg_3", gtype="mesh", gparam=peg_mesh, h_mat=peg3_pose.h_mat, color=[1, 0.0, 0.0]
 )
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_robot(robot)
 
@@ -144,15 +124,9 @@ pick.scene_mngr.render_objects(ax)
 p_utils.plot_basis(ax)
 grasp_poses_for_only_gripper = list(pick.get_all_grasp_poses_not_collision(grasp_poses))
 for grasp_pose_for_only_gripper in grasp_poses_for_only_gripper:
-    pick.scene_mngr.render_axis(
-        ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp]
-    )
-    pick.scene_mngr.render_axis(
-        ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp]
-    )
-    pick.scene_mngr.render_axis(
-        ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp]
-    )
+    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp])
+    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_pre_grasp])
+    pick.scene_mngr.render_axis(ax, grasp_pose_for_only_gripper[pick.move_data.MOVE_post_grasp])
     pick.scene_mngr.render_gripper(
         ax, alpha=0.7, pose=grasp_pose_for_only_gripper[pick.move_data.MOVE_grasp]
     )
@@ -162,9 +136,7 @@ fig, ax = p_utils.init_3d_figure(name="Level wise 2")
 pick.scene_mngr.render_scene(ax)
 p_utils.plot_basis(ax)
 for grasp_pose_for_only_gripper in grasp_poses_for_only_gripper:
-    thetas, grasp_pose = pick.compute_ik_solve_for_robot(
-        grasp_pose=grasp_pose_for_only_gripper
-    )
+    thetas, grasp_pose = pick.compute_ik_solve_for_robot(grasp_pose=grasp_pose_for_only_gripper)
     if grasp_pose:
         pick.scene_mngr.render_axis(ax, grasp_pose[pick.move_data.MOVE_grasp])
 

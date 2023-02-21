@@ -23,12 +23,8 @@ parser.add_argument(
     choices=["bai_perturb", "bai_ucb", "uct"],
     help="Sampler Name",
 )
-parser.add_argument(
-    "--debug_mode", metavar="debug", type=bool, default=False, help="Debug mode"
-)
-parser.add_argument(
-    "--benchmark", metavar="N", type=int, default=2, help="Benchmark Number"
-)
+parser.add_argument("--debug_mode", metavar="debug", type=bool, default=False, help="Debug mode")
+parser.add_argument("--benchmark", metavar="N", type=int, default=2, help="Benchmark Number")
 args = parser.parse_args()
 
 debug_mode = args.debug_mode
@@ -70,10 +66,7 @@ for seed in range(1, 20):
                 mcts.do_planning(i)
 
                 #### File Save ####
-                if (
-                    mcts.level_wise_2_success
-                    and not mcts.has_aleardy_level_1_optimal_nodes
-                ):
+                if mcts.level_wise_2_success and not mcts.has_aleardy_level_1_optimal_nodes:
                     try:
                         (
                             pnp_all_joint_path,

@@ -30,11 +30,9 @@ for i in range(20):
     )
 
 place_action = PlaceAction(scene_mngr, n_samples_held_obj=0, n_samples_support_obj=100)
-surface_points_for_support_obj = list(
-    place_action.get_surface_points_for_support_obj("clearbox_8")
-)
+surface_points_for_support_obj = list(place_action.get_surface_points_for_support_obj("clearbox_8"))
 fig, ax = p_utils.init_3d_figure(figsize=(10, 6), dpi=120, name="Sampling Object")
-for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, normal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
     if not (min_x <= point[0] <= max_x):
         continue
     if not (min_y <= point[1] <= max_y):
@@ -44,7 +42,7 @@ for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_ob
 surface_points_for_support_obj = list(
     place_action.get_surface_points_for_support_obj("clearbox_16")
 )
-for point, normal, (min_x, max_x, min_y, max_y) in surface_points_for_support_obj:
+for (point, normal, (min_x, max_x, min_y, max_y)) in surface_points_for_support_obj:
     if not (min_x <= point[0] <= max_x):
         continue
     if not (min_y <= point[1] <= max_y):

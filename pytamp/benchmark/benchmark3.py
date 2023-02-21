@@ -8,9 +8,7 @@ from pytamp.benchmark.benchmark import Benchmark
 
 
 class Benchmark3(Benchmark):
-    def __init__(
-        self, robot_name="panda", geom="visual", is_pyplot=True, only_sim=False
-    ):
+    def __init__(self, robot_name="panda", geom="visual", is_pyplot=True, only_sim=False):
         param = {"goal_object": "goal_can"}
         self.benchmark_config = {3: param}
         super().__init__(robot_name, geom, is_pyplot, self.benchmark_config, only_sim)
@@ -29,15 +27,7 @@ class Benchmark3(Benchmark):
         if self.robot_name == "panda":
             self.robot.setup_link_name("panda_link_0", "right_hand")
             self.robot.init_qpos = np.array(
-                [
-                    0,
-                    np.pi / 16.0,
-                    0.00,
-                    -np.pi / 2.0 - np.pi / 3.0,
-                    0.00,
-                    np.pi - 0.2,
-                    -np.pi / 4,
-                ]
+                [0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi / 4]
             )
 
         if self.robot_name == "doosan":
@@ -47,9 +37,7 @@ class Benchmark3(Benchmark):
     def _load_objects(self):
         self.table_mesh = get_object_mesh("ben_table.stl", [1.0, 1.5, 1.0])
         self.table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
-        self.table_pose = Transform(
-            pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]])
-        )
+        self.table_pose = Transform(pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]]))
 
         self.tray_blue_mesh = get_object_mesh("ben_tray_blue.stl")
         self.tray_blue_mesh.apply_translation(-self.tray_blue_mesh.center_mass)
@@ -57,16 +45,12 @@ class Benchmark3(Benchmark):
         #! clearbox 8, 16 is placing spot
         self.clearbox = get_object_mesh(f"clearbox.stl", scale=[1.4, 1.3, 1.5])
         self.clearbox_pose = Transform(
-            pos=np.array(
-                [0.7, 0.4, self.table_height + abs(self.clearbox.bounds[0][2])]
-            ),
+            pos=np.array([0.7, 0.4, self.table_height + abs(self.clearbox.bounds[0][2])]),
             rot=[0, 0, np.pi / 2],
         )
 
         clearbox_8_mesh = get_object_mesh(f"clearbox_8.stl", scale=[1.4, 1.3, 1.5])
-        self.clearbox_8_height = (
-            clearbox_8_mesh.bounds[1][2] - clearbox_8_mesh.bounds[0][2]
-        )
+        self.clearbox_8_height = clearbox_8_mesh.bounds[1][2] - clearbox_8_mesh.bounds[0][2]
 
         self.square_box_num = 3
         self.square_boxes = []
@@ -76,9 +60,7 @@ class Benchmark3(Benchmark):
             self.square_boxes.append(get_object_mesh("ben_cube.stl", [0.1, 0.1, 0.07]))
             self.square_boxes[i].apply_translation(-self.square_boxes[i].center_mass)
 
-            squarebox_height = (
-                self.square_boxes[i].bounds[1][2] - self.square_boxes[i].bounds[0][2]
-            )
+            squarebox_height = self.square_boxes[i].bounds[1][2] - self.square_boxes[i].bounds[0][2]
             square_box_pose = Transform(
                 pos=np.array(
                     [
@@ -101,17 +83,13 @@ class Benchmark3(Benchmark):
         self.rect_box_poses = []
         self.rect_box_colors = []
         for i in range(self.rect_box_num):
-            self.rect_boxes.append(
-                get_object_mesh("rect_box.stl", [0.002, 0.0005, 0.002])
-            )
+            self.rect_boxes.append(get_object_mesh("rect_box.stl", [0.002, 0.0005, 0.002]))
             self.rect_boxes[i].apply_transform(
                 get_h_mat(orientation=np.array([np.pi / 2, 0, np.pi / 2]))
             )
             self.rect_boxes[i].apply_translation(-self.rect_boxes[i].center_mass)
 
-            rectbox_height = (
-                self.rect_boxes[0].bounds[1][2] - self.rect_boxes[0].bounds[0][2]
-            )
+            rectbox_height = self.rect_boxes[0].bounds[1][2] - self.rect_boxes[0].bounds[0][2]
             rect_box_pose = Transform(
                 pos=np.array(
                     [
@@ -152,9 +130,7 @@ class Benchmark3(Benchmark):
                 [
                     0.76,
                     0.5,
-                    self.table_height
-                    + self.clearbox_8_height
-                    + abs(self.milk1.bounds[0][2]),
+                    self.table_height + self.clearbox_8_height + abs(self.milk1.bounds[0][2]),
                 ]
             ),
             rot=[0, 0, np.pi / 12],
@@ -164,9 +140,7 @@ class Benchmark3(Benchmark):
                 [
                     0.62,
                     0.42,
-                    self.table_height
-                    + self.clearbox_8_height
-                    + abs(self.milk2.bounds[0][2]),
+                    self.table_height + self.clearbox_8_height + abs(self.milk2.bounds[0][2]),
                 ]
             ),
             rot=[0, 0, np.pi / 20],
@@ -176,9 +150,7 @@ class Benchmark3(Benchmark):
                 [
                     0.6,
                     0.5,
-                    self.table_height
-                    + self.clearbox_8_height
-                    + abs(self.milk3.bounds[0][2]),
+                    self.table_height + self.clearbox_8_height + abs(self.milk3.bounds[0][2]),
                 ]
             ),
             rot=[0, 0, -np.pi / 2],
@@ -188,9 +160,7 @@ class Benchmark3(Benchmark):
                 [
                     0.58,
                     0.32,
-                    self.table_height
-                    + self.clearbox_8_height
-                    + abs(self.milk4.bounds[0][2]),
+                    self.table_height + self.clearbox_8_height + abs(self.milk4.bounds[0][2]),
                 ]
             )
         )
@@ -199,21 +169,13 @@ class Benchmark3(Benchmark):
                 [
                     0.52,
                     0.42,
-                    self.table_height
-                    + self.clearbox_8_height
-                    + abs(self.milk5.bounds[0][2]),
+                    self.table_height + self.clearbox_8_height + abs(self.milk5.bounds[0][2]),
                 ]
             )
         )
         self.can_pose = Transform(
             pos=np.array(
-                [
-                    0.72,
-                    0.4,
-                    self.table_height
-                    + self.clearbox_8_height
-                    + abs(self.can.bounds[0][2]),
-                ]
+                [0.72, 0.4, self.table_height + self.clearbox_8_height + abs(self.can.bounds[0][2])]
             )
         )
         self.tray_blue_pose = Transform(pos=np.array([0.6, 0, 0.8]))
@@ -291,9 +253,7 @@ class Benchmark3(Benchmark):
                     self.scene_mngr.set_logical_state(rect_box_name, ("on", "table"))
                 else:
                     prev_rect_box_name = "rect_box" + str(i - 1)
-                    self.scene_mngr.set_logical_state(
-                        rect_box_name, ("on", prev_rect_box_name)
-                    )
+                    self.scene_mngr.set_logical_state(rect_box_name, ("on", prev_rect_box_name))
 
             for i in range(self.square_box_num):
                 square_box_name = "square_box" + str(i)
@@ -301,9 +261,7 @@ class Benchmark3(Benchmark):
                     self.scene_mngr.set_logical_state(square_box_name, ("on", "table"))
                 else:
                     prev_square_box_name = "square_box" + str(i - 1)
-                    self.scene_mngr.set_logical_state(
-                        square_box_name, ("on", prev_square_box_name)
-                    )
+                    self.scene_mngr.set_logical_state(square_box_name, ("on", prev_square_box_name))
 
             self.scene_mngr.set_logical_state("goal_can", ("on", "clearbox"))
             self.scene_mngr.set_logical_state("milk1", ("on", "clearbox"))
@@ -318,13 +276,10 @@ class Benchmark3(Benchmark):
                 "tray_blue", (self.scene_mngr.scene.logical_state.static, True)
             )
             self.scene_mngr.set_logical_state(
-                "clearbox",
-                (self.scene_mngr.scene.logical_state.static, True),
-                ("on", "table"),
+                "clearbox", (self.scene_mngr.scene.logical_state.static, True), ("on", "table")
             )
             self.scene_mngr.set_logical_state(
-                self.scene_mngr.gripper_name,
-                (self.scene_mngr.scene.logical_state.holding, None),
+                self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None)
             )
             self.scene_mngr.show_logical_states()
         self.scene_mngr.update_logical_states(is_init=True)

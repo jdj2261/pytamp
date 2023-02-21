@@ -17,9 +17,7 @@ fig, ax = p_utils.init_3d_figure()
 asset_file_path = os.path.abspath(assets.__file__ + "/../")
 file_path = "urdf/panda/panda.urdf"
 robot = SingleArm(
-    f_name=file_path,
-    offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]),
-    has_gripper=True,
+    f_name=file_path, offset=Transform(rot=[0.0, 0.0, 0.0], pos=[0, 0, 0.913]), has_gripper=True
 )
 robot.setup_link_name("panda_link_0", "right_hand")
 
@@ -31,9 +29,7 @@ init_qpos = controller_config["init_qpos"]
 red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
 blue_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.06]))
 green_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.12]))
-support_box_pose = Transform(
-    pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0])
-)
+support_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0]))
 table_pose = Transform(pos=np.array([0.4, 0.24, 0.0]))
 
 red_cube_mesh = get_object_mesh("ben_cube.stl", 0.06)
@@ -44,11 +40,7 @@ table_mesh = get_object_mesh("custom_table.stl", 0.01)
 
 scene_mngr = SceneManager("collision", is_pyplot=True)
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_object(
     name="red_box",
@@ -91,15 +83,9 @@ target_thetas = scene_mngr.scene.robot.get_result_qpos(init_qpos, grasp_pose)
 scene_mngr.set_robot_eef_pose(target_thetas)
 scene_mngr.attach_object_on_gripper("green_box", False)
 
-planner = RRTStarPlanner(
-    delta_distance=0.05,
-    epsilon=0.2,
-    gamma_RRT_star=2,
-)
+planner = RRTStarPlanner(delta_distance=0.05, epsilon=0.2, gamma_RRT_star=2)
 
-planner.run(
-    scene_mngr=scene_mngr, cur_q=target_thetas, goal_pose=init_pose, max_iter=300
-)
+planner.run(scene_mngr=scene_mngr, cur_q=target_thetas, goal_pose=init_pose, max_iter=300)
 
 joint_path = planner.get_joint_path(n_step=10)
 target_eef_poses = planner.get_target_eef_poses()

@@ -23,12 +23,8 @@ parser.add_argument(
     choices=["bai_perturb", "bai_ucb", "uct"],
     help="Sampler Name",
 )
-parser.add_argument(
-    "--debug_mode", metavar="debug", type=bool, default=False, help="Debug mode"
-)
-parser.add_argument(
-    "--benchmark", metavar="N", type=int, default=2, help="Benchmark Number"
-)
+parser.add_argument("--debug_mode", metavar="debug", type=bool, default=False, help="Debug mode")
+parser.add_argument("--benchmark", metavar="N", type=int, default=2, help="Benchmark Number")
 parser.add_argument(
     "--disk_number", metavar="N", type=int, default=3, help="Disk Number(5 or less.)"
 )
@@ -42,9 +38,7 @@ seed = args.seed
 number = args.disk_number
 np.random.seed(seed)
 
-benchmark4 = Benchmark4(
-    robot_name="doosan", geom="visual", disk_num=number, is_pyplot=False
-)
+benchmark4 = Benchmark4(robot_name="doosan", geom="visual", disk_num=number, is_pyplot=False)
 # c_list = 10**np.linspace(-2, 2., 5)
 c_list = 10 ** np.linspace(-2, 2.0, 10)
 for idx, c in enumerate(c_list):
@@ -62,9 +56,7 @@ for idx, c in enumerate(c_list):
         mcts.do_planning(i)
 
         if mcts.level_wise_1_success:
-            sub_nodes = mcts.get_nodes_from_leaf_node(mcts.success_level_1_leaf_node)[
-                ::-1
-            ]
+            sub_nodes = mcts.get_nodes_from_leaf_node(mcts.success_level_1_leaf_node)[::-1]
             for n in sub_nodes:
                 if mcts.tree.nodes[n][mcts.node_data.TYPE] == "state":
                     action = mcts.tree.nodes[n].get(mcts.node_data.ACTION)

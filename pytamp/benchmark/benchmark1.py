@@ -26,15 +26,7 @@ class Benchmark1(Benchmark):
         if self.robot_name == "panda":
             self.robot.setup_link_name("panda_link_0", "right_hand")
             self.robot.init_qpos = np.array(
-                [
-                    0,
-                    np.pi / 16.0,
-                    0.00,
-                    -np.pi / 2.0 - np.pi / 3.0,
-                    0.00,
-                    np.pi - 0.2,
-                    -np.pi / 4,
-                ]
+                [0, np.pi / 16.0, 0.00, -np.pi / 2.0 - np.pi / 3.0, 0.00, np.pi - 0.2, -np.pi / 4]
             )
         if self.robot_name == "doosan":
             self.robot.setup_link_name("base_0", "right_hand")
@@ -48,51 +40,31 @@ class Benchmark1(Benchmark):
 
         box_height = self.box_mesh.bounds[1][2] - self.box_mesh.bounds[0][2]
         table_height = self.table_mesh.bounds[1][2] - self.table_mesh.bounds[0][2]
-        self.table_pose = Transform(
-            pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]])
-        )
+        self.table_pose = Transform(pos=np.array([1.0, -0.6, -self.table_mesh.bounds[0][2]]))
 
         self.box_poses = []
         A_box_pose = Transform(
-            pos=np.array(
-                [0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073]
-            )
+            pos=np.array([0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073])
         )
         B_box_pose = Transform(
-            pos=np.array(
-                [0.6, -0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073]
-            )
+            pos=np.array([0.6, -0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073])
         )
         C_box_pose = Transform(
-            pos=np.array(
-                [0.6, 0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073]
-            )
+            pos=np.array([0.6, 0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073])
         )
         D_box_pose = Transform(
             pos=np.array(
-                [
-                    0.6,
-                    0.2,
-                    table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 + box_height,
-                ]
+                [0.6, 0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 + box_height]
             )
         )
         E_box_pose = Transform(
             pos=np.array(
-                [
-                    0.6,
-                    -0.2,
-                    table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 + box_height,
-                ]
+                [0.6, -0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 + box_height]
             )
         )
         F_box_pose = Transform(
             pos=np.array(
-                [
-                    0.6,
-                    0,
-                    table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 + box_height,
-                ]
+                [0.6, 0, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073 + box_height]
             )
         )
 
@@ -103,14 +75,10 @@ class Benchmark1(Benchmark):
         # E_box_pose = Transform(pos=np.array([0.8, 0, table_height + abs(self.box_mesh.bounds[0][2])+ 0.073 + box_height]))
         # F_box_pose = Transform(pos=np.array([0.8, 0, table_height + abs(self.box_mesh.bounds[0][2])+ 0.073 + box_height * 2]))
         G_box_pose = Transform(
-            pos=np.array(
-                [0.8, -0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073]
-            )
+            pos=np.array([0.8, -0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073])
         )
         H_box_pose = Transform(
-            pos=np.array(
-                [0.8, 0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073]
-            )
+            pos=np.array([0.8, 0.2, table_height + abs(self.box_mesh.bounds[0][2]) + 0.073])
         )
         self.box_poses.extend(
             [
@@ -188,9 +156,7 @@ class Benchmark1(Benchmark):
                 h_mat=self.box_poses[i].h_mat,
                 color=self.box_colors[i],
             )
-            self.scene_mngr.set_logical_state(
-                logical_states[i][0], logical_states[i][1]
-            )
+            self.scene_mngr.set_logical_state(logical_states[i][0], logical_states[i][1])
         # self.scene_mngr.add_object(name="ceiling", gtype="mesh", gparam=self.ceiling_mesh, h_mat=self.ceiling_pose.h_mat, color=[0.823, 0.71, 0.55])
         self.scene_mngr.add_object(
             name="tray_red",
@@ -208,8 +174,7 @@ class Benchmark1(Benchmark):
             "table", (self.scene_mngr.scene.logical_state.static, True)
         )
         self.scene_mngr.set_logical_state(
-            self.scene_mngr.gripper_name,
-            (self.scene_mngr.scene.logical_state.holding, None),
+            self.scene_mngr.gripper_name, (self.scene_mngr.scene.logical_state.holding, None)
         )
         self.scene_mngr.update_logical_states(is_init=True)
         self.scene_mngr.show_logical_states()

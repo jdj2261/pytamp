@@ -45,11 +45,7 @@ table_mesh = get_object_mesh("custom_table.stl", 0.01)
 
 scene_mngr = SceneManager("collision", is_pyplot=True)
 scene_mngr.add_object(
-    name="table",
-    gtype="mesh",
-    gparam=table_mesh,
-    h_mat=table_pose.h_mat,
-    color=[0.823, 0.71, 0.55],
+    name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
 )
 scene_mngr.add_robot(robot, init_qpos)
 

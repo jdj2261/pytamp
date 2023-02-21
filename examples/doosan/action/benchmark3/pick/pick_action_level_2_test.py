@@ -3,9 +3,7 @@ from pytamp.action.pick import PickAction
 from pytamp.benchmark import Benchmark3
 
 benchmark3 = Benchmark3(robot_name="doosan", geom="visual", is_pyplot=True)
-pick = PickAction(
-    benchmark3.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1
-)
+pick = PickAction(benchmark3.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1)
 
 ################# Action Test ##################
 actions = list(pick.get_possible_actions_level_1())
@@ -40,6 +38,4 @@ pick_all_joint_path.append(pick_path)
 pick_all_objects.append(pick_objects)
 pick_all_object_poses.append(pick_object_poses)
 fig, ax = p_utils.init_3d_figure(name="Level wise 2")
-pick.simulate_path(
-    pick_all_joint_path, pick_all_objects, pick_all_object_poses, fig=fig, ax=ax
-)
+pick.simulate_path(pick_all_joint_path, pick_all_objects, pick_all_object_poses, fig=fig, ax=ax)

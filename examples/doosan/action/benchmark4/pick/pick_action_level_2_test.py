@@ -2,12 +2,8 @@
 from pytamp.action.pick import PickAction
 from pytamp.benchmark import Benchmark4
 
-benchmark4 = Benchmark4(
-    robot_name="doosan", geom="collision", is_pyplot=True, disk_num=5
-)
-pick = PickAction(
-    benchmark4.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1
-)
+benchmark4 = Benchmark4(robot_name="doosan", geom="collision", is_pyplot=True, disk_num=5)
+pick = PickAction(benchmark4.scene_mngr, n_contacts=0, n_directions=0, retreat_distance=0.1)
 # pick.scene_mngr.render_scene()
 # pick.scene_mngr.show()
 

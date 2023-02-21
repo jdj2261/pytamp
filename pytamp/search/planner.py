@@ -33,10 +33,7 @@ class Planner:
             )
         elif bench_num == 2:
             self.pick_action = PickAction(
-                scene_mngr,
-                n_contacts=0,
-                limit_angle_for_force_closure=0.02,
-                n_directions=3,
+                scene_mngr, n_contacts=0, limit_angle_for_force_closure=0.02, n_directions=3
             )
             self.place_action = PlaceAction(
                 scene_mngr, n_samples_held_obj=0, n_samples_support_obj=30
@@ -83,23 +80,19 @@ class Planner:
                     self.scene_mngr.scene, obj_name
                 )
                 pick_scenes = list(
-                    self.pick_action.get_possible_transitions(
-                        self.scene_mngr.scene, pick_actions
-                    )
+                    self.pick_action.get_possible_transitions(self.scene_mngr.scene, pick_actions)
                 )
                 pick_scene: Scene = np.random.choice(pick_scenes)
                 if not init_thetas:
                     init_theta = self.pick_action.scene_mngr.scene.robot.init_qpos
                 pick_joint_path = self.pick_action.get_possible_joint_path_level_2(
-                    scene=pick_scene,
-                    grasp_poses=pick_scene.grasp_poses,
-                    init_thetas=init_theta,
+                    scene=pick_scene, grasp_poses=pick_scene.grasp_poses, init_thetas=init_theta
                 )
                 if pick_joint_path:
                     success_pick = True
-                    init_theta = pick_joint_path[-1][
-                        self.pick_action.move_data.MOVE_default_grasp
-                    ][-1]
+                    init_theta = pick_joint_path[-1][self.pick_action.move_data.MOVE_default_grasp][
+                        -1
+                    ]
                 self.scene_mngr.scene = pick_scene
                 # self.render_state("Pick", pick_scene)
             if "place" in action:
@@ -112,9 +105,7 @@ class Planner:
                     self.scene_mngr.scene,
                 )
                 place_scenes = list(
-                    self.place_action.get_possible_transitions(
-                        self.scene_mngr.scene, place_actions
-                    )
+                    self.place_action.get_possible_transitions(self.scene_mngr.scene, place_actions)
                 )
                 place_scene: Scene = np.random.choice(place_scenes)
                 place_joint_path = self.place_action.get_possible_joint_path_level_2(
@@ -125,9 +116,7 @@ class Planner:
                 if place_joint_path:
                     pnp_path += pick_joint_path + place_joint_path
                     pick_objects.append(pick_scene.robot.gripper.attached_obj_name)
-                    place_object_poses.append(
-                        place_scene.objs[place_scene.pick_obj_name].h_mat
-                    )
+                    place_object_poses.append(place_scene.objs[place_scene.pick_obj_name].h_mat)
                     init_theta = place_joint_path[-1][
                         self.place_action.move_data.MOVE_default_release
                     ][-1]
