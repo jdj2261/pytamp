@@ -51,40 +51,16 @@ $ sh scripts/run_benchmark4.sh
 
 If you want to see the result of the output,  Run the benchmark#_result_level_2.ipynb file for that benchmark in the **results** directory.
 
-## Examples
-
-If you go to the examples/doosan directory, there are action, benchmark, heuristic, and mcts directory.
-
-You can see 3D animation or image of pick, place, pick and place for each benchmark.
-
-### SceneManager
-
-- **Scene** 
-
-  You can manage entire scene using *SceneManager* class. We recommend using the *SceneManager*.  
-  For example, You can manage robot, object, gripper pose or collision as well as visualize their geom.   
-  In addition, You can compute cartesian or RRT-star motion planning.  
-  You can see various examples in `examples/scene` directory. 
-
-  |                           baxter                           |                           sawyer                           |                           iiwa14                           |
-  | :--------------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------------: |
-  | <img src="img/baxter_scene.png" width="300" height="200"/> | <img src="img/sawyer_scene.png" width="300" height="200"/> | <img src="img/iiwa14_scene.png" width="300" height="200"/> |
-  
-  |                           Panda                           |                           Doosan                           |                           UR5e                           |
-  | :-------------------------------------------------------: | :--------------------------------------------------------: | :------------------------------------------------------: |
-  | <img src="img/panda_scene.png" width="300" height="200"/> | <img src="img/doosan_scene.png" width="300" height="200"/> | <img src="img/ur5e_scene.png" width="300" height="200"/> |
-  
-- **Planning**
-
-  You can see an animation of planning that visualizes trajectory in `examples/planning` directory. 
-
 
 ### Benchmark
 
-You can use the 4 benchmarks.
+We provide 4 benchmarks.
+
+We also show the results when using our algorithm.
 
 |                          Benchmark1                          |                          Benchmark2                          |                          Benchmark3                          |                          Benchmark4                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | <img src="img/Benchmark1_Init.png" width="300" height="200"/> | <img src="img/Benchmark2_Init.png" width="300" height="200"/> | <img src="img/Benchmark3_Init.png" width="300" height="200"/> | <img src="img/Benchmark4_Init.png" width="300" height="200"/> |
 |                                                              |                                                              |                                                              |                                                              |
 | <img src="img/Benchmark1_result.png" width="300" height="200"/> | <img src="img/Benchmark2_result.png" width="300" height="200"/> | <img src="img/Benchmark3_result.png" width="300" height="200"/> | <img src="img/Benchmark4_result_2.png" width="300" height="200"/> |
+
