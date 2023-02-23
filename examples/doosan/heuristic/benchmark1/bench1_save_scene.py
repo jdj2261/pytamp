@@ -13,12 +13,12 @@ from pykin.utils.kin_utils import (
     apply_objects_to_scene,
 )
 
-directory_name = "bench1_scene/random"
+directory_name = "bench1_scene/bai_ucb"
 p_utils.createDirectory(directory_name)
 
-method = "bai_perturb"
+# method = "bai_perturb"
 # method = "uct"
-# method = "bai_ucb"
+method = "bai_ucb"
 # method = "random"
 budgets = 100
 if len(sys.argv) > 1:
