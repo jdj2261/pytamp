@@ -35,7 +35,7 @@ setup(
     url="https://github.com/jdj2261/pytamp.git",
     download_url="https://github.com/jdj2261/pytamp/archive/refs/heads/main.zip",
     author_email="wlseoeo@gmail.com",
-    version="0.4.0",
+    version="0.5.1",
     long_description=long_description,
     long_description_content_type="text/markdown",
 )
