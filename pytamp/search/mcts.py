@@ -24,7 +24,6 @@ class MCTS:
         c: float = 100000,
         max_depth: int = 20,
         gamma: float = 1,
-        eps: float = 0.01,
         debug_mode=False,
     ):
         self.node_data = NodeData
@@ -78,7 +77,6 @@ class MCTS:
         self.c = c
         self.max_depth = max_depth
         self.gamma = gamma
-        self.eps = eps
         self.debug_mode = debug_mode
 
         self.tree = self._create_tree(self.state)
