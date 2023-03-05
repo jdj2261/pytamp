@@ -2,12 +2,10 @@
 
 [![PyPI version](https://badge.fury.io/py/pytamp.svg)](https://badge.fury.io/py/pytamp)  [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-Python Interface for the robot task and motion planning(TAMP) library
-
 *Our paper named "Perturbation-Based Best Arm Identification for Efficient Task Planning with Monte-Carlo Tree Search", accepted to ICRA 2023.*
 
-In the future, we plan to update it so that it can be operated in mujoco simulator using pytamp.
-
+Python Interface for the robot task and motion planning(TAMP) library.
+In the future, we are going to update it so that it can be operated in mujoco simulator.
 We want to provide an environment for applying reinforcement learning in the robot domain.
 
 ## Features
@@ -15,9 +13,8 @@ We want to provide an environment for applying reinforcement learning in the rob
 - Pure python library
 - Support only kinematic world, so not consider dynamics in this repo
 - Support simple motion planning (RRT* , PRM* , Cartesian planning)
-- Render Robot mesh using matplotlib or trimesh.Scene
-- Support 4 benchmarks for tamp
-- Support Robot TAMP with MCTS
+- Render scene using matplotlib or trimesh.Scene
+- Support Robot Task and Motion Planning examples with MCTS in 4 benchmarks
 
 ## Installation
 
@@ -54,38 +51,16 @@ $ sh scripts/run_benchmark4.sh
 
 If you want to see the result of the output,  Run the benchmark#_result_level_2.ipynb file for that benchmark in the **results** directory.
 
-## Examples
-
-If you go to the examples/doosan directory, there are action, benchmark, heuristic, and mcts directory.
-
-You can see 3D animation or image of pick, place, pick and place for each benchmark, 
-
-### SceneManager
-
-- **Scene** 
-
-  You can manage entire scene using *SceneManager* class. We recommend using the *SceneManager*.  
-  For example, You can manage robot, object, gripper pose or collision as well as visualize their geom.   
-  In addition, You can compute cartesian or RRT-star motion planning.  
-  You can see various examples in `examples/scene` directory. 
-
-  |                           baxter                           |                           sawyer                           |                           iiwa14                           |
-  | :--------------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------------: |
-  | <img src="img/baxter_scene.png" width="300" height="200"/> | <img src="img/sawyer_scene.png" width="300" height="200"/> | <img src="img/iiwa14_scene.png" width="300" height="200"/> |
-  
-  |                           Panda                           |                           Doosan                           |                           UR5e                           |
-  | :-------------------------------------------------------: | :--------------------------------------------------------: | :------------------------------------------------------: |
-  | <img src="img/panda_scene.png" width="300" height="200"/> | <img src="img/doosan_scene.png" width="300" height="200"/> | <img src="img/ur5e_scene.png" width="300" height="200"/> |
-  
-- **Planning**
-
-  You can see an animation of planning that visualizes trajectory in `examples/planning` directory. 
-
 
 ### Benchmark
 
-You can use the 4 benchmarks.
+We provide 4 benchmarks.
+
+We also show the results when using our algorithm.
 
 |                          Benchmark1                          |                          Benchmark2                          |                          Benchmark3                          |                          Benchmark4                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | <img src="img/Benchmark1_Init.png" width="300" height="200"/> | <img src="img/Benchmark2_Init.png" width="300" height="200"/> | <img src="img/Benchmark3_Init.png" width="300" height="200"/> | <img src="img/Benchmark4_Init.png" width="300" height="200"/> |
+|                                                              |                                                              |                                                              |                                                              |
+| <img src="img/Benchmark1_result.png" width="300" height="200"/> | <img src="img/Benchmark2_result.png" width="300" height="200"/> | <img src="img/Benchmark3_result.png" width="300" height="200"/> | <img src="img/Benchmark4_result_2.png" width="300" height="200"/> |
+

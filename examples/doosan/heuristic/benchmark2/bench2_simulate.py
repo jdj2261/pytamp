@@ -5,16 +5,16 @@ from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark2
 from pytamp.action.place import PlaceAction
 
-method = "bai_perturb"
+# method = "bai_perturb"
 # method = "uct"
-# method = "bai_ucb"
+method = "bai_ucb"
 # method = "random"
-budgets = 300
+budgets = 100
 if len(sys.argv) > 1:
     method = sys.argv[1]
 
-seed = 17
-end_num = 2
+seed = 31
+end_num = 3
 filename = (
     f"./bench2_planner/benchmark2_test_algo({method})_budget({budgets})_seed({seed})_{end_num}.npy"
 )
