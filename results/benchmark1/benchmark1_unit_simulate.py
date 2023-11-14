@@ -5,16 +5,16 @@ from pykin.utils import plot_utils as p_utils
 from pytamp.benchmark import Benchmark1
 from pytamp.action.place import PlaceAction
 
-# method = "bai_perturb"
-method = "uct"
+method = "perturb"
+# method = "uct"
 # method = "random"
 budgets = 100
 if len(sys.argv) > 1:
     method = sys.argv[1]
 
-seed = 40
+seed = 12
 end_num = 2
-filename = f"benchmark1_trajectory/final_trajectory/success/uct/benchmark1_test_algo({method})_budget({budgets})_seed({seed})_{end_num}.npy"
+filename = f"benchmark1_trajectory/final_trajectory/success/bai_perturb/benchmark1_test_algo({method})_budget({budgets})_seed({seed})_{end_num}.npy"
 benchmark1 = Benchmark1(robot_name="doosan", geom="collision", is_pyplot=True, box_num=6)
 place = PlaceAction(benchmark1.scene_mngr, n_samples_held_obj=0, n_samples_support_obj=0)
 
