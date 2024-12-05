@@ -551,6 +551,7 @@ class SceneManager:
         place_obj_pose=None,
         is_save=False,
         video_name="test",
+        visible_body=True,
         fps=30,
     ):
         self.is_pyplot = True
@@ -602,7 +603,7 @@ class SceneManager:
                     self.is_attach = False
                     self.open_gripper()
 
-            visible_geom = True
+            visible_geom = visible_body
             if visible_gripper:
                 visible_geom = False
 
