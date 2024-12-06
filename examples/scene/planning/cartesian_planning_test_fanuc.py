@@ -24,56 +24,14 @@ custom_fpath = asset_file_path + "/config/fanuc_init_params.yaml"
 with open(custom_fpath) as f:
     controller_config = yaml.safe_load(f)
 init_qpos = controller_config["init_qpos"]
-
-red_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77]))
-blue_box_pose = Transform(pos=np.array([0.6, 0.2, 0.77 + 0.06]))
-green_box_pose = Transform(pos=np.array([1, 0.2, 1 + 0.12]))
-support_box_pose = Transform(pos=np.array([0.6, -0.2, 0.77]), rot=np.array([0, np.pi / 2, 0]))
-table_pose = Transform(pos=np.array([0.4, 0.24, 0.0]))
-
-# red_cube_mesh = get_object_mesh("ben_cube.stl", 0.06)
-# blue_cube_mesh = get_object_mesh("ben_cube.stl", 0.06)
-# green_cube_mesh = get_object_mesh("ben_cube.stl", 0.06)
-# goal_box_mesh = get_object_mesh("goal_box.stl", 0.001)
-# table_mesh = get_object_mesh("custom_table.stl", 0.01)
-
+init_qpos = [0, 45, 0, 0, 0, 0]
+goal_pose = Transform(pos=np.array([1, -0.6, 0.5]))
 scene_mngr = SceneManager("collision", is_pyplot=True)
-# scene_mngr.add_object(
-#     name="table", gtype="mesh", gparam=table_mesh, h_mat=table_pose.h_mat, color=[0.823, 0.71, 0.55]
-# )
-# scene_mngr.add_object(
-#     name="red_box",
-#     gtype="mesh",
-#     gparam=red_cube_mesh,
-#     h_mat=red_box_pose.h_mat,
-#     color=[1.0, 0.0, 0.0],
-# )
-# scene_mngr.add_object(
-#     name="blue_box",
-#     gtype="mesh",
-#     gparam=blue_cube_mesh,
-#     h_mat=blue_box_pose.h_mat,
-#     color=[0.0, 0.0, 1.0],
-# )
-# scene_mngr.add_object(
-#     name="green_box",
-#     gtype="mesh",
-#     gparam=green_cube_mesh,
-#     h_mat=green_box_pose.h_mat,
-#     color=[0.0, 1.0, 0.0],
-# )
-# scene_mngr.add_object(
-#     name="goal_box",
-#     gtype="mesh",
-#     gparam=goal_box_mesh,
-#     h_mat=support_box_pose.h_mat,
-#     color=[1.0, 0, 1.0],
-# )
 scene_mngr.add_robot(robot, init_qpos)
 
 init_pose = scene_mngr.get_robot_eef_pose()
-# print(init_pose)
-grasp_pose = green_box_pose.h_mat
+print(init_pose)
+grasp_pose = goal_pose.h_mat
 r_mat = get_matrix_from_rpy(np.array([0, np.pi / 2, 0]))
 grasp_pose[:3, :3] = r_mat
 grasp_pose[:3, 3] = grasp_pose[:3, 3] - [0.10, 0, 0]
@@ -88,14 +46,14 @@ scene_mngr.set_robot_eef_pose(target_thetas)
 
 
 ############################ Show collision info #############################
-planner = CartesianPlanner(n_step=500, dimension=6)
+planner = CartesianPlanner(n_step=50, dimension=6)
 
 planner.run(scene_mngr=scene_mngr, cur_q=target_thetas, goal_pose=init_pose)
 
 joint_path = planner.get_joint_path()
 eef_poses = planner.get_target_eef_poses()
 
-print(eef_poses)
+# print(eef_poses)
 scene_mngr.animation(
     ax,
     fig,
