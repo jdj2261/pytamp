@@ -102,5 +102,5 @@ scene_mngr.animation(
     alpha=1,
     interval=50,
     repeat=True,
-    visible_body=False
+    visible_body=True
 )
